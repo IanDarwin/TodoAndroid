@@ -1,5 +1,5 @@
 <resources>
-	<!-- List if Priorities; MUST be kept in synch to match model/Priority.java! -->
+	<!-- List of Priorities; MUST be kept in synch to match model/Priority.java! -->
     <string-array name="priorities_array">
         <item>Top</item>
         <item>High</item>
