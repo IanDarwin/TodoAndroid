@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TodoList-Android</string>
+    <string name="add_item">New Todo Item Here</string>
+    <string name="add_button">Add</string>
+</resources>

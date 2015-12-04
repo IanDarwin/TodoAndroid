@@ -1,0 +1,5 @@
+= TodoAndroid
+
+This will someday be the TodoMore Android client.
+As of today it is just a skeleton of what it will be.
+Don't even think of using it yet.
