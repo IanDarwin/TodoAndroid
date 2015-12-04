@@ -32,10 +32,14 @@ public class MainActivity extends Activity {
     
     /** Called from the View when the Add button is pressed */
     public void addItem(View v) {
-    	Log.d(TAG, "addItem: " + addTF.getText());
-    	
+    	String name = addTF.getText().toString();
+    	Log.d(TAG, "addItem: " + name);
+    	if (name == null || name.length() == 0) {
+    		Toast.makeText(this, "Text required!", Toast.LENGTH_SHORT).show();
+    		return;
+    	}
     	// If we get here, remove text so it doesn't get added twice
     	addTF.setText("");
-    	Toast.makeText(this, "(Fake) Done", Toast.LENGTH_SHORT);
+    	Toast.makeText(this, "(Fake) Done", Toast.LENGTH_SHORT).show();
     }
 }

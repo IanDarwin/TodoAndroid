@@ -3,4 +3,5 @@
     <string name="app_name">TodoList-Android</string>
     <string name="add_item">New Todo Item Here</string>
     <string name="add_button">Add</string>
+    <string name="priority">Priority</string>
 </resources>
