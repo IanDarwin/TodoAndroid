@@ -4,4 +4,11 @@
     <string name="add_item">New Todo Item Here</string>
     <string name="add_button">Add</string>
     <string name="priority">Priority</string>
+    <string name="prompt_email">Account</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="error_invalid_password">Password too short</string>
+    <string name="error_incorrect_password">Password rejected</string>
+	<string name="error_field_required">Field required</string>
+	<string name="error_invalid_email">Not a valid email?</string>
 </resources>

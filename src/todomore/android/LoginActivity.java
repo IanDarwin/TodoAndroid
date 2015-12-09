@@ -1,4 +1,4 @@
-package todomore/android;
+package todomore.android;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
