@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -38,6 +37,10 @@ public class MainActivity extends Activity {
     		Toast.makeText(this, "Text required!", Toast.LENGTH_SHORT).show();
     		return;
     	}
+    	
+    	// XXX Do the work here! To send it to the server...
+    	
+    	
     	// If we get here, remove text so it doesn't get added twice
     	addTF.setText("");
     	Toast.makeText(this, "(Fake) Done", Toast.LENGTH_SHORT).show();
