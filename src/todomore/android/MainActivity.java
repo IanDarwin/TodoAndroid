@@ -1,7 +1,5 @@
 package todomore.android;
 
-import java.util.List;
-
 import com.darwinsys.todo.model.Priority;
 import com.darwinsys.todo.model.Task;
 
