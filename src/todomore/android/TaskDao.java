@@ -49,6 +49,12 @@ public class TaskDao {
 		Cursor c = db.query(TABLE_TODO, null, null, null, null, null, null);
 		return GruntWork.cursorToTasks(c);
 	}
+	
+	/** U: Update */
+	public int update(Task t) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 	class DbHelper extends SQLiteOpenHelper {
 
@@ -75,4 +81,5 @@ public class TaskDao {
 		}
 		
 	}
+
 }
