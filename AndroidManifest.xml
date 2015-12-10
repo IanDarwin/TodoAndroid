@@ -23,9 +23,12 @@
         <activity android:name="LoginActivity">
             
         </activity>
-        <service android:name=".NetworkService" 
+        <service android:name=".TodoSyncAdapterService" 
             android:exported="false" 
-            android:label="NetworkService">
+            android:label="SyncAdapterService">
+            <intent-filter>
+                <action android:name="todomore.TodoSyncAdapter"/>
+            </intent-filter>
         </service>
 
     </application>
