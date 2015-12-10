@@ -1,13 +1,16 @@
 package todomore.android;
 
+import java.util.List;
+
 import com.darwinsys.todo.model.Task;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
-import android.util.Log;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class TaskDao {
 	
@@ -26,12 +29,25 @@ public class TaskDao {
 		db.close();
 	}
 	
-	/** Inserts a new object */
+	/** C: Inserts a new object */
 	void insert(Task t) {
 		ContentValues cv = GruntWork.taskToContentValues(t);
 		if (db.insert(TABLE_TODO, "_id", cv) != 1) {
 			throw new RuntimeException("Insert failed!");
 		}
+	}
+	
+	/** R: Find by id */
+	Task findById(long id) {
+		Cursor c = db.query(TABLE_TODO, null, "_id = ?", new String[]{Long.toString(id)}, null, null, null);
+		c.moveToFirst();
+		return GruntWork.cursorToTask(c);
+	}
+	
+	/** R: Find All */
+	List<Task> findAll() {
+		Cursor c = db.query(TABLE_TODO, null, null, null, null, null, null);
+		return GruntWork.cursorToTasks(c);
 	}
 
 	class DbHelper extends SQLiteOpenHelper {

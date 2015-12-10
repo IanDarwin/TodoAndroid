@@ -1,5 +1,7 @@
 package todomore.android;
 
+import java.util.List;
+
 import com.darwinsys.todo.model.Priority;
 import com.darwinsys.todo.model.Task;
 
@@ -80,5 +82,6 @@ public class MainActivity extends Activity {
     	// If we get here, remove text so it doesn't get added twice
     	addTF.setText("");
     	Toast.makeText(this, "Saved locally", Toast.LENGTH_SHORT).show();
+
     }
 }
