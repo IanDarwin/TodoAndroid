@@ -21,15 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name="LoginActivity">
-            
+            <!-- Empty -->
         </activity>
-        <service android:name=".TodoSyncAdapterService" 
-            android:exported="false" 
-            android:label="SyncAdapterService">
-            <intent-filter>
-                <action android:name="todomore.TodoSyncAdapter"/>
-            </intent-filter>
-        </service>
-
     </application>
 </manifest>
