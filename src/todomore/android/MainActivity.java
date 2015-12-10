@@ -1,10 +1,30 @@
 package todomore.android;
 
+import java.net.URI;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.AbstractHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
 import com.darwinsys.todo.model.Priority;
 import com.darwinsys.todo.model.Task;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -14,13 +34,14 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+import todomore.android.MainActivity.SendObjectAsyncTask;
 
 public class MainActivity extends Activity {
-	static String TAG = MainActivity.class.getSimpleName();
-	EditText addTF;
-	Spinner prioSpinner;
-	
-	TaskDao mDao;
+
+	public static final String TAG = MainActivity.class.getSimpleName();
+	private EditText addTF;
+	private Spinner prioSpinner;	
+	private TaskDao mDao;
 	
     /** Called when the activity is first created. */
     @Override
@@ -76,10 +97,69 @@ public class MainActivity extends Activity {
     	mDao.insert(t);
     	
     	// XXX Send to server, or, trigger sync?
+    	new SendObjectAsyncTask().execute(t);
     	
     	// If we get here, remove text so it doesn't get added twice
     	addTF.setText("");
     	Toast.makeText(this, "Saved locally", Toast.LENGTH_SHORT).show();
-
     }
+    
+	public class SendObjectAsyncTask extends AsyncTask<Task, Void, Long>{
+		final ObjectMapper jacksonMapper = new ObjectMapper();
+
+		@Override
+		protected Long doInBackground(Task... params) {
+			AppSingleton app = AppSingleton.getInstance();
+			String userName = app.getUserName();
+			String password = app.getPassword();
+			Log.d(TAG, "Starting TODO send for " + userName);
+			
+			HttpClient client = new DefaultHttpClient();
+			Credentials creds = new UsernamePasswordCredentials(userName, password);        
+			((AbstractHttpClient)client).getCredentialsProvider()
+				.setCredentials(new AuthScope(RestConstants.SERVER, RestConstants.PORT), creds); 
+			try {
+			final URI postUri = new URI(String.format(RestConstants.PROTO + "://%s/todo/%s/tasks", 
+					RestConstants.PATH_PREFIX, AppSingleton.getInstance().getUserName()));
+			Task t = params[0];
+			
+				// Send a POST request with to upload this Task
+				Log.d(TAG, "Connecting to server for " + postUri);
+
+				HttpPost postAccessor = new HttpPost();
+				postAccessor.setURI(postUri);
+				postAccessor.addHeader("Content-Type", "application/json");
+				postAccessor.addHeader("Accept", "application/json");
+				
+				final ObjectWriter w = jacksonMapper.writer();
+				String json = w
+				  .with(SerializationFeature.INDENT_OUTPUT)
+				  .without(SerializationFeature.WRAP_EXCEPTIONS)
+				  .writeValueAsString(t);
+
+				postAccessor.setEntity(new StringEntity(json));
+
+				// INVOKE
+				HttpResponse response = client.execute(postAccessor);
+
+				// Get the response body from the response
+				HttpEntity postResults = response.getEntity();
+				final String resultStr = EntityUtils.toString(postResults);
+
+				// it actually sends the URL of the new ID
+				Uri resultUri = Uri.parse(resultStr);
+				long id = ContentUris.parseId(resultUri);
+				t.setId(id);;
+				int n = mDao.update(t);
+				if (n != 1) {
+					Log.e(TAG, "FAILED TO UPDATE");
+				}
+				Log.d(TAG, "UPDATED " + t + ", new _ID = " + t.getId());
+				return id;
+			} catch (Exception e) {
+				throw new RuntimeException("Send failed!" + e, e);
+			}
+		}
+
+	}
 }
