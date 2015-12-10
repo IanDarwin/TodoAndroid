@@ -6,17 +6,20 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.util.Log;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class TaskDao {
 	
+	private static final String TAG = "TaskDao";
+
 	Context context;
 	private static final String TABLE_TODO = "todo";
 	SQLiteDatabase db;
 	
 	TaskDao(Context context) {
 		this.context = context;
-		db = new DbHelper(context, TABLE_TODO, null, 0).getWritableDatabase();
+		db = new DbHelper(context, "todo.db", null, 1).getWritableDatabase();
 	}
 	
 	void shutdown() {
@@ -39,12 +42,13 @@ public class TaskDao {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
+			Log.d(TAG, "onCreate()");
 			db.execSQL("create table Todo("
 					+ "_id integer primary key,"	// PKey in Android SQLite database
 					+ "id long integer,"			// PKey in remote database
-					+ "name varchar," 
-					+ "priority integer,"	// 0 = top, 1, 2, 3 = lowest
-					+ "modified integer"
+					+ "name varchar," 				// Short description of task
+					+ "priority integer,"			// 0 = top, 1, 2, 3 = lowest
+					+ "modified integer"			// currentTimeMillis when last modified
 					+ ")"
 					);
 		}
