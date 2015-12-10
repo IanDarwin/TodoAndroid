@@ -20,7 +20,7 @@ public class MainActivity extends Activity {
 	EditText addTF;
 	Spinner prioSpinner;
 	
-	TaskDao mDao = new TaskDao(this);
+	TaskDao mDao;
 	
     /** Called when the activity is first created. */
     @Override
@@ -29,6 +29,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
         addTF = (EditText) findViewById(R.id.addTF);
         prioSpinner = (Spinner) findViewById(R.id.prioSpinner);
+        mDao = new TaskDao(this);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.priorities_array, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
@@ -73,6 +74,8 @@ public class MainActivity extends Activity {
     	t.setModified(System.currentTimeMillis());
     	
     	mDao.insert(t);
+    	
+    	// XXX Send to server, or, trigger sync?
     	
     	// If we get here, remove text so it doesn't get added twice
     	addTF.setText("");
