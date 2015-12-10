@@ -22,8 +22,8 @@ public class GruntWork {
 		if (t instanceof AndroidTask) {
 			cv.put("_id", ((AndroidTask)t)._id);
 		}
-		cv.put("priority", t.getPriority().toString());
 		cv.put("name", t.getName());
+		cv.put("priority", t.getPriority().ordinal());
 //		Date creationDate = new Date(); // when you decided you had to do it
 //		Project project;	// what this task is part of
 //		Context context;	// where to do it

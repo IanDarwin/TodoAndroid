@@ -1,5 +1,8 @@
 package todomore.android;
 
+import com.darwinsys.todo.model.Priority;
+import com.darwinsys.todo.model.Task;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +19,8 @@ public class MainActivity extends Activity {
 	static String TAG = MainActivity.class.getSimpleName();
 	EditText addTF;
 	Spinner prioSpinner;
+	
+	TaskDao mDao = new TaskDao(this);
 	
     /** Called when the activity is first created. */
     @Override
@@ -61,11 +66,16 @@ public class MainActivity extends Activity {
     		return;
     	}
     	
-    	// XXX Do the work here! To send it to the server...
+    	// Do the work here! Save to local DB, send it to the server...
+    	Task t = new Task();
+    	t.setName(addTF.getText().toString());
+    	t.setPriority(Priority.values()[prioSpinner.getSelectedItemPosition()]);
+    	t.setModified(System.currentTimeMillis());
     	
+    	mDao.insert(t);
     	
     	// If we get here, remove text so it doesn't get added twice
     	addTF.setText("");
-    	Toast.makeText(this, "(Fake) Done", Toast.LENGTH_SHORT).show();
+    	Toast.makeText(this, "Saved locally", Toast.LENGTH_SHORT).show();
     }
 }

@@ -10,10 +10,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class TaskDao {
 	
+	Context context;
 	private static final String TABLE_TODO = "todo";
 	SQLiteDatabase db;
 	
-	void init(Context context) {
+	TaskDao(Context context) {
+		this.context = context;
 		db = new DbHelper(context, TABLE_TODO, null, 0).getWritableDatabase();
 	}
 	
