@@ -37,6 +37,8 @@
 	</dependencies>
 
 	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<outputDirectory>bin/classes</outputDirectory>
 		<plugins>
 			<!-- Use the Android Plugin -->
 			<plugin>
