@@ -7,5 +7,5 @@ public class RestConstants {
 	public static final String SERVER = "10.0.2.2"; // demo-onetodolist.openshift.com";
 	public static int PORT = 8080;
 	// PATH_PREFIX may be the empty string or a directory name
-	public static final String PATH_PREFIX = "rest";
+	public static final String PATH_PREFIX = "todolist/rs";
 }
