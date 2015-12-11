@@ -1,6 +1,7 @@
 package todomore.android;
 
 import java.net.URI;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -8,6 +9,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.AbstractHttpClient;
@@ -30,17 +32,20 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
-import todomore.android.MainActivity.SendObjectAsyncTask;
 
 public class MainActivity extends Activity {
 
 	public static final String TAG = MainActivity.class.getSimpleName();
 	private EditText addTF;
-	private Spinner prioSpinner;	
+	private Spinner prioSpinner;
+	private ListView mListView;
 	private TaskDao mDao;
 	
     /** Called when the activity is first created. */
@@ -102,6 +107,8 @@ public class MainActivity extends Activity {
     	// If we get here, remove text so it doesn't get added twice
     	addTF.setText("");
     	Toast.makeText(this, "Saved locally", Toast.LENGTH_SHORT).show();
+    	
+    	new GetListAsyncTask().execute();
     }
     
 	public class SendObjectAsyncTask extends AsyncTask<Task, Void, Long>{
@@ -119,9 +126,9 @@ public class MainActivity extends Activity {
 			((AbstractHttpClient)client).getCredentialsProvider()
 				.setCredentials(new AuthScope(RestConstants.SERVER, RestConstants.PORT), creds); 
 			try {
-			final URI postUri = new URI(String.format(RestConstants.PROTO + "://%s/todo/%s/tasks", 
+				final URI postUri = new URI(String.format(RestConstants.PROTO + "://%s/todo/%s/tasks", 
 					RestConstants.PATH_PREFIX, AppSingleton.getInstance().getUserName()));
-			Task t = params[0];
+				Task t = params[0];
 			
 				// Send a POST request with to upload this Task
 				Log.d(TAG, "Connecting to server for " + postUri);
@@ -160,6 +167,52 @@ public class MainActivity extends Activity {
 				throw new RuntimeException("Send failed!" + e, e);
 			}
 		}
+	}
+	
+	public class GetListAsyncTask extends AsyncTask<Void, Void, List<Task>>{
+		final ObjectMapper jacksonMapper = new ObjectMapper();
 
+		@Override
+		protected List<Task> doInBackground(Void... params) {
+			AppSingleton app = AppSingleton.getInstance();
+			String userName = app.getUserName();
+			String password = app.getPassword();
+			Log.d(TAG, "Starting TODO send for " + userName);
+			
+			HttpClient client = new DefaultHttpClient();
+			Credentials creds = new UsernamePasswordCredentials(userName, password);        
+			((AbstractHttpClient)client).getCredentialsProvider()
+				.setCredentials(new AuthScope(RestConstants.SERVER, RestConstants.PORT), creds); 
+			try {
+				final URI postUri = new URI(String.format(RestConstants.PROTO + "://%s/todo/%s/tasks", 
+					RestConstants.PATH_PREFIX, AppSingleton.getInstance().getUserName()));
+			
+				// Send a GET request with to list the Tasks
+				Log.d(TAG, "Connecting to server for " + postUri);
+
+				HttpGet httpAccessor = new HttpGet();
+				httpAccessor.setURI(postUri);
+				httpAccessor.addHeader("Accept", "application/json");
+				
+				// INVOKE
+				HttpResponse response = client.execute(httpAccessor);
+
+				// Get the response body from the response
+				HttpEntity postResults = response.getEntity();
+				final String resultStr = EntityUtils.toString(postResults);
+
+				// Service sends the list of Tasks in JSON
+				List<Task> list = GruntWork.jsonStringToListTask(resultStr);
+				return list;
+			} catch (Exception e) {
+				throw new RuntimeException("Get List failed!" + e, e);
+			}
+		}
+		
+		@Override
+		protected void onPostExecute(List<Task> result) {
+			ListAdapter adapter = new ArrayAdapter<Task>(MainActivity.this, 0);
+			mListView.setAdapter(adapter);
+		}
 	}
 }
