@@ -92,6 +92,7 @@ public class MainActivity extends Activity {
     		Toast.makeText(this, "Text required!", Toast.LENGTH_SHORT).show();
     		return;
     	}
+    	ensureLogin();
     	
     	// Do the work here! Save to local DB, send it to the server...
     	Task t = new Task();
@@ -111,11 +112,24 @@ public class MainActivity extends Activity {
     	new GetListAsyncTask().execute();
     }
     
+    /** If the user hasn't logged in, press them for credentials
+     */
+	private void ensureLogin() {
+		AppSingleton appSingleton = AppSingleton.getInstance();
+		String username = appSingleton.getUserName();
+		String password = appSingleton.getPassword();
+		if (username == null || username.length() == 0 ||
+			password == null || password.length() == 0) {
+			startActivity(new Intent(this, LoginActivity.class));
+		}
+	}
+    
 	public class SendObjectAsyncTask extends AsyncTask<Task, Void, Long>{
 		final ObjectMapper jacksonMapper = new ObjectMapper();
 
 		@Override
 		protected Long doInBackground(Task... params) {
+			ensureLogin();
 			AppSingleton app = AppSingleton.getInstance();
 			String userName = app.getUserName();
 			String password = app.getPassword();
@@ -167,6 +181,7 @@ public class MainActivity extends Activity {
 				throw new RuntimeException("Send failed!" + e, e);
 			}
 		}
+
 	}
 	
 	public class GetListAsyncTask extends AsyncTask<Void, Void, List<Task>>{
