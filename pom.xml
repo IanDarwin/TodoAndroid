@@ -50,7 +50,9 @@
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
 		<outputDirectory>bin/classes</outputDirectory>
+		<testOutputDirectory>bin/classes</testOutputDirectory>
 		<plugins>
 			<!-- Use the Android Plugin -->
 			<plugin>
