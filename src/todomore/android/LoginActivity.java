@@ -24,8 +24,6 @@ public class LoginActivity extends Activity {
     // UI references.
     private EditText mEmailView;
     private EditText mPasswordView;
-    private View mProgressView;
-    private View mLoginFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +55,6 @@ public class LoginActivity extends Activity {
                 attemptLogin();
             }
         });
-
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
     }
 
     /**
@@ -111,6 +106,7 @@ public class LoginActivity extends Activity {
         	AppSingleton app = AppSingleton.getInstance();
         	app.setUserName(username);
         	app.setPassword(password);
+        	finish();
         }
     }
 

@@ -141,8 +141,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 				Uri resultUri = Uri.parse(resultStr);
 				long id = ContentUris.parseId(resultUri);
 				t.setId(id);;
-				int n = mDao.update(t);
-				if (n != 1) {
+				if (mDao.update(t)) {
 					Log.e(TAG, "FAILED TO UPDATE");
 				}
 				Log.d(TAG, "UPDATED " + t + ", new _ID = " + t.getId());

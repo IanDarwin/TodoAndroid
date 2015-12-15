@@ -32,7 +32,11 @@ public class TaskDao {
 	/** C: Inserts a new object */
 	void insert(Task t) {
 		ContentValues cv = GruntWork.taskToContentValues(t);
-		if (db.insert(TABLE_TODO, "_id", cv) != 1) {
+		System.out.println("Inserting task " + t);
+		for (String k : cv.keySet()) {
+			System.out.println(k + "->" + cv.get(k));
+		}
+		if (db.insert(TABLE_TODO, "name", cv) != 1) {
 			throw new RuntimeException("Insert failed!");
 		}
 	}
@@ -47,13 +51,20 @@ public class TaskDao {
 	/** R: Find All */
 	List<Task> findAll() {
 		Cursor c = db.query(TABLE_TODO, null, null, null, null, null, null);
-		return GruntWork.cursorToTasks(c);
+		return GruntWork.cursorToTaskList(c);
 	}
 	
 	/** U: Update */
-	public int update(Task t) {
-		// TODO Auto-generated method stub
-		return 0;
+	public boolean update(Task t) {
+		if (!(t instanceof AndroidTask)) {
+			throw new RuntimeException("Update but task has no _id!");
+		}
+		long _id = ((AndroidTask) t)._id;
+		int rc = db.update(TABLE_TODO, GruntWork.taskToContentValues(t), "where _id = ?", new String[]{Long.toString(_id)});
+		if (!(rc == 1)) {
+			Log.d(TAG, "Warning: Update Failed!");
+		}
+		return rc == 1;
 	}
 
 	class DbHelper extends SQLiteOpenHelper {
@@ -65,7 +76,7 @@ public class TaskDao {
 		@Override
 		public void onCreate(SQLiteDatabase db) {
 			Log.d(TAG, "onCreate()");
-			db.execSQL("create table Todo("
+			db.execSQL("create table " + TABLE_TODO + "("
 					+ "_id integer primary key,"	// PKey in Android SQLite database
 					+ "id long integer,"			// PKey in remote database
 					+ "name varchar," 				// Short description of task

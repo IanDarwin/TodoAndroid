@@ -56,7 +56,7 @@ public class GruntWork {
 		return t;
 	}
 	
-	public static List<Task> cursorToTasks(Cursor c) {
+	public static List<Task> cursorToTaskList(Cursor c) {
 		List<Task> list = new ArrayList<>();
 		while (c.moveToNext()) {
 			list.add(cursorToTask(c));
