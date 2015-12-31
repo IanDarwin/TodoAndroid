@@ -11,4 +11,5 @@
     <string name="error_incorrect_password">Password rejected</string>
 	<string name="error_field_required">Field required</string>
 	<string name="error_invalid_email">Not a valid email?</string>
+	<string name="error_invalid_user">Username must be alphabetic</string>
 </resources>

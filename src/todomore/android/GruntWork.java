@@ -23,11 +23,20 @@ import android.util.Log;
 public class GruntWork {
 	
 	private final static String TAG = "GruntWork";
+	
+
+	public static ContentValues taskToContentValuesWithout_ID(Task t) {
+		return taskToContentValues(t, false);
+	}
 
 	public static ContentValues taskToContentValues(Task t) {
+		return taskToContentValues(t, true);
+	}
+	
+	private static ContentValues taskToContentValues(Task t, boolean include_ID) {
 		ContentValues cv = new ContentValues();
 		cv.put("id", t.getId());
-		if (t instanceof AndroidTask) {
+		if (!include_ID && t instanceof AndroidTask) {
 			cv.put("_id", ((AndroidTask)t)._id);
 		}
 		cv.put("name", t.getName());
@@ -42,7 +51,7 @@ public class GruntWork {
 //		String description;
 		return cv;
 	}
-
+ 
 	public static Task cursorToTask(Cursor c) {
 		if (c.isAfterLast()) {
 			Log.d(TAG, "Cursor has no more rows");
@@ -97,5 +106,6 @@ public class GruntWork {
 		}
 		return ret;
 	}
+
 }
 

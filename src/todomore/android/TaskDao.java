@@ -14,10 +14,11 @@ import android.util.Log;
 
 public class TaskDao {
 	
-	private static final String TAG = "TaskDao";
+	private static final String TAG = "TodoMore.TaskDao";
 
 	Context context;
 	private static final String TABLE_TODO = "todo";
+	private String _ID = "_ID";
 	SQLiteDatabase db;
 	
 	TaskDao(Context context) {
@@ -30,15 +31,23 @@ public class TaskDao {
 	}
 	
 	/** C: Inserts a new object */
-	void insert(Task t) {
-		ContentValues cv = GruntWork.taskToContentValues(t);
-		System.out.println("Inserting task " + t);
-		for (String k : cv.keySet()) {
-			System.out.println(k + "->" + cv.get(k));
+	long insert(Task t) {
+		ContentValues cv = GruntWork.taskToContentValuesWithout_ID(t);
+		Log.d(TAG, "Inserting task " + t);
+		Long _id = cv.getAsLong(_ID);
+		if (_id != null) {
+			if (_id != 0L) {
+				throw new IllegalArgumentException("Trying to insert Task with _id = " + _id);
+			}
 		}
-		if (db.insert(TABLE_TODO, "name", cv) != 1) {
+		for (String k : cv.keySet()) {
+			Log.d(TAG, k + "->" + cv.get(k));
+		}
+		long newId = db.insert(TABLE_TODO, "name", cv);
+		if (newId == -1) {
 			throw new RuntimeException("Insert failed!");
 		}
+		return newId;
 	}
 	
 	/** R: Find by id */
@@ -57,7 +66,7 @@ public class TaskDao {
 	/** U: Update */
 	public boolean update(Task t) {
 		if (!(t instanceof AndroidTask)) {
-			throw new RuntimeException("Update but task has no _id!");
+			throw new RuntimeException("Update but Task has no _id!");
 		}
 		long _id = ((AndroidTask) t)._id;
 		int rc = db.update(TABLE_TODO, GruntWork.taskToContentValues(t), "where _id = ?", new String[]{Long.toString(_id)});
@@ -65,6 +74,11 @@ public class TaskDao {
 			Log.d(TAG, "Warning: Update Failed!");
 		}
 		return rc == 1;
+	}
+	
+	/** D: Delete */
+	public boolean delete(Task t) {
+		throw new UnsupportedOperationException("Delete not supported yet");
 	}
 
 	class DbHelper extends SQLiteOpenHelper {

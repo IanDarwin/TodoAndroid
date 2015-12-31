@@ -111,7 +111,7 @@ public class LoginActivity extends Activity {
     }
 
     private boolean isUsernameValid(String name) {
-        return name.matches("[\\w.]{8}");
+        return name.matches("[\\w.]{2,}");
     }
 
     private boolean isPasswordValid(String password) {

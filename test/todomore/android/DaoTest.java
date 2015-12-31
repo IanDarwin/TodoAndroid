@@ -2,13 +2,27 @@ package todomore.android;
 
 import java.util.List;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import com.darwinsys.todo.model.Priority;
 import com.darwinsys.todo.model.Task;
+
+import android.content.ContentValues;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class DaoTest {
 	
 	TaskDao mDao;
+	
+	@Before
+	public void setup() {
+		mDao = mock(TaskDao.class);
+	}
 
+	@Test
 	public void testFindAll() {
 		Task t = new Task();
 		t.setName("Buy a Tesla on the way home");
@@ -20,5 +34,23 @@ public class DaoTest {
     	for (Task td : todos) {
     		System.out.println("DAO Found " + td.getName());
     	}
+	}
+	
+	// Can't test w/o Robolectric or Android Unit Test
+//	@Test
+//	public void testCV() {
+//		ContentValues cv = new ContentValues();
+//		cv.put("string", "string");
+//		cv.put("long", 356L);
+//		dump("initial", cv);
+//		cv.remove("long");
+//		assertNull(cv.getAsLong("long"));
+//	}
+	
+	private void dump(String title, ContentValues cv) {
+		System.out.println("---" + title + "---");
+		for (String k : cv.keySet()) {
+			System.out.println(k + "-->" + cv.getAsString(k));
+		}
 	}
 }

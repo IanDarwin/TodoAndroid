@@ -47,6 +47,7 @@ public class MainActivity extends Activity {
 	private Spinner prioSpinner;
 	private ListView mListView;
 	private TaskDao mDao;
+	private int ACTIVITY_ID_LOGIN;
 	
     /** Called when the activity is first created. */
     @Override
@@ -88,27 +89,29 @@ public class MainActivity extends Activity {
     public void addItem(View v) {
     	String name = addTF.getText().toString();
     	Log.d(TAG, "addItem: " + name);
-    	if (name == null || name.length() == 0) {
+    	if (name == null || name.isEmpty()) {
     		Toast.makeText(this, "Text required!", Toast.LENGTH_SHORT).show();
     		return;
     	}
     	ensureLogin();
     	
-    	// Do the work here! Save to local DB, send it to the server...
-    	Task t = new Task();
+    	// Do the work here! Save to local DB before sending to the server...
+    	AndroidTask t = new AndroidTask();
     	t.setName(addTF.getText().toString());
     	t.setPriority(Priority.values()[prioSpinner.getSelectedItemPosition()]);
     	t.setModified(System.currentTimeMillis());
     	
-    	mDao.insert(t);
-    	
-    	// XXX Send to server, or, trigger sync?
-    	new SendObjectAsyncTask().execute(t);
-    	
-    	// If we get here, remove text so it doesn't get added twice
-    	addTF.setText("");
+    	long _id = mDao.insert(t);
+    	t._id = _id;
     	Toast.makeText(this, "Saved locally", Toast.LENGTH_SHORT).show();
     	
+    	// XXX Send to server now; later, will just trigger sync?
+    	new SendObjectAsyncTask().execute(t);
+    	
+    	// If we get here, remove text from TF so task doesn't get added twice
+    	addTF.setText("");
+    	
+    	Toast.makeText(this, "Sync request send", Toast.LENGTH_SHORT).show();
     	new GetListAsyncTask().execute();
     }
     
@@ -120,7 +123,7 @@ public class MainActivity extends Activity {
 		String password = appSingleton.getPassword();
 		if (username == null || username.length() == 0 ||
 			password == null || password.length() == 0) {
-			startActivity(new Intent(this, LoginActivity.class));
+			startActivityForResult(new Intent(this, LoginActivity.class), ACTIVITY_ID_LOGIN);
 		}
 	}
     
@@ -133,7 +136,9 @@ public class MainActivity extends Activity {
 			AppSingleton app = AppSingleton.getInstance();
 			String userName = app.getUserName();
 			String password = app.getPassword();
-			Log.d(TAG, "Starting TODO send for " + userName);
+			// The number shalle be one...
+			Task t = params[0];
+			Log.d(TAG, "Starting TODO send of task " + t + " for user " + userName);
 			
 			HttpClient client = new DefaultHttpClient();
 			Credentials creds = new UsernamePasswordCredentials(userName, password);        
@@ -142,7 +147,6 @@ public class MainActivity extends Activity {
 			try {
 				final URI postUri = new URI(String.format(RestConstants.PROTO + "://%s/todo/%s/tasks", 
 					RestConstants.PATH_PREFIX, AppSingleton.getInstance().getUserName()));
-				Task t = params[0];
 			
 				// Send a POST request with to upload this Task
 				Log.d(TAG, "Connecting to server for " + postUri);
@@ -191,7 +195,7 @@ public class MainActivity extends Activity {
 			AppSingleton app = AppSingleton.getInstance();
 			String userName = app.getUserName();
 			String password = app.getPassword();
-			Log.d(TAG, "Starting TODO send for " + userName);
+			Log.d(TAG, "Starting TODO list-fetch for " + userName);
 			
 			HttpClient client = new DefaultHttpClient();
 			Credentials creds = new UsernamePasswordCredentials(userName, password);        
