@@ -17,7 +17,7 @@ import android.widget.TextView;
 /**
  * A preferences screen that offers login via username/password and other settings
  */
-public class LoginCredentialsActivity extends Activity {
+public class PrefsActivity extends Activity {
 
 	private SharedPreferences prefs;
 
