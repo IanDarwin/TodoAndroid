@@ -1,7 +1,9 @@
 package todomore.android;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -25,14 +27,15 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListAdapter;
@@ -48,12 +51,14 @@ public class MainActivity extends Activity {
 	private ListView mListView;
 	private TaskDao mDao;
 	private int ACTIVITY_ID_LOGIN;
+	private SharedPreferences mPrefs;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         addTF = (EditText) findViewById(R.id.addTF);
         prioSpinner = (Spinner) findViewById(R.id.prioSpinner);
         mDao = new TaskDao(this);
@@ -129,10 +134,9 @@ public class MainActivity extends Activity {
      */
     private void ensureLogin() {
     	if (!isLoginOK) {
-    		AppSingleton appSingleton = AppSingleton.getInstance();
-    		String username = appSingleton.getUserName();
-    		String password = appSingleton.getPassword();
-    		if (username == null || username.isEmpty() ||
+    		String userName = mPrefs.getString("KEY_USERNAME", null);
+    		String password = mPrefs.getString("KEY_PASSWORD", null);
+    		if (userName == null || userName.isEmpty() ||
     				password == null || password.isEmpty()) {
     			startActivityForResult(new Intent(this, PrefsActivity.class), ACTIVITY_ID_LOGIN);
     		}
@@ -151,6 +155,21 @@ public class MainActivity extends Activity {
 			isLoginOK = true;
 		}
 	}
+	
+	private String getUserName() { return mPrefs.getString("KEY_USERNAME", null); }
+	private String getPassword() { return mPrefs.getString("KEY_PASSWORD", null); }
+	
+	/** Should be used by all REST tasks */
+	protected URI makePath(SharedPreferences prefs) {
+		try {
+			return new URI(String.format("http://%s:%d/%s/todo/%s/tasks", 
+					mPrefs.getString("KEY_HOSTNAME", null),
+					mPrefs.getInt("KEY_HOSTPORT", 80),
+					mPrefs.getString("KEY_HOSTPATH", "/"), getUserName()));
+		} catch (URISyntaxException e) {
+			throw new RuntimeException("Failed to create path! " + e, e);
+		}
+	}
     
 	public class SendObjectAsyncTask extends AsyncTask<Task, Void, Long>{
 		final ObjectMapper jacksonMapper = new ObjectMapper();
@@ -158,20 +177,23 @@ public class MainActivity extends Activity {
 		@Override
 		protected Long doInBackground(Task... params) {
 			ensureLogin();
-			AppSingleton app = AppSingleton.getInstance();
-			String userName = app.getUserName();
-			String password = app.getPassword();
+			
+			
+    		
 			// The number shalle be one...
 			Task t = params[0];
-			Log.d(TAG, "Starting TODO send of task " + t + " for user " + userName);
+			Log.d(TAG, "Starting TODO send of task " + t + " for user " + getUserName());
 			
 			HttpClient client = new DefaultHttpClient();
-			Credentials creds = new UsernamePasswordCredentials(userName, password);        
+			Credentials creds = new UsernamePasswordCredentials(getUserName(), getPassword());        
 			((AbstractHttpClient)client).getCredentialsProvider()
-				.setCredentials(new AuthScope(RestConstants.SERVER, RestConstants.PORT), creds); 
+				.setCredentials(new AuthScope(
+						mPrefs.getString("KEY_HOSTNAME", "10.0.2.2"), 
+						mPrefs.getInt("KEY_PORT", 80)),
+						creds); 
 			try {
-				final URI postUri = new URI(String.format(RestConstants.PROTO + "://%s/todo/%s/tasks", 
-					RestConstants.PATH_PREFIX, AppSingleton.getInstance().getUserName()));
+				final URI postUri = new URI(String.format("http://%s/todo/%s/tasks", 
+						mPrefs.getString("KEY_PATH", "/"), getUserName()));
 			
 				// Send a POST request with to upload this Task
 				Log.d(TAG, "Connecting to server for " + postUri);
@@ -205,6 +227,8 @@ public class MainActivity extends Activity {
 				}
 				Log.d(TAG, "UPDATED " + t + ", new _ID = " + t.getId());
 				return id;
+			} catch (RuntimeException e) { // Avoid bloating the stack trace
+				throw e;
 			} catch (Exception e) {
 				throw new RuntimeException("Send failed!" + e, e);
 			}
@@ -217,18 +241,17 @@ public class MainActivity extends Activity {
 
 		@Override
 		protected List<Task> doInBackground(Void... params) {
-			AppSingleton app = AppSingleton.getInstance();
-			String userName = app.getUserName();
-			String password = app.getPassword();
-			Log.d(TAG, "Starting TODO list-fetch for " + userName);
+			Log.d(TAG, "Starting TODO list-fetch for " + getUserName());
 			
 			HttpClient client = new DefaultHttpClient();
-			Credentials creds = new UsernamePasswordCredentials(userName, password);        
+			Credentials creds = new UsernamePasswordCredentials(getUserName(), getPassword());        
 			((AbstractHttpClient)client).getCredentialsProvider()
-				.setCredentials(new AuthScope(RestConstants.SERVER, RestConstants.PORT), creds); 
+			.setCredentials(new AuthScope(
+					mPrefs.getString("KEY_HOSTNAME", "10.0.2.2"), 
+					mPrefs.getInt("KEY_PORT", 80)),
+					creds);  
 			try {
-				final URI postUri = new URI(String.format(RestConstants.PROTO + "://%s/todo/%s/tasks", 
-					RestConstants.PATH_PREFIX, AppSingleton.getInstance().getUserName()));
+				final URI postUri = makePath(mPrefs);
 			
 				// Send a GET request with to list the Tasks
 				Log.d(TAG, "Connecting to server for " + postUri);

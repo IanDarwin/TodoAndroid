@@ -16,8 +16,12 @@ import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import com.darwinsys.todo.model.Task;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
@@ -25,16 +29,10 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SyncResult;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-
-import com.darwinsys.todo.model.Task;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 
 /**
@@ -48,7 +46,6 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	
 	private final static String LAST_SYNC_TSTAMP = "last sync";
 	
-	private final ContentResolver mResolver;
 	private SharedPreferences mPrefs;
 	private TaskDao mDao;
 	
@@ -64,7 +61,6 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 				boolean allowParallelSyncs) {
 			super(context, autoInitialize, allowParallelSyncs);
 
-			mResolver = context.getContentResolver();
 			mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 			mDao = new TaskDao(context);
 		}
@@ -77,24 +73,26 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 				SyncResult syncResult) {
 			Log.d(TAG, "ToDoSyncAdapter.onPerformSync()");
 			
-			// Get the username and password, set there by our LoginActivity.
+			// Get the username and password, which must be in mPrefs by now
 			
 			long tStamp = mPrefs.getLong(LAST_SYNC_TSTAMP, 0L);
 			
-			AppSingleton app = AppSingleton.getInstance();
-			String userName = app.getUserName();
-			String password = app.getPassword();
+			String userName = mPrefs.getString("KEY_USERNAME", null);
+			String password = mPrefs.getString("KEY_PASSWORD",  null);
 			Log.d(TAG, "Starting TODO Sync for " + userName);
 			
 			HttpClient client = new DefaultHttpClient();
 			Credentials creds = new UsernamePasswordCredentials(userName, password);        
 			((AbstractHttpClient)client).getCredentialsProvider()
-				.setCredentials(new AuthScope(RestConstants.SERVER, RestConstants.PORT), creds); 
+			.setCredentials(new AuthScope(
+					mPrefs.getString("KEY_HOSTNAME", "10.0.2.2"), 
+					mPrefs.getInt("KEY_PORT", 80)),
+					creds);  
 			
 			// First, get list of items modified on the server
 			try {
-			final URI getUri = new URI(String.format(RestConstants.PROTO + "://%s:%d/%s/%s/tasks", 
-					RestConstants.SERVER, RestConstants.PORT, RestConstants.PATH_PREFIX, userName));
+				final URI getUri = new URI(String.format("http://%s/todo/%s/tasks", 
+						mPrefs.getString("KEY_PATH", "/"), userName));
 			Log.d(TAG, "Getting Items From " + getUri);
 			HttpGet httpAccessor = new HttpGet();
 			httpAccessor.setURI(getUri);
@@ -110,7 +108,8 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			// NOW SEND ANY ITEMS WE'VE CREATED/MODIFIED, going FROM the ContentResolver
 			// TO the remote sync server.
 
-			final URI postUri = new URI(String.format(RestConstants.PROTO + "://%s/todo/%s/tasks", RestConstants.PATH_PREFIX, userName));
+			final URI postUri = new URI(String.format("http://%s/todo/%s/tasks", 
+					mPrefs.getString("KEY_USERNAME", null), userName));
 			String sqlQuery = "modified < ?";
 			for (Task t : mDao.findAll()) {
 
@@ -154,9 +153,12 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			for (Object o : newToDos) {
 				System.out.println(o);
 				Task t = jacksonMapper.readValue(o.toString(), Task.class);
-			mDao.insert(t);
-			Log.d(TAG, "Downloaded and inserted this new Task: " + t);
-		}
+				mDao.insert(t);
+				Log.d(TAG, "Downloaded and inserted this new Task: " + t);
+			}
+			
+			// Finally, update our timestamp!
+			mPrefs.edit().putLong(LAST_SYNC_TSTAMP, System.currentTimeMillis());
 	
 	} catch (Exception e) {
 		Log.wtf(TAG, "ERROR in synchronization!: " + e, e);

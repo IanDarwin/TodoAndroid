@@ -1,0 +1,51 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory 
+		android:title="User">
+		
+		<EditTextPreference
+			android:key="KEY_USERNAME"
+			android:title="Username"
+			android:hint="User name"
+		/>
+			
+		<EditTextPreference
+			android:key="KEY_PASSWORD"
+			android:title="password"
+			android:hint="password"
+			android:inputType="textPassword"
+		/>
+			
+	</PreferenceCategory>
+	
+	<PreferenceCategory android:title="Host">
+		
+		<EditTextPreference
+			android:key="KEY_HOSTNAME"
+			android:title="Host Name"
+			android:hint="hostName"
+			android:defaultValue="10.0.2.2"
+		/>
+
+		<EditTextPreference
+			android:key="KEY_HOSTPORT"
+			android:title="Host Port"
+			android:hint="hostPort"
+			android:inputType="number"
+			android:defaultValue="80"
+		/>
+		
+		<EditTextPreference
+			android:key="KEY_HOSTPATH"
+			android:title="Host Path"
+			android:hint="hostPath"
+			android:defaultValue="/todolist/rs"
+		/>
+			
+	</PreferenceCategory>
+	
+</PreferenceScreen>
+
+
+
+
