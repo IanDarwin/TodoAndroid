@@ -1,34 +1,34 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<PreferenceCategory 
-		android:title="User">
+		android:title="TodoMore Account">
 		
 		<EditTextPreference
-			android:key="KEY_USERNAME"
+			android:key="@string/key_username"
 			android:title="Username"
 			android:hint="User name"
 		/>
 			
 		<EditTextPreference
-			android:key="KEY_PASSWORD"
-			android:title="password"
+			android:key="@string/key_password"
+			android:title="Password"
 			android:hint="password"
 			android:inputType="textPassword"
 		/>
 			
 	</PreferenceCategory>
 	
-	<PreferenceCategory android:title="Host">
+	<PreferenceCategory android:title="REST Access">
 		
 		<EditTextPreference
-			android:key="KEY_HOSTNAME"
+			android:key="@string/key_hostname"
 			android:title="Host Name"
 			android:hint="hostName"
 			android:defaultValue="10.0.2.2"
 		/>
 
 		<EditTextPreference
-			android:key="KEY_HOSTPORT"
+			android:key="@string/key_hostport"
 			android:title="Host Port"
 			android:hint="hostPort"
 			android:inputType="number"
@@ -36,7 +36,7 @@
 		/>
 		
 		<EditTextPreference
-			android:key="KEY_HOSTPATH"
+			android:key="@string/key_hostpath"
 			android:title="Host Path"
 			android:hint="hostPath"
 			android:defaultValue="/todolist/rs"

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <string name="key_username">KEY_USERNAME</string>
+    <string name="key_password">KEY_PASSWORD</string>
+    
+    <string name="key_hostname">KEY_HOSTNAME</string>
+    <string name="key_hostport">KEY_HOSTPORT</string>
+    <string name="key_hostpath">KEY_HOSTPATH</string>
+    
+</resources>
