@@ -36,7 +36,7 @@ public class GruntWork {
 	private static ContentValues taskToContentValues(Task t, boolean include_ID) {
 		ContentValues cv = new ContentValues();
 		cv.put("id", t.getId());
-		if (!include_ID && t instanceof AndroidTask) {
+		if (include_ID && t instanceof AndroidTask) {
 			cv.put("_id", ((AndroidTask)t)._id);
 		}
 		cv.put("name", t.getName());
