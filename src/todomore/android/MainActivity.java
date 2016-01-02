@@ -52,13 +52,14 @@ public class MainActivity extends Activity {
 	private TaskDao mDao;
 	private int ACTIVITY_ID_LOGIN;
 	private SharedPreferences mPrefs;
+	// Keys for mPrefs lookups
+	private String KEY_USERNAME, KEY_PASSWORD, KEY_HOSTNAME, KEY_HOSTPORT, KEY_HOSTPATH;
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         addTF = (EditText) findViewById(R.id.addTF);
         prioSpinner = (Spinner) findViewById(R.id.prioSpinner);
         mDao = new TaskDao(this);
@@ -66,6 +67,13 @@ public class MainActivity extends Activity {
                 R.array.priorities_array, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        KEY_USERNAME = getString(R.string.key_username);
+        KEY_PASSWORD = getString(R.string.key_password);
+        KEY_HOSTNAME = getString(R.string.key_hostname);
+        KEY_HOSTPORT = getString(R.string.key_hostport);
+        KEY_HOSTPATH = getString(R.string.key_hostpath);
 
         prioSpinner.setAdapter(adapter);
         
@@ -130,12 +138,13 @@ public class MainActivity extends Activity {
     
     private boolean isLoginOK;
     
-    /** If the user hasn't logged in, press them for credentials
+    /** 
+     * If the user hasn't provided username and password, press them for credentials
      */
     private void ensureLogin() {
     	if (!isLoginOK) {
-    		String userName = mPrefs.getString("KEY_USERNAME", null);
-    		String password = mPrefs.getString("KEY_PASSWORD", null);
+    		String userName = mPrefs.getString(KEY_USERNAME, null);
+    		String password = mPrefs.getString(KEY_PASSWORD, null);
     		if (userName == null || userName.isEmpty() ||
     				password == null || password.isEmpty()) {
     			startActivityForResult(new Intent(this, PrefsActivity.class), ACTIVITY_ID_LOGIN);
@@ -156,16 +165,16 @@ public class MainActivity extends Activity {
 		}
 	}
 	
-	private String getUserName() { return mPrefs.getString("KEY_USERNAME", null); }
-	private String getPassword() { return mPrefs.getString("KEY_PASSWORD", null); }
+	private String getUserName() { return mPrefs.getString(KEY_USERNAME, null); }
+	private String getPassword() { return mPrefs.getString(KEY_PASSWORD, null); }
 	
 	/** Should be used by all REST tasks */
-	protected URI makePath(SharedPreferences prefs) {
+	protected URI makeRestUri(SharedPreferences prefs) {
 		try {
 			return new URI(String.format("http://%s:%d/%s/todo/%s/tasks", 
-					mPrefs.getString("KEY_HOSTNAME", null),
-					mPrefs.getInt("KEY_HOSTPORT", 80),
-					mPrefs.getString("KEY_HOSTPATH", "/"), getUserName()));
+					mPrefs.getString(KEY_HOSTNAME, null),
+					Integer.parseInt(mPrefs.getString(KEY_HOSTPORT, "80")),
+					mPrefs.getString(KEY_HOSTPATH, "/"), getUserName()));
 		} catch (URISyntaxException e) {
 			throw new RuntimeException("Failed to create path! " + e, e);
 		}
@@ -177,8 +186,6 @@ public class MainActivity extends Activity {
 		@Override
 		protected Long doInBackground(Task... params) {
 			ensureLogin();
-			
-			
     		
 			// The number shalle be one...
 			Task t = params[0];
@@ -188,12 +195,11 @@ public class MainActivity extends Activity {
 			Credentials creds = new UsernamePasswordCredentials(getUserName(), getPassword());        
 			((AbstractHttpClient)client).getCredentialsProvider()
 				.setCredentials(new AuthScope(
-						mPrefs.getString("KEY_HOSTNAME", "10.0.2.2"), 
-						mPrefs.getInt("KEY_PORT", 80)),
+						mPrefs.getString(KEY_HOSTNAME, "10.0.2.2"), 
+						Integer.parseInt(mPrefs.getString(KEY_HOSTPORT, "80"))),
 						creds); 
 			try {
-				final URI postUri = new URI(String.format("http://%s/todo/%s/tasks", 
-						mPrefs.getString("KEY_PATH", "/"), getUserName()));
+				final URI postUri = makeRestUri(mPrefs);
 			
 				// Send a POST request with to upload this Task
 				Log.d(TAG, "Connecting to server for " + postUri);
@@ -217,7 +223,8 @@ public class MainActivity extends Activity {
 				// Get the response body from the response
 				HttpEntity postResults = response.getEntity();
 				final String resultStr = EntityUtils.toString(postResults);
-
+				Log.d(TAG, "Result from SEND: " + resultStr);
+				
 				// it actually sends the URL of the new ID
 				Uri resultUri = Uri.parse(resultStr);
 				long id = ContentUris.parseId(resultUri);
@@ -247,11 +254,11 @@ public class MainActivity extends Activity {
 			Credentials creds = new UsernamePasswordCredentials(getUserName(), getPassword());        
 			((AbstractHttpClient)client).getCredentialsProvider()
 			.setCredentials(new AuthScope(
-					mPrefs.getString("KEY_HOSTNAME", "10.0.2.2"), 
-					mPrefs.getInt("KEY_PORT", 80)),
+					mPrefs.getString(KEY_HOSTNAME, "10.0.2.2"), 
+					Integer.parseInt(mPrefs.getString(KEY_HOSTPORT, "80"))),
 					creds);  
 			try {
-				final URI postUri = makePath(mPrefs);
+				final URI postUri = makeRestUri(mPrefs);
 			
 				// Send a GET request with to list the Tasks
 				Log.d(TAG, "Connecting to server for " + postUri);
@@ -266,6 +273,7 @@ public class MainActivity extends Activity {
 				// Get the response body from the response
 				HttpEntity postResults = response.getEntity();
 				final String resultStr = EntityUtils.toString(postResults);
+				Log.d(TAG, "Result from LIST: " + resultStr);
 
 				// Service sends the list of Tasks in JSON
 				List<Task> list = GruntWork.jsonStringToListTask(resultStr);
