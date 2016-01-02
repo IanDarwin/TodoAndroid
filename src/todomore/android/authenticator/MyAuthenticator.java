@@ -25,7 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import todomore.android.LoginActivity;
+import todomore.android.LoginCredentialsActivity;
 import todomore.android.MainActivity;
 
 public class MyAuthenticator extends AbstractAccountAuthenticator {
@@ -45,7 +45,7 @@ public class MyAuthenticator extends AbstractAccountAuthenticator {
 			String[] requiredFeatures, Bundle options)
 			throws NetworkErrorException {
 		Log.d(TAG, "MyAuthenticator.addAccount()");
-		final Intent intent = new Intent(mContext, LoginActivity.class);
+		final Intent intent = new Intent(mContext, LoginCredentialsActivity.class);
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
         final Bundle bundle = new Bundle();
         bundle.putParcelable(AccountManager.KEY_INTENT, intent);

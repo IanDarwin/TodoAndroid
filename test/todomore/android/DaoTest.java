@@ -30,6 +30,7 @@ public class DaoTest {
 		mDao.insert(t);
 		
     	List<Task> todos = mDao.findAll();
+    	// Mock DAO doesn't have this much logic yet
     	// assertEquals(1, todos.size());
     	for (Task td : todos) {
     		System.out.println("DAO Found " + td.getName());

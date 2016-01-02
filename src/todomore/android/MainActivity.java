@@ -63,6 +63,14 @@ public class MainActivity extends Activity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         prioSpinner.setAdapter(adapter);
+        
+        ensureLogin();
+    }
+    
+    @Override
+    protected void onRestart() {
+    	super.onRestart();
+    	addTF.requestFocus();
     }
     
     @Override
@@ -75,7 +83,7 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch(item.getItemId()) {
     	case R.id.settings_menuitem:
-    		startActivity(new Intent(this, LoginActivity.class));
+    		startActivity(new Intent(this, LoginCredentialsActivity.class));
     		return true;
     	case R.id.help_menuitem:
     		Toast.makeText(this, "Help not written yet", Toast.LENGTH_SHORT).show();
@@ -115,15 +123,32 @@ public class MainActivity extends Activity {
     	new GetListAsyncTask().execute();
     }
     
+    private boolean isLoginOK;
+    
     /** If the user hasn't logged in, press them for credentials
      */
-	private void ensureLogin() {
-		AppSingleton appSingleton = AppSingleton.getInstance();
-		String username = appSingleton.getUserName();
-		String password = appSingleton.getPassword();
-		if (username == null || username.length() == 0 ||
-			password == null || password.length() == 0) {
-			startActivityForResult(new Intent(this, LoginActivity.class), ACTIVITY_ID_LOGIN);
+    private void ensureLogin() {
+    	if (!isLoginOK) {
+    		AppSingleton appSingleton = AppSingleton.getInstance();
+    		String username = appSingleton.getUserName();
+    		String password = appSingleton.getPassword();
+    		if (username == null || username.isEmpty() ||
+    				password == null || password.isEmpty()) {
+    			startActivityForResult(new Intent(this, LoginCredentialsActivity.class), ACTIVITY_ID_LOGIN);
+    		}
+    	}
+    }
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode != ACTIVITY_ID_LOGIN) {
+			super.onActivityResult(requestCode, resultCode, data);
+			return;
+		}
+		// Not secure enough for general use, but since the eserver side will actually
+		// validate the credentials, this is OK for use in this app.
+		if (resultCode == RESULT_OK) {
+			isLoginOK = true;
 		}
 	}
     

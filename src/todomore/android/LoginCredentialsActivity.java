@@ -17,13 +17,13 @@ import android.widget.TextView;
 /**
  * A preferences screen that offers login via username/password and other settings
  */
-public class LoginActivity extends Activity {
+public class LoginCredentialsActivity extends Activity {
 
 	private SharedPreferences prefs;
 
     // UI references.
-    private EditText mEmailView;
-    private EditText mPasswordView;
+    private EditText mUsernameTF;
+    private EditText mPasswordTF;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,64 +33,63 @@ public class LoginActivity extends Activity {
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         
         // Set up the login form.
-        mEmailView = (EditText) findViewById(R.id.username);
-        mEmailView.setText(prefs.getString("KEY_USERNAME", null));
+        mUsernameTF = (EditText) findViewById(R.id.username);
+        mUsernameTF.setText(prefs.getString("KEY_USERNAME", null));
 
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mPasswordTF = (EditText) findViewById(R.id.password);
+        mPasswordTF.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
+                    validateCreds();
                     return true;
                 }
                 return false;
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+        Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
+        mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                validateCreds();
             }
         });
     }
 
     /**
-     * Attempts to sign in or register the account specified by the login form.
+     * Attempts to validate the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    public void attemptLogin() {
+    private void validateCreds() {
 
         // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
+        mUsernameTF.setError(null);
+        mPasswordTF.setError(null);
 
         // Store values at the time of the login attempt.
-        String username = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
+        String username = mUsernameTF.getText().toString();
+        String password = mPasswordTF.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
 
-
-        // Check for a valid password, if the user entered one.
-        if (TextUtils.isEmpty(password) || !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-
         // Check for a valid username .
         if (TextUtils.isEmpty(username)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+            mUsernameTF.setError(getString(R.string.error_field_required));
+            focusView = mUsernameTF;
             cancel = true;
         } else if (!isUsernameValid(username)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
+            mUsernameTF.setError(getString(R.string.error_invalid_user));
+            focusView = mUsernameTF;
+            cancel = true;
+        }
+        
+        // Check for a valid password, if the user entered one.
+        if (TextUtils.isEmpty(password) || !isPasswordValid(password)) {
+            mPasswordTF.setError(getString(R.string.error_invalid_password));
+            focusView = mPasswordTF;
             cancel = true;
         }
 
@@ -101,6 +100,7 @@ public class LoginActivity extends Activity {
         } else {
         	// email is syntactically valid so save it
         	prefs.edit().putString("KEY_USERNAME", username).commit();
+        	// Do NOT save the password as there's no good way to do so securely
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
         	AppSingleton app = AppSingleton.getInstance();
@@ -115,7 +115,7 @@ public class LoginActivity extends Activity {
     }
 
     private boolean isPasswordValid(String password) {
-        return password.length() > 8;
+        return password.length() >= 6;
     }
 }
 
