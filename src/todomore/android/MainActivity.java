@@ -83,7 +83,7 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch(item.getItemId()) {
     	case R.id.settings_menuitem:
-    		startActivity(new Intent(this, LoginCredentialsActivity.class));
+    		startActivity(new Intent(this, PrefsActivity.class));
     		return true;
     	case R.id.help_menuitem:
     		Toast.makeText(this, "Help not written yet", Toast.LENGTH_SHORT).show();
@@ -134,7 +134,7 @@ public class MainActivity extends Activity {
     		String password = appSingleton.getPassword();
     		if (username == null || username.isEmpty() ||
     				password == null || password.isEmpty()) {
-    			startActivityForResult(new Intent(this, LoginCredentialsActivity.class), ACTIVITY_ID_LOGIN);
+    			startActivityForResult(new Intent(this, PrefsActivity.class), ACTIVITY_ID_LOGIN);
     		}
     	}
     }
