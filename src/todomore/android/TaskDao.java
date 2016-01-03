@@ -40,9 +40,6 @@ public class TaskDao {
 				throw new IllegalArgumentException("Trying to insert Task with _id = " + _id);
 			}
 		}
-		for (String k : cv.keySet()) {
-			Log.d(TAG, k + "->" + cv.get(k));
-		}
 		long newId = db.insert(TABLE_TODO, "name", cv);
 		if (newId == -1) {
 			throw new RuntimeException("Insert failed!");
