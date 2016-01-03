@@ -237,9 +237,10 @@ public class MainActivity extends Activity {
 				HttpResponse response = client.execute(postAccessor);
 
 				// Get the response body from the response
+				int resp = response.getStatusLine().getStatusCode();
 				HttpEntity postResults = response.getEntity();
 				final String resultStr = EntityUtils.toString(postResults);
-				Log.d(TAG, "Result from SEND: " + resultStr);
+				Log.d(TAG, "Result from SEND: " + resp + " -- " + resultStr);
 
 				// on success it should send us the URL of the new ID, we need to save the remote id in our db
 				Uri resultUri = Uri.parse(resultStr);
