@@ -15,13 +15,16 @@ public class GruntWorkTest {
 	@Test
 	public void testJsonToTaskList() {
 		String input = 
-				"[{\"id\":102,\"priority\":\"High\",\"name\":\"TEST 2\","
-				+ "\"creationDate\":{\"year\":2015,\"month\":11,\"day\":1},"
-				+ "\"project\":null,\"context\":{\"id\":100,\"name\":\"Life\"},"
-				+ "\"dueDate\":null,\"status\":\"ACTIVE\",\"completedDate\":null,"
-				+ "\"modified\":1448292432791,\"description\":\"None\","
-				+ "\"complete\":false},"
+				"[{\"id\":94,\"priority\":\"High\",\"name\":\"TEST 2\","
+				+ "\"creationDate\":{\"year\":2015,\"month\":11,\"day\":18},\"project\":null,\"context\":null,"
+				+ "\"dueDate\":null,\"status\":\"NEW\",\"completedDate\":null,\"modified\":12345678,"
+				+ "\"description\":null,\"complete\":false},"
 				// Start of second Task
+				+ "{\"id\":51,\"priority\":\"Medium\",\"name\":\"Phillishave 5821 cutters and plastic cap?\","
+				+ "\"creationDate\":{\"year\":2015,\"month\":10,\"day\":18},\"project\":null,\"context\":null,"
+				+ "\"dueDate\":{\"year\":2012,\"month\":12,\"day\":12},\"status\":\"NEW\",\"completedDate\":null,\"modified\":123,"
+				+ "\"description\":null,\"complete\":false},"
+				// Start of third Task
 				+ "{\"id\":103,\"priority\":\"Low\",\"name\":\"Low prio item\","
 				+ "\"creationDate\":{\"year\":2015,\"month\":10,\"day\":23},"
 				+ "\"project\":null,\"context\":{\"id\":80,\"name\":\"Home\"},"
@@ -30,10 +33,10 @@ public class GruntWorkTest {
 				+ "\"description\":\"\",\"complete\":false}]";
 
 		List<Task> actual = GruntWork.jsonStringToListTask(input);
-		assertEquals(2, actual.size());
+		assertEquals(3, actual.size());
 		assertEquals("TEST 2", actual.get(0).getName());
 		assertSame(Priority.High, actual.get(0).getPriority());
-		assertEquals(1448312330383L, actual.get(1).getModified());
+		assertEquals(123L, actual.get(1).getModified());
 	}
 }
 
