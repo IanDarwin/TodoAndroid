@@ -2,8 +2,8 @@ package todomore.android;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -287,11 +287,13 @@ public class MainActivity extends Activity {
 				// Get the response body from the response
 				HttpEntity postResults = response.getEntity();
 				final String resultStr = EntityUtils.toString(postResults);
-				Log.d(TAG, "Result from LIST: " + resultStr);
+				
+				
 
 				// Service sends the list of Tasks in JSON
 				List<Task> list = GruntWork.jsonStringToListTask(resultStr);
 				Log.d(TAG, "LIST SIZE = " + list.size());
+
 				return list;
 			} catch (RuntimeException e) { // Avoid bloating the stack trace
 				throw e;
@@ -301,9 +303,14 @@ public class MainActivity extends Activity {
 		}
 
 		@Override
-		protected void onPostExecute(List<Task> result) {
-			ListAdapter adapter = new ArrayAdapter<Task>(MainActivity.this, 0);
-			mListView.setAdapter(adapter);
+		protected void onPostExecute(List<Task> list) {
+			List<String> titlesList = new ArrayList<String>();
+			for (Task t : list) {
+				titlesList.add(t.getName());
+			}
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+	                MainActivity.this, android.R.layout.simple_list_item_1, titlesList);
+	        mListView.setAdapter(adapter);
 		}
 	}
 }
