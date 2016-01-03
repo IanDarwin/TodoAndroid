@@ -12,8 +12,12 @@
 	<url>http://darwinsys.com/TodoMore</url>
 
 	<properties>
-		<javase-version>1.7</javase-version>
+		<javase-version>1.6</javase-version>
 		<platform.version>4.1.1.4</platform.version>
+		<maven.compiler.source>${javase.version}</maven.compiler.source>
+		<maven.compiler.target>${javase.version}</maven.compiler.target>
+		<maven.compiler.testSource>${javase.version}</maven.compiler.testSource>
+		<maven.compiler.testTarget>${javase.version}</maven.compiler.testTarget>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
@@ -31,7 +35,7 @@
 		<dependency>
 			<groupId>com.darwinsys</groupId>
 			<artifactId>todo-datamodel</artifactId>
-			<version>1.0.4</version>
+			<version>1.0.6</version>
 		</dependency>
 
         <!-- Jackson Core, databind, used in REST service -->
@@ -80,14 +84,6 @@
 				<extensions>true</extensions>
 			</plugin>
 
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>${javase-version}</source>
-					<target>${javase-version}</target>
-				</configuration>
-			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
