@@ -66,7 +66,7 @@ public class GruntWork {
 	}
 	
 	public static List<Task> cursorToTaskList(Cursor c) {
-		List<Task> list = new ArrayList<>();
+		List<Task> list = new ArrayList<Task>();
 		while (c.moveToNext()) {
 			list.add(cursorToTask(c));
 		}
@@ -88,7 +88,7 @@ public class GruntWork {
 	 * into a proper List<Task>.
 	 */
 	public static List<Task> jsonStringToListTask(String resultStr) {
-		List<Task> ret = new ArrayList<>();
+		List<Task> ret = new ArrayList<Task>();
 		try {
 			JSONArray array = (JSONArray) new JSONTokener(resultStr).nextValue();
 			for (int i = 0; i < array.length(); i++) {
@@ -102,7 +102,7 @@ public class GruntWork {
 				ret.add(t);
 			}
 		} catch (JSONException e) {
-			throw new RuntimeException("This rudpucker failed to parse! " + e, e);
+			throw new RuntimeException("This JSON failed to parse! " + e, e);
 		}
 		return ret;
 	}
