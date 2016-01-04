@@ -12,4 +12,7 @@
 	<string name="error_field_required">Field required</string>
 	<string name="error_invalid_email">Not a valid username?</string>
 	<string name="error_invalid_user">Username must be alphabetic</string>
+	
+	<!-- Specific for DetailsActivity -->
+	<string name="toggleEditable">Edit</string>
 </resources>

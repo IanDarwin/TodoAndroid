@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+	android:layout_height="fill_parent"
+	tools:context=".MainActivity">
 
 	<view class="org.metawidget.android.widget.AndroidMetawidget" android:id="@+id/metawidget"		
 		readOnly="true"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="5dp">
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:paddingTop="5dp">
 
 	</view>
+	
+	<Button
+		android:layout_width="wrap_content"
+		android:gravity="center"
+		android:layout_height="wrap_content"
+		android:text="@string/toggleEditable"
+		android:onClick="enableEditing"
+		/>
 	        
-</ScrollView>
+</LinearLayout>
