@@ -52,11 +52,14 @@ public class MainActivity extends Activity {
 	private EditText addTF;
 	private Spinner prioSpinner;
 	private ListView mListView;
-	private TaskDao mDao;
 	private int ACTIVITY_ID_LOGIN;
 	private static SharedPreferences mPrefs;
 	// Keys for mPrefs lookups
 	private static String KEY_USERNAME, KEY_PASSWORD, KEY_HOSTNAME, KEY_HOSTPORT, KEY_HOSTPATH;
+	
+	// Data
+	List<String> fullTitlesList;
+	List<Task> fullTaskList;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -66,14 +69,17 @@ public class MainActivity extends Activity {
 		addTF = (EditText) findViewById(R.id.addTF);
 		prioSpinner = (Spinner) findViewById(R.id.prioSpinner);
 		mListView = (ListView) findViewById(R.id.listView);
-		mListView.setOnItemClickListener(new OnItemClickListener() {
-			@Override
+		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				startActivity(new Intent(MainActivity.this, DetailsActivity.class));
+				// This will de-convolute when we put in a real Adapter for the List.
+				AndroidTask androidTask = (AndroidTask)fullTaskList.get(position);
+				long _id = androidTask.get_Id();
+				Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+				intent.putExtra("taskId", _id);
+				startActivity(intent);
 			}
 		});
-		mDao = new TaskDao(this);
-		
+
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.priorities_array,
 				android.R.layout.simple_spinner_item);
 		// Specify the layout to use when the list of choices appears
@@ -136,7 +142,7 @@ public class MainActivity extends Activity {
 		t.setModified(System.currentTimeMillis());
 		t.setStatus(Status.NEW);
 
-		long _id = mDao.insert(t);
+		long _id = ((TodoMoreApplication) getApplication()).getTaskDao().insert(t);
 		t._id = _id;
 		Toast.makeText(this, "Saved locally", Toast.LENGTH_SHORT).show();
 
@@ -247,19 +253,23 @@ public class MainActivity extends Activity {
 
 				// Get the response body from the response
 				StatusLine stat = response.getStatusLine();
-				int resp = stat.getStatusCode();
-				String resultStr = response.getFirstHeader("location").getValue();
-				Log.d(TAG, "Result from SEND: " + resp + " -- " + resultStr);
+				final int resp = stat.getStatusCode();
+				Log.d(TAG, "Result from SEND: " + resp);
 
 				// on success it should send us the URL of the new ID, we need to save the remote id in our db
 				if (resp != 201) {
-					Toast.makeText(MainActivity.this, "Failed to create " + resp, Toast.LENGTH_LONG).show();
+					runOnUiThread(new Runnable() { 
+						public void run() {
+							Toast.makeText(MainActivity.this, "Failed to create " + resp, Toast.LENGTH_LONG).show();
+						}
+					});
 					return -1L;
 				}
+				String resultStr = response.getFirstHeader("location").getValue();
 				Uri resultUri = Uri.parse(resultStr);
 				long id = ContentUris.parseId(resultUri);
 				t.setId(id);
-				if (!mDao.update(t)) {
+				if (!((TodoMoreApplication) getApplication()).getTaskDao().update(t)) {
 					Log.e(TAG, "FAILED TO UPDATE");
 				}
 				Log.d(TAG, "UPDATED " + t + ", new Remote ID = " + t.getId());
@@ -301,14 +311,12 @@ public class MainActivity extends Activity {
 				// Get the response body from the response
 				HttpEntity postResults = response.getEntity();
 				final String resultStr = EntityUtils.toString(postResults);
-				
-				
 
 				// Service sends the list of Tasks in JSON
-				List<Task> list = GruntWork.jsonStringToListTask(resultStr);
-				Log.d(TAG, "LIST SIZE = " + list.size());
-
-				return list;
+				fullTaskList = GruntWork.jsonStringToListTask(resultStr);
+				Log.d(TAG, "LIST SIZE = " + fullTaskList.size());
+				// List is loaded into UI in onPostExecute() below...
+				return fullTaskList;
 			} catch (RuntimeException e) { // Avoid bloating the stack trace
 				throw e;
 			} catch (Exception e) {
@@ -318,12 +326,12 @@ public class MainActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(List<Task> list) {
-			List<String> titlesList = new ArrayList<String>();
+			fullTitlesList = new ArrayList<String>();
 			for (Task t : list) {
-				titlesList.add(t.getName());
+				fullTitlesList.add(t.getName());
 			}
 			ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-	                MainActivity.this, android.R.layout.simple_list_item_1, titlesList);
+	                MainActivity.this, android.R.layout.simple_list_item_1, fullTitlesList);
 	        mListView.setAdapter(adapter);
 		}
 	}

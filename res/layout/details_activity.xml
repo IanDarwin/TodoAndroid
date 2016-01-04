@@ -1,22 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    tools:context=".DetailsActivity"
-    >
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
 
-<EditText
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content"
-    android:hint="Hello, world"
-    />
+	<view class="org.metawidget.android.widget.AndroidMetawidget" android:id="@+id/metawidget"		
+		readOnly="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp">
 
-<Button
-	android:layout_width="fill_parent" 
-    android:layout_height="wrap_content"
-	android:text="Button 1"
-	/>
-
-</LinearLayout>
+	</view>
+	        
+</ScrollView>

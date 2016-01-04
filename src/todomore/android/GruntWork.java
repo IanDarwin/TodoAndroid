@@ -93,7 +93,7 @@ public class GruntWork {
 			JSONArray array = (JSONArray) new JSONTokener(resultStr).nextValue();
 			for (int i = 0; i < array.length(); i++) {
 				JSONObject o = array.getJSONObject(i);
-				Task t = new Task();
+				Task t = new AndroidTask();
 				t.setId(o.getLong("id"));
 				t.setPriority(Priority.valueOf(o.getString("priority")));
 				t.setName(o.getString("name"));

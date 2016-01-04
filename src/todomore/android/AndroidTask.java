@@ -11,4 +11,8 @@ public class AndroidTask extends Task {
 	private static final long serialVersionUID = 1247383306369798480L;
 
 	long _id;
+
+	public long get_Id() {
+		return _id;
+	}
 }
