@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -19,6 +20,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import com.darwinsys.todo.model.Priority;
+import com.darwinsys.todo.model.Status;
 import com.darwinsys.todo.model.Task;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -38,7 +40,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -77,7 +78,6 @@ public class MainActivity extends Activity {
 		KEY_HOSTNAME = getString(R.string.key_hostname);
 		KEY_HOSTPORT = getString(R.string.key_hostport);
 		KEY_HOSTPATH = getString(R.string.key_hostpath);
-
 
 		ensureLogin();
 	}
@@ -126,6 +126,7 @@ public class MainActivity extends Activity {
 		t.setName(addTF.getText().toString());
 		t.setPriority(Priority.values()[prioSpinner.getSelectedItemPosition()]);
 		t.setModified(System.currentTimeMillis());
+		t.setStatus(Status.NEW);
 
 		long _id = mDao.insert(t);
 		t._id = _id;
@@ -237,12 +238,16 @@ public class MainActivity extends Activity {
 				HttpResponse response = client.execute(postAccessor);
 
 				// Get the response body from the response
-				int resp = response.getStatusLine().getStatusCode();
-				HttpEntity postResults = response.getEntity();
-				final String resultStr = EntityUtils.toString(postResults);
+				StatusLine stat = response.getStatusLine();
+				int resp = stat.getStatusCode();
+				String resultStr = response.getFirstHeader("location").getValue();
 				Log.d(TAG, "Result from SEND: " + resp + " -- " + resultStr);
 
 				// on success it should send us the URL of the new ID, we need to save the remote id in our db
+				if (resp != 201) {
+					Toast.makeText(MainActivity.this, "Failed to create " + resp, Toast.LENGTH_LONG).show();
+					return -1L;
+				}
 				Uri resultUri = Uri.parse(resultStr);
 				long id = ContentUris.parseId(resultUri);
 				t.setId(id);
