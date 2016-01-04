@@ -19,6 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="DetailsActivity">
+            <!-- No intent filter or other goo needed here -->
+        </activity>
         <activity android:name="PrefsActivity">
             <!-- No intent filter or other goo needed here -->
         </activity>

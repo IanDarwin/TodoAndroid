@@ -38,6 +38,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -64,6 +66,12 @@ public class MainActivity extends Activity {
 		addTF = (EditText) findViewById(R.id.addTF);
 		prioSpinner = (Spinner) findViewById(R.id.prioSpinner);
 		mListView = (ListView) findViewById(R.id.listView);
+		mListView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				startActivity(new Intent(MainActivity.this, DetailsActivity.class));
+			}
+		});
 		mDao = new TaskDao(this);
 		
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.priorities_array,
