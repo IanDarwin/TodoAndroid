@@ -1,0 +1,5 @@
+Use CursorLoader to get from Local DB ONLY
+
+Then finish the SyncAdapter.
+
+Then call it quits for now.
