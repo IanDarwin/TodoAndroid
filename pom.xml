@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>com.darwinsys</groupId>
 			<artifactId>todo-datamodel</artifactId>
-			<version>1.0.6</version>
+			<version>1.0.7</version>
 		</dependency>
 
 		<!-- Let's try MetaWidget for UI (OIM) -->
