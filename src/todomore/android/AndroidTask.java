@@ -13,10 +13,15 @@ public class AndroidTask extends Task {
 
 	private static final long serialVersionUID = 1247383306369798480L;
 
+	/** "id" is the field in the remote database, "_id" is the field in the local db */
 	private long _id;
 
 	@UiHidden
 	public long get_Id() {
 		return _id;
+	}
+
+	public void set_Id(long _id) {
+		this._id = _id;
 	}
 }

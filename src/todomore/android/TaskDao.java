@@ -65,7 +65,7 @@ public class TaskDao {
 		if (!(t instanceof AndroidTask)) {
 			throw new RuntimeException("Update but Task has no _id!");
 		}
-		long _id = ((AndroidTask) t)._id;
+		long _id = ((AndroidTask) t).get_Id();
 		int rc = db.update(TABLE_TODO, GruntWork.taskToContentValues(t), "_id = ?", new String[]{Long.toString(_id)});
 		if (!(rc == 1)) {
 			Log.d(TAG, "Warning: Update Failed!");

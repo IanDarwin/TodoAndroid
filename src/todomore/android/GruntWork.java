@@ -38,7 +38,7 @@ public class GruntWork {
 		ContentValues cv = new ContentValues();
 		cv.put("id", t.getId());
 		if (include_ID && t instanceof AndroidTask) {
-			cv.put("_id", ((AndroidTask)t)._id);
+			cv.put("_id", ((AndroidTask)t).get_Id());
 		}
 		cv.put("name", t.getName());
 		cv.put("priority", t.getPriority().ordinal());
@@ -59,7 +59,7 @@ public class GruntWork {
 			return null;
 		}
 		AndroidTask t = new AndroidTask();
-		t._id = c.getInt(1);
+		t.set_Id(c.getInt(1));
 		t.setName(c.getString(c.getColumnIndex("name")));
 		t.setPriority(Priority.values()[(c.getColumnIndex("priority"))]);
 		t.setModified(c.getLong(c.getColumnIndex("modified")));
@@ -72,7 +72,7 @@ public class GruntWork {
 			list.add(cursorToTask(c));
 		}
 		return list;
-		}
+	}
 
 	/**
 	 * Convert JSON goo like this:

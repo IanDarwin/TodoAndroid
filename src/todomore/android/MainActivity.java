@@ -100,7 +100,7 @@ public class MainActivity extends Activity {
 	protected void onResume() {
 		super.onResume();
 		addTF.requestFocus();
-		if (isLoginOK) {
+		if (isLoginSet()) {
 			new GetListAsyncTask().execute();
 		}
 	}
@@ -143,7 +143,7 @@ public class MainActivity extends Activity {
 		t.setStatus(Status.NEW);
 
 		long _id = ((TodoMoreApplication) getApplication()).getTaskDao().insert(t);
-		t._id = _id;
+		t.set_Id(_id);
 		Toast.makeText(this, "Saved locally", Toast.LENGTH_SHORT).show();
 
 		// XXX Send to server now; later, will just trigger sync?
@@ -152,18 +152,22 @@ public class MainActivity extends Activity {
 		// If we get here, remove text from TF so task doesn't get added twice
 		addTF.setText("");
 
-		Toast.makeText(this, "Sync request send", Toast.LENGTH_SHORT).show();
 		new GetListAsyncTask().execute();
 	}
 
-	private boolean isLoginOK;
+	private boolean isLoginSet() {
+		String userName = mPrefs.getString(KEY_USERNAME, null);
+		String password = mPrefs.getString(KEY_PASSWORD, null);
+		return userName != null && !userName.isEmpty() && 
+				password != null && !userName.isEmpty();
+	}
 
 	/**
 	 * If the user hasn't provided username and password, press them for
 	 * credentials
 	 */
 	private void ensureLogin() {
-		if (!isLoginOK) {
+		if (!isLoginSet()) {
 			String userName = mPrefs.getString(KEY_USERNAME, null);
 			String password = mPrefs.getString(KEY_PASSWORD, null);
 			if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
@@ -177,11 +181,6 @@ public class MainActivity extends Activity {
 		if (requestCode != ACTIVITY_ID_LOGIN) {
 			super.onActivityResult(requestCode, resultCode, data);
 			return;
-		}
-		// Not secure enough for general use, but since the server side will
-		// actually validate the credentials, this is OK for use in this app.
-		if (resultCode == RESULT_OK) {
-			isLoginOK = true;
 		}
 	}
 
