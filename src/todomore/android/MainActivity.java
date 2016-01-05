@@ -93,16 +93,25 @@ public class MainActivity extends Activity {
 		KEY_HOSTPORT = getString(R.string.key_hostport);
 		KEY_HOSTPATH = getString(R.string.key_hostpath);
 
-		ensureLogin();
+		loadListFromDB();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		addTF.requestFocus();
-		if (isLoginSet()) {
-			new GetListAsyncTask().execute();
+		loadListFromDB();
+	}
+	
+	private void loadListFromDB() {
+		fullTaskList = ((TodoMoreApplication)getApplication()).getTaskDao().findAll();
+		fullTitlesList = new ArrayList<String>();
+		for (Task t : fullTaskList) {
+			fullTitlesList.add(t.getName());
 		}
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+				MainActivity.this, android.R.layout.simple_list_item_1, fullTitlesList);
+		mListView.setAdapter(adapter);
 	}
 
 	@Override
@@ -152,7 +161,7 @@ public class MainActivity extends Activity {
 		// If we get here, remove text from TF so task doesn't get added twice
 		addTF.setText("");
 
-		new GetListAsyncTask().execute();
+		//new GetListAsyncTask().execute();
 	}
 
 	private boolean isLoginSet() {
@@ -184,14 +193,6 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	private static String getUserName() {
-		return mPrefs.getString(KEY_USERNAME, null);
-	}
-
-	private static String getPassword() {
-		return mPrefs.getString(KEY_PASSWORD, null);
-	}
-
 	protected static URI makeSendUri(SharedPreferences prefs) {
 		try {
 			String pathStr = prefs.getString(KEY_HOSTPATH, "/");
@@ -208,13 +209,13 @@ public class MainActivity extends Activity {
 			String pathStr = prefs.getString(KEY_HOSTPATH, "/");
 			return new URI(String.format("http://%s:%d/%s/%s/tasks", prefs.getString(KEY_HOSTNAME, null),
 					Integer.parseInt(prefs.getString(KEY_HOSTPORT, "80")),
-					pathStr.startsWith("/") ? pathStr.substring(1) : pathStr, getUserName()));
+					pathStr.startsWith("/") ? pathStr.substring(1) : pathStr, mPrefs.getString(KEY_USERNAME, null)));
 		} catch (URISyntaxException e) {
 			throw new RuntimeException("Failed to create path! " + e, e);
 		}
 	}
 
-	public class SendObjectAsyncTask extends AsyncTask<Task, Void, Long> {
+	private class SendObjectAsyncTask extends AsyncTask<Task, Void, Long> {
 		final ObjectMapper jacksonMapper = new ObjectMapper();
 
 		@Override
@@ -223,10 +224,10 @@ public class MainActivity extends Activity {
 
 			// The number shalle be one...
 			Task t = params[0];
-			Log.d(TAG, "Starting TODO send of task " + t + " for user " + getUserName());
+			Log.d(TAG, "Starting TODO send of task " + t + " for user " + mPrefs.getString(KEY_USERNAME, null));
 
 			HttpClient client = new DefaultHttpClient();
-			Credentials creds = new UsernamePasswordCredentials(getUserName(), getPassword());
+			Credentials creds = new UsernamePasswordCredentials(mPrefs.getString(KEY_USERNAME, null), mPrefs.getString(KEY_PASSWORD, null));
 			((AbstractHttpClient) client).getCredentialsProvider()
 					.setCredentials(new AuthScope(mPrefs.getString(KEY_HOSTNAME, "10.0.2.2"),
 							Integer.parseInt(mPrefs.getString(KEY_HOSTPORT, "80"))), creds);
@@ -279,18 +280,16 @@ public class MainActivity extends Activity {
 				throw new RuntimeException("Send failed!" + e, e);
 			}
 		}
-
 	}
 
-	public class GetListAsyncTask extends AsyncTask<Void, Void, List<Task>> {
-		final ObjectMapper jacksonMapper = new ObjectMapper();
-
+	private class GetListAsyncTask extends AsyncTask<Void, Void, List<Task>> {
+		
 		@Override
 		protected List<Task> doInBackground(Void... params) {
-			Log.d(TAG, "Starting TODO list-fetch for " + getUserName());
+			Log.d(TAG, "Starting TODO list-fetch for " + mPrefs.getString(KEY_USERNAME, null));
 
 			HttpClient client = new DefaultHttpClient();
-			Credentials creds = new UsernamePasswordCredentials(getUserName(), getPassword());
+			Credentials creds = new UsernamePasswordCredentials(mPrefs.getString(KEY_USERNAME, null), mPrefs.getString(KEY_PASSWORD, null));
 			((AbstractHttpClient) client).getCredentialsProvider()
 					.setCredentials(new AuthScope(mPrefs.getString(KEY_HOSTNAME, "10.0.2.2"),
 							Integer.parseInt(mPrefs.getString(KEY_HOSTPORT, "80"))), creds);

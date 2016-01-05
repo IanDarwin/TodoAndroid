@@ -56,7 +56,7 @@ public class TaskDao {
 	
 	/** R: Find All */
 	List<Task> findAll() {
-		Cursor c = db.query(TABLE_TODO, null, null, null, null, null, null);
+		Cursor c = db.query(TABLE_TODO, null, null, null, null, null, "priority asc, name desc");
 		return GruntWork.cursorToTaskList(c);
 	}
 	
