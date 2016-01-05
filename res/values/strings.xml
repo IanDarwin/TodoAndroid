@@ -15,4 +15,5 @@
 	
 	<!-- Specific for DetailsActivity -->
 	<string name="toggleEditable">Edit</string>
+	<string name="save">Save</string>
 </resources>

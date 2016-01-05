@@ -8,6 +8,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 /** 
  * An Activity that shows all the Details of one Task, using MetaWidget.
@@ -39,16 +41,41 @@ public class DetailsActivity extends Activity {
         }
 
         if (!mMetawidget.isReadOnly()) {
-            mMetawidget.buildWidgets();
-            View view = mMetawidget.findViewWithTag("name");
-            view.setFocusable(true);
-            view.setFocusableInTouchMode(true);
-            view.requestFocus();
+            enableEditing();
         }
+        
+        Button enableEditButton = (Button) findViewById(R.id.enableEditButton);
+        enableEditButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				Log.d(TAG, "onClick");
+				enableEditing();
+			}
+		});
 	}
 	
-	public void enableEditing(View v) {
+	private final View.OnClickListener saver = new View.OnClickListener() {
+		public void onClick(View v) {
+			Toast.makeText(DetailsActivity.this, "Saving...", Toast.LENGTH_SHORT).show();
+			
+			// XXX something with a DAO
+			//
+			
+			// If no exception thrown...
+			finish();
+		}
+	};
+
+	private void enableEditing() {
 		Log.d(TAG, "enableEditing");
 		mMetawidget.setReadOnly(false);
+		mMetawidget.buildWidgets();
+		View view = mMetawidget.findViewWithTag("name");
+		view.setFocusable(true);
+		view.setFocusableInTouchMode(true);
+		view.requestFocus();
+		// And the Save button
+		Button save = (Button) findViewById(R.id.saveButton);
+		save.setVisibility(View.VISIBLE);
+		save.setOnClickListener(saver);
 	}
 }

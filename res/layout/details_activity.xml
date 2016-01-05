@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center"
     android:orientation="vertical"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	tools:context=".MainActivity">
+    tools:context=".MainActivity" >
 
-	<view class="org.metawidget.android.widget.AndroidMetawidget" android:id="@+id/metawidget"		
+	<view class="org.metawidget.android.widget.AndroidMetawidget" 
+	    android:id="@+id/metawidget"		
 		readOnly="true"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
@@ -14,12 +16,27 @@
 
 	</view>
 	
+	<LinearLayout
+	    android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+    	android:gravity="center"
+    	android:orientation="horizontal"
+    	>
+	    
 	<Button
+	    android:id="@+id/enableEditButton"
 		android:layout_width="wrap_content"
-		android:gravity="center"
 		android:layout_height="wrap_content"
 		android:text="@string/toggleEditable"
-		android:onClick="enableEditing"
 		/>
+	
+	<Button
+	    android:visibility="gone"
+	    android:id="@+id/saveButton"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/save"
+		/>
+	</LinearLayout>
 	        
 </LinearLayout>
