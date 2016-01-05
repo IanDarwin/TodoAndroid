@@ -1,5 +1,7 @@
 Use CursorLoader to get from Local DB ONLY
 
-Then finish the SyncAdapter.
+Finish the SyncAdapter.
 
-Then call it quits for now.
+Need MetaWidget adapters for enums, dates, etc.
+
+Then call it quits for now... work on other stuff.
