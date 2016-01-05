@@ -1,6 +1,7 @@
 package todomore.android;
 
 import org.metawidget.android.widget.AndroidMetawidget;
+import org.metawidget.android.widget.widgetprocessor.binding.simple.SimpleBindingProcessor;
 
 import com.darwinsys.todo.model.Task;
 
@@ -57,8 +58,11 @@ public class DetailsActivity extends Activity {
 		public void onClick(View v) {
 			Toast.makeText(DetailsActivity.this, "Saving...", Toast.LENGTH_SHORT).show();
 			
-			// XXX something with a DAO
-			//
+			// Get the fields from the metawidget subfields into mTask:
+			mMetawidget.getWidgetProcessor(SimpleBindingProcessor.class).save( mMetawidget );// XXX something with a DAO
+
+			// Do the actual save
+			((TodoMoreApplication) getApplication()).getTaskDao().update(mTask);
 			
 			// If no exception thrown...
 			finish();

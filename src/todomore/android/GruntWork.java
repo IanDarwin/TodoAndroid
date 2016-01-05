@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import com.darwinsys.todo.model.Priority;
+import com.darwinsys.todo.model.Status;
 import com.darwinsys.todo.model.Task;
 
 import android.content.ContentValues;
@@ -96,8 +97,10 @@ public class GruntWork {
 				Task t = new AndroidTask();
 				t.setId(o.getLong("id"));
 				t.setPriority(Priority.valueOf(o.getString("priority")));
+				t.setStatus(Status.valueOf(o.getString("status")));
 				t.setName(o.getString("name"));
 				t.setModified(o.getLong("modified"));
+				t.setDescription(o.getString("description"));
 				// XXX moar!!
 				ret.add(t);
 			}
