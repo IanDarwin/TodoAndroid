@@ -82,7 +82,6 @@ public class MainActivity extends /*AccountAuthenticator*/Activity {
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 			//@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				// This will de-convolute when we put in a real Adapter for the List.
 				AndroidTask androidTask = (AndroidTask)fullTaskList.get(position);
 				long _id = androidTask.get_Id();
 				Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
@@ -179,9 +178,8 @@ public class MainActivity extends /*AccountAuthenticator*/Activity {
 			Toast.makeText(this, "Text required!", Toast.LENGTH_SHORT).show();
 			return;
 		}
-		ensureLogin();
 
-		// Do the work here! Save to local DB before sending to the server...
+		// Do the work here! Save to local DB, let Sync Adapter send it to the server...
 		AndroidTask t = new AndroidTask();
 		t.setName(addTF.getText().toString());
 		t.setPriority(Priority.values()[prioSpinner.getSelectedItemPosition()]);
@@ -189,8 +187,7 @@ public class MainActivity extends /*AccountAuthenticator*/Activity {
 		t.setStatus(Status.NEW);
 
 		long _id = ((TodoMoreApplication) getApplication()).getTaskDao().insert(t);
-		t.set_Id(_id);
-		Toast.makeText(this, "Saved locally", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "Saved locally, _id = " + _id, Toast.LENGTH_SHORT).show();
 
 		// Will schedule later; for now just trigger sync
 		Bundle settingsBundle = new Bundle();
@@ -205,8 +202,6 @@ public class MainActivity extends /*AccountAuthenticator*/Activity {
 
 		// If we get here, remove text from TF so task doesn't get added twice
 		addTF.setText("");
-
-		//new GetListAsyncTask().execute();
 	}
 
 	private boolean isLoginSet() {
@@ -214,20 +209,6 @@ public class MainActivity extends /*AccountAuthenticator*/Activity {
 		String password = mPrefs.getString(KEY_PASSWORD, null);
 		return userName != null && !userName.isEmpty() && 
 				password != null && !userName.isEmpty();
-	}
-
-	/**
-	 * If the user hasn't provided username and password, press them for
-	 * credentials
-	 */
-	private void ensureLogin() {
-		if (!isLoginSet()) {
-			String userName = mPrefs.getString(KEY_USERNAME, null);
-			String password = mPrefs.getString(KEY_PASSWORD, null);
-			if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
-				startActivityForResult(new Intent(this, PrefsActivity.class), ACTIVITY_ID_LOGIN);
-			}
-		}
 	}
 
 	@Override
@@ -265,7 +246,7 @@ public class MainActivity extends /*AccountAuthenticator*/Activity {
 
 		@Override
 		protected Long doInBackground(Task... params) {
-			ensureLogin();
+			// ensureLogin();
 
 			// The number shalle be one...
 			Task t = params[0];
