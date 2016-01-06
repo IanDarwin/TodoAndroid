@@ -1,7 +1,15 @@
 = TodoAndroid
 
 This will someday be the TodoMore Android client.
-As of today it certainly is not fully working - don't try to use it unless you can recode the parts that are missing.
+
+== Unfinished Warning
+
+As of today it certainly is not fully working - don't try to use it unless you can code the parts that are missing.
+The next bit push is that the SyncAdapter starts but isn't fully coded yet, so don't run it against
+a database of real TODOs.
+
+Next up in this area will be a delete feature; it's harder because you have to atomically commit in two
+places, and you can't.
 
 == Security Warning
 
