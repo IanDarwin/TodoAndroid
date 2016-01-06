@@ -52,6 +52,13 @@ public class DetailsActivity extends Activity {
 				enableEditing();
 			}
 		});
+        
+        ((Button) findViewById(R.id.cancelDetailsButton)).setOnClickListener(new View.OnClickListener() {			
+			@Override
+			public void onClick(View v) {
+				finish();
+			}
+		});
 	}
 	
 	private final View.OnClickListener saver = new View.OnClickListener() {
@@ -77,6 +84,8 @@ public class DetailsActivity extends Activity {
 		view.setFocusable(true);
 		view.setFocusableInTouchMode(true);
 		view.requestFocus();
+		// And the Done button
+		((Button) findViewById(R.id.cancelDetailsButton)).setText(R.string.cancelEditing);
 		// And the Save button
 		Button save = (Button) findViewById(R.id.saveButton);
 		save.setVisibility(View.VISIBLE);

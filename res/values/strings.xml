@@ -16,6 +16,9 @@
 	<!-- Specific for DetailsActivity -->
 	<string name="toggleEditable">Edit</string>
 	<string name="save">Save</string>
+	<!-- Next two both used with "Done" button, depending on mode -->
+	<string name="doneDetails">Done</string>
+	<string name="cancelEditing">Cancel</string>
 	
 	<!-- Specific to Sync Adapter, Dummy Authenticator, etc -->
 	<string name="accountType">todomore.android.todomore</string>

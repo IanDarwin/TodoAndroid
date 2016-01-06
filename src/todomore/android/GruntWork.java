@@ -59,10 +59,14 @@ public class GruntWork {
 			return null;
 		}
 		AndroidTask t = new AndroidTask();
-		t.set_Id(c.getInt(1));
+		t.set_Id(c.getInt(c.getColumnIndex("_ID")));// our idea of pkey
+		t.setId(c.getInt(c.getColumnIndex("ID")));	// remote's idea of pkey
 		t.setName(c.getString(c.getColumnIndex("name")));
-		t.setPriority(Priority.values()[(c.getColumnIndex("priority"))]);
+		t.setDescription(c.getString(c.getColumnIndex("description")));
+		t.setPriority(Priority.values()[c.getColumnIndex("priority")]);
+		t.setStatus(Status.values()[c.getColumnIndex("status")]);
 		t.setModified(c.getLong(c.getColumnIndex("modified")));
+		// XXX moar
 		return t;
 	}
 	
