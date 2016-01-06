@@ -80,7 +80,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			// Get the username and password, which must be in mPrefs by now
 			String userName = mPrefs.getString("KEY_USERNAME", null);
 			String password = mPrefs.getString("KEY_PASSWORD",  null);
-			Log.d(TAG, String.format("userName %s, Password %s", userName, password));
+			Log.d(TAG, String.format("userName %s, Password xxxxxxxx", userName));
 			if (userName == null || userName.isEmpty() ||
 					password == null || password.isEmpty()) {
 				Log.d(TAG, "Can't synch until you set username and password in Preferences");
@@ -93,8 +93,8 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			Credentials creds = new UsernamePasswordCredentials(userName, password);        
 			((AbstractHttpClient)client).getCredentialsProvider()
 			.setCredentials(new AuthScope(
-					mPrefs.getString("KEY_HOSTNAME", "10.0.2.2"), 
-					mPrefs.getInt("KEY_PORT", 80)),
+					mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"), 
+					mPrefs.getInt(MainActivity.KEY_HOSTPORT, 80)),
 					creds);  
 			
 			// First, get list of items FROM the remote server
@@ -121,6 +121,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 					mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"),
 					Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80")),
 					pathStr.startsWith("/") ? pathStr.substring(1) : pathStr));
+			
 			for (Task t : mDao.findAll()) {
 
 				// Send a POST request with to upload this Task
