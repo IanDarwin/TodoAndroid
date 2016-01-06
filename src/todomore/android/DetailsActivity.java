@@ -29,7 +29,7 @@ public class DetailsActivity extends Activity {
 
 		long id = getIntent().getLongExtra("taskId", -1);
 		Log.d(TAG, "_id = " + id);
-		if (id != -1) {
+		if (id > 0) {
 			mTask = ((TodoMoreApplication) getApplication()).getTaskDao().findById(id);
 		} else {
 			mTask = new AndroidTask();
