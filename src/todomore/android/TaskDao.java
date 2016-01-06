@@ -44,6 +44,7 @@ public class TaskDao {
 		if (newId == -1) {
 			throw new RuntimeException("Insert failed!");
 		}
+		((AndroidTask) t).set_Id(newId);
 		return newId;
 	}
 	
