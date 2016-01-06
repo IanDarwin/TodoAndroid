@@ -30,8 +30,10 @@ import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 
 
 /**
@@ -50,17 +52,18 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	
 		ObjectMapper jacksonMapper = new ObjectMapper();
 		
-		public TodoSyncAdapter(Context context, boolean autoInitialize) {
-			this(context, autoInitialize, false);
+		public TodoSyncAdapter(Context context, SharedPreferences prefs, boolean autoInitialize) {
+			this(context, prefs, autoInitialize, false);
 		}
 
 		public TodoSyncAdapter(
 				Context context,
+				SharedPreferences prefs,
 				boolean autoInitialize,
 				boolean allowParallelSyncs) {
 			super(context, autoInitialize, allowParallelSyncs);
 
-			mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+			this.mPrefs = prefs;
 			mDao = new TaskDao(context);
 		}
 
@@ -71,19 +74,20 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 				ContentProviderClient provider, 
 				SyncResult syncResult) {
 			Log.d(TAG, "ToDoSyncAdapter.onPerformSync()");
-			
-			// Get the username and password, which must be in mPrefs by now
-			
+
 			final long lastLocalUpdate_Tstamp = mPrefs.getLong(LAST_SYNC_TSTAMP, 0L);
 			
+			// Get the username and password, which must be in mPrefs by now
 			String userName = mPrefs.getString("KEY_USERNAME", null);
 			String password = mPrefs.getString("KEY_PASSWORD",  null);
-			Log.d(TAG, "Starting TODO Sync for " + userName);
-			
-			if (userName != null) {
-				Log.d(TAG, "BYPASSING FOR NOW - TESTING"); // XXX
+			Log.d(TAG, String.format("userName %s, Password %s", userName, password));
+			if (userName == null || userName.isEmpty() ||
+					password == null || password.isEmpty()) {
+				Log.d(TAG, "Can't synch until you set username and password in Preferences");
 				return;
 			}
+			
+			Log.d(TAG, "Starting TODO Sync for " + userName);
 			
 			HttpClient client = new DefaultHttpClient();
 			Credentials creds = new UsernamePasswordCredentials(userName, password);        
@@ -93,10 +97,12 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 					mPrefs.getInt("KEY_PORT", 80)),
 					creds);  
 			
-			// First, get list of items modified on the server
+			// First, get list of items FROM the remote server
 			try {
-				final URI getUri = new URI(String.format("http://%s/todo/%s/tasks", 
-						mPrefs.getString("KEY_PATH", "/"), userName));
+				String pathStr = mPrefs.getString(MainActivity.KEY_HOSTPATH, "/");
+				URI getUri = new URI(String.format("http://%s:%d/%s/%s/tasks", mPrefs.getString(MainActivity.KEY_HOSTNAME, null),
+						Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80")),
+						pathStr.startsWith("/") ? pathStr.substring(1) : pathStr, mPrefs.getString(MainActivity.KEY_USERNAME, null)));
 			Log.d(TAG, "Getting Items From " + getUri);
 			HttpGet httpAccessor = new HttpGet();
 			httpAccessor.setURI(getUri);
@@ -105,15 +111,16 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			HttpResponse getResponse = client.execute(httpAccessor);	// CONNECT
 			final HttpEntity getResults = getResponse.getEntity();
 			final String tasksStr = EntityUtils.toString(getResults);
-			List<?> newToDos = jacksonMapper.readValue(tasksStr, List.class);
+			List<Task> newToDos = jacksonMapper.readValue(tasksStr, List.class);
 			Log.d(TAG, "Done Getting Items, list size = " + newToDos.size());
 		
 			// NOW SEND ANY ITEMS WE'VE CREATED/MODIFIED, going FROM the Task DAO
 			// TO the remote sync server.
 
-			final URI postUri = new URI(String.format("http://%s/todo/%s/tasks", 
-					mPrefs.getString("KEY_USERNAME", null), userName));
-			String sqlQuery = "modified < ?";
+			final URI postUri = new URI(String.format("http://%s:%d/%s/new/tasks", 
+					mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"),
+					Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80")),
+					pathStr.startsWith("/") ? pathStr.substring(1) : pathStr));
 			for (Task t : mDao.findAll()) {
 
 				// Send a POST request with to upload this Task
@@ -135,18 +142,17 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 				// INVOKE
 				HttpResponse response = client.execute(postAccessor);
 
-				// Get the response body from the response
-				HttpEntity postResults = response.getEntity();
-				final String resultStr = EntityUtils.toString(postResults);
+				// Get the "created" response body from the response
+				final String resultStr = response.getFirstHeader("Location").getValue();
 
 				// it actually sends the URL of the new ID
 				Uri resultUri = Uri.parse(resultStr);
 				long id = ContentUris.parseId(resultUri);
-				t.setId(id);;
+				t.setId(id);
 				if (mDao.update(t)) {
 					Log.e(TAG, "FAILED TO UPDATE");
 				}
-				Log.d(TAG, "UPDATED " + t + ", new _ID = " + t.getId());
+				Log.d(TAG, "UPDATED " + t + ", new  Remote ID = " + t.getId());
 			}
 			
 			// NOW GET ONES UPDATED ON THE SERVER

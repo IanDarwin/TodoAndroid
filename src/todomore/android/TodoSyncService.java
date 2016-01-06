@@ -2,7 +2,9 @@ package todomore.android;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 
 /** 
  * This will be the Synchronizer service, for use after the user has signed in successfully.
@@ -17,9 +19,10 @@ public class TodoSyncService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplication());
 		synchronized(sLock) {
 			if (sSyncAdapter == null) {
-				sSyncAdapter = new TodoSyncAdapter(getApplicationContext(), true);
+				sSyncAdapter = new TodoSyncAdapter(getApplicationContext(), prefs, true);
 			}
 		}
 	}

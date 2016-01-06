@@ -59,7 +59,8 @@ public class MainActivity extends /*AccountAuthenticator*/Activity {
 	private int ACTIVITY_ID_LOGIN;
 	private static SharedPreferences mPrefs;
 	// Keys for mPrefs lookups
-	private static String KEY_USERNAME, KEY_PASSWORD, KEY_HOSTNAME, KEY_HOSTPORT, KEY_HOSTPATH;
+	protected static String KEY_USERNAME, KEY_PASSWORD, KEY_HOSTNAME, KEY_HOSTPORT;
+	static String KEY_HOSTPATH;
 
 	/** The account name */
     public static final String ACCOUNT = "account";
