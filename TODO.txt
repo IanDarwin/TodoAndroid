@@ -1,6 +1,8 @@
+Finish the SyncAdapter.
+
 Use CursorLoader to get from Local DB ONLY
 
-Finish the SyncAdapter.
+Implement two-location delete algorithm.
 
 Need MetaWidget adapters for enums, dates, etc.
 
