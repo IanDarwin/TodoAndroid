@@ -57,7 +57,7 @@ public class TaskDao {
 	
 	/** R: Find All */
 	List<Task> findAll() {
-		Cursor c = db.query(TABLE_TODO, null, null, null, null, null, "priority asc, name desc");
+		Cursor c = db.query(TABLE_TODO, null, null, null, null, null, "priority asc, name asc");
 		return GruntWork.cursorToTaskList(c);
 	}
 	
@@ -92,8 +92,11 @@ public class TaskDao {
 					+ "_id integer primary key,"	// PKey in Android SQLite database
 					+ "id long integer,"			// PKey in remote database
 					+ "name varchar," 				// Short description of task
+					+ "description varchar,"		// Longer description
 					+ "priority integer,"			// 0 = top, 1, 2, 3 = lowest
+					+ "status integer,"
 					+ "modified integer"			// currentTimeMillis when last modified
+					// XXX moar!
 					+ ")"
 					);
 		}

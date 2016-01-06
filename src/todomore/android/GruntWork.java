@@ -42,14 +42,14 @@ public class GruntWork {
 		}
 		cv.put("name", t.getName());
 		cv.put("priority", t.getPriority().ordinal());
+		cv.put("description", t.getDescription());
+		cv.put("status", t.getStatus().ordinal());
 //		Date creationDate = new Date(); // when you decided you had to do it
 //		Project project;	// what this task is part of
 //		Context context;	// where to do it
 //		Date dueDate;		// when to do it by
-//		Status status;
 //		Date completedDate = null; // when you actually did it
 		cv.put("modified", t.getModified());
-//		String description;
 		return cv;
 	}
  
@@ -59,15 +59,28 @@ public class GruntWork {
 			return null;
 		}
 		AndroidTask t = new AndroidTask();
-		t.set_Id(c.getInt(c.getColumnIndex("_ID")));// our idea of pkey
-		t.setId(c.getInt(c.getColumnIndex("ID")));	// remote's idea of pkey
+		dumpCursor(c);
+		t.set_Id(c.getInt(c.getColumnIndex("_id")));// our idea of pkey
+		t.setId(c.getInt(c.getColumnIndex("id")));	// remote's idea of pkey
 		t.setName(c.getString(c.getColumnIndex("name")));
 		t.setDescription(c.getString(c.getColumnIndex("description")));
-		t.setPriority(Priority.values()[c.getColumnIndex("priority")]);
-		t.setStatus(Status.values()[c.getColumnIndex("status")]);
+		t.setPriority(Priority.values()[c.getInt(c.getColumnIndex("priority"))]);
+		t.setStatus(Status.values()[c.getInt(c.getColumnIndex("status"))]);
 		t.setModified(c.getLong(c.getColumnIndex("modified")));
 		// XXX moar
 		return t;
+	}
+	
+	static void dumpCursor(Cursor c) {
+		int n = c.getColumnCount();
+		for (int i = 0; i < n; i++) {
+			System.out.println(c.getColumnName(i));
+			System.out.println("\t");
+		}
+		for (int i = 0; i < n; i++) {
+			// bleah
+			System.out.println(c.getInt(i));
+		}
 	}
 	
 	public static List<Task> cursorToTaskList(Cursor c) {
