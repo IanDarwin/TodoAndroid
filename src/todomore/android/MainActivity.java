@@ -26,8 +26,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -46,7 +50,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends /*AccountAuthenticator*/Activity {
 
 	public static final String TAG = MainActivity.class.getSimpleName();
 	private EditText addTF;
@@ -56,6 +60,11 @@ public class MainActivity extends Activity {
 	private static SharedPreferences mPrefs;
 	// Keys for mPrefs lookups
 	private static String KEY_USERNAME, KEY_PASSWORD, KEY_HOSTNAME, KEY_HOSTPORT, KEY_HOSTPATH;
+
+	/** The account name */
+    public static final String ACCOUNT = "account";
+    /* The account */
+	private Account mAccount;
 	
 	// Data
 	List<String> fullTitlesList;
@@ -64,12 +73,14 @@ public class MainActivity extends Activity {
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		Log.d(TAG, "onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		addTF = (EditText) findViewById(R.id.addTF);
 		prioSpinner = (Spinner) findViewById(R.id.prioSpinner);
 		mListView = (ListView) findViewById(R.id.listView);
-		mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+		mListView.setOnItemClickListener(new OnItemClickListener() {
+			//@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				// This will de-convolute when we put in a real Adapter for the List.
 				AndroidTask androidTask = (AndroidTask)fullTaskList.get(position);
@@ -80,7 +91,8 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.priorities_array,
+		ArrayAdapter<CharSequence> adapter = 
+			ArrayAdapter.createFromResource(this, R.array.priorities_array,
 				android.R.layout.simple_spinner_item);
 		// Specify the layout to use when the list of choices appears
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -93,8 +105,33 @@ public class MainActivity extends Activity {
 		KEY_HOSTPORT = getString(R.string.key_hostport);
 		KEY_HOSTPATH = getString(R.string.key_hostpath);
 
+		mAccount = CreateSyncAccount(this);
+		
 		loadListFromDB();
 	}
+	
+	/**
+     * Create a new dummy account for the sync adapter.
+     * @author Adapted from http://developer.android.com/ page on this topic.
+     * @param context The application context
+     */
+    public Account CreateSyncAccount(Context context) {
+        // Create the account type and default account
+        Account newAccount = new Account(ACCOUNT, getString(R.string.accountType));
+        // Get the Android account manager
+        AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
+        /*
+         * Add the account and account type, no password or user data
+         * If successful, return the Account object, otherwise report an error.
+         */
+        Log.d(TAG, "Adding Account Explicitly");
+        if (accountManager.addAccountExplicitly(newAccount, "top secret", null)) {
+            Log.d(TAG, "Added Account Explicitly Successfully");
+        } else {
+        	Log.d(TAG, "Account exists, or, other error");
+        }
+        return newAccount;
+    }
 
 	@Override
 	protected void onResume() {
@@ -155,8 +192,16 @@ public class MainActivity extends Activity {
 		t.set_Id(_id);
 		Toast.makeText(this, "Saved locally", Toast.LENGTH_SHORT).show();
 
-		// XXX Send to server now; later, will just trigger sync?
-		new SendObjectAsyncTask().execute(t);
+		// Will schedule later; for now just trigger sync
+		Bundle settingsBundle = new Bundle();
+        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+        
+        /*
+         * Request the sync for the default account, authority, and
+         * manual sync settings
+         */
+        ContentResolver.requestSync(mAccount, getString(R.string.datasync_provider_authority), settingsBundle);
 
 		// If we get here, remove text from TF so task doesn't get added twice
 		addTF.setText("");

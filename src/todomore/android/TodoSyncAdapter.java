@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -75,11 +74,16 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			
 			// Get the username and password, which must be in mPrefs by now
 			
-			long tStamp = mPrefs.getLong(LAST_SYNC_TSTAMP, 0L);
+			final long lastLocalUpdate_Tstamp = mPrefs.getLong(LAST_SYNC_TSTAMP, 0L);
 			
 			String userName = mPrefs.getString("KEY_USERNAME", null);
 			String password = mPrefs.getString("KEY_PASSWORD",  null);
 			Log.d(TAG, "Starting TODO Sync for " + userName);
+			
+			if (userName != null) {
+				Log.d(TAG, "BYPASSING FOR NOW - TESTING"); // XXX
+				return;
+			}
 			
 			HttpClient client = new DefaultHttpClient();
 			Credentials creds = new UsernamePasswordCredentials(userName, password);        
@@ -101,11 +105,10 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			HttpResponse getResponse = client.execute(httpAccessor);	// CONNECT
 			final HttpEntity getResults = getResponse.getEntity();
 			final String tasksStr = EntityUtils.toString(getResults);
-			Log.d(TAG, "JSON list string is: " + tasksStr);
 			List<?> newToDos = jacksonMapper.readValue(tasksStr, List.class);
 			Log.d(TAG, "Done Getting Items, list size = " + newToDos.size());
 		
-			// NOW SEND ANY ITEMS WE'VE CREATED/MODIFIED, going FROM the ContentResolver
+			// NOW SEND ANY ITEMS WE'VE CREATED/MODIFIED, going FROM the Task DAO
 			// TO the remote sync server.
 
 			final URI postUri = new URI(String.format("http://%s/todo/%s/tasks", 

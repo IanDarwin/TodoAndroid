@@ -16,4 +16,8 @@
 	<!-- Specific for DetailsActivity -->
 	<string name="toggleEditable">Edit</string>
 	<string name="save">Save</string>
+	
+	<!-- Specific to Sync Adapter, Dummy Authenticator, etc -->
+	<string name="accountType">todomore.android.todomore</string>
+	<string name="datasync_provider_authority">todomore.android.datasync.provider</string>
 </resources>
