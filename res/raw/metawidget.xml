@@ -21,6 +21,10 @@
 		    <array>
 		        <simpleBindingProcessor xmlns="java:org.metawidget.android.widget.widgetprocessor.binding.simple" config="SimpleBindingProcessorConfig">
 		            <converter>
+		                <class>com.darwinsys.todo.model.Date</class>
+		                <dateConverter xmlns="java:todomore.android.uiconverter"/>
+		            </converter>
+		            <converter>
 		                <class>com.darwinsys.todo.model.Priority</class>
 		                <priorityConverter xmlns="java:todomore.android.uiconverter"/>
 		            </converter>

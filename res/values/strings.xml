@@ -30,9 +30,9 @@
 	<string name="status">Status</string>
 	<string name="context">Context</string>
 	<string name="project">Project</string>
-	<string name="creationDate">creationDate</string>
+	<string name="creationDate">Creation Date</string>
 	<string name="modified">Modified</string>
-	<string name="dueDate">Due</string>
+	<string name="dueDate">Due Date</string>
 	<string name="completedDate">Completed</string>
 
 </resources>
