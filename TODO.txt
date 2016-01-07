@@ -1,9 +1,13 @@
-Finish the SyncAdapter.
+Finish the SyncAdapter for two-way synch.
 
-Use CursorLoader to get from Local DB ONLY
+Add a "Test" button in Prefs for account and server info.
 
 Implement two-location delete algorithm.
+
+Use CursorLoader to sync dynamically with changes in Local DB
 
 Need MetaWidget adapters for enums, dates, etc.
 
 Then call it quits for now... work on other stuff.
+
+Move this information into the TodoMore database(!).
