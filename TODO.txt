@@ -1,3 +1,6 @@
+Find out why my DateConverter doesn't display dates correctly (at all).
+	It gets instantiated but not called!!
+
 Finish the SyncAdapter for two-way synch.
 
 Add a "Test" button in Prefs for account and server info.
@@ -6,8 +9,6 @@ Implement two-location delete algorithm.
 
 Use CursorLoader to sync dynamically with changes in Local DB
 
-Need MetaWidget adapters for enums, dates, etc.
-
 Then call it quits for now... work on other stuff.
 
-Move this information into the TodoMore database(!).
+And, BTW, move this list into a TodoMore database(!).
