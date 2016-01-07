@@ -9,13 +9,13 @@ import android.view.View;
 /**
  * MetaWidget converter for our local Date class.
  */
-
 public class DateConverter implements Converter<Date> {
 
 	public DateConverter() {
 		System.out.println("DateConverter.DateConverter()");
 	}
 
+	@Override
 	public Object convertForView(View widget, Date value) {
 		System.out.println("DateConverter.convertForView()");
 		if (value == null) {
@@ -24,6 +24,7 @@ public class DateConverter implements Converter<Date> {
 		return value.toString();
 	}
 
+	@Override
 	public Date convertFromView(View widget, Object value, Class<?> intoClass) {
 		System.out.println("DateConverter.convertFromView()");
 		if (value instanceof String) {
