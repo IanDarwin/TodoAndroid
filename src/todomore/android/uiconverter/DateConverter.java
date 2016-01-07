@@ -15,6 +15,7 @@ public class DateConverter implements Converter<Date> {
 		System.out.println("DateConverter.DateConverter()");
 	}
 
+	/** Convert from a Date to a String for display */
 	@Override
 	public Object convertForView(View widget, Date value) {
 		System.out.println("DateConverter.convertForView()");
@@ -24,6 +25,7 @@ public class DateConverter implements Converter<Date> {
 		return value.toString();
 	}
 
+	/** Convert from a String in the View to a Date object */
 	@Override
 	public Date convertFromView(View widget, Object value, Class<?> intoClass) {
 		System.out.println("DateConverter.convertFromView()");
