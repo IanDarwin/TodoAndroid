@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import todomore.android.TodoMoreApplication;
 
 /** 
  * An Activity that shows all the Details of one Task, using MetaWidget.
@@ -36,6 +37,7 @@ public class DetailsActivity extends Activity {
 		}
 
 		mMetawidget = (AndroidMetawidget) findViewById(R.id.metawidget);
+		mMetawidget.setConfig(R.raw.metawidget);
         mMetawidget.setToInspect(mTask);
         if (id == -1) {
             mMetawidget.setReadOnly(false);
@@ -66,7 +68,7 @@ public class DetailsActivity extends Activity {
 			Toast.makeText(DetailsActivity.this, "Saving...", Toast.LENGTH_SHORT).show();
 			
 			// Get the fields from the metawidget subfields into mTask:
-			mMetawidget.getWidgetProcessor(SimpleBindingProcessor.class).save( mMetawidget );// XXX something with a DAO
+			mMetawidget.getWidgetProcessor(SimpleBindingProcessor.class).save(mMetawidget);
 
 			// Do the actual save
 			((TodoMoreApplication) getApplication()).getTaskDao().update(mTask);
@@ -84,9 +86,9 @@ public class DetailsActivity extends Activity {
 		view.setFocusable(true);
 		view.setFocusableInTouchMode(true);
 		view.requestFocus();
-		// And the Done button
+		// Change the "Done" button to "Cancel"
 		((Button) findViewById(R.id.cancelDetailsButton)).setText(R.string.cancelEditing);
-		// And the Save button
+		// Let the Save button appear, and become active
 		Button save = (Button) findViewById(R.id.saveButton);
 		save.setVisibility(View.VISIBLE);
 		save.setOnClickListener(saver);

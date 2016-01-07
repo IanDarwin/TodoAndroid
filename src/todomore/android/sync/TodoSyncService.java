@@ -1,4 +1,4 @@
-package todomore.android;
+package todomore.android.sync;
 
 import android.app.Service;
 import android.content.Intent;

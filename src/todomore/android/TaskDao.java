@@ -21,7 +21,7 @@ public class TaskDao {
 	private String _ID = "_ID";
 	SQLiteDatabase db;
 	
-	TaskDao(Context context) {
+	public TaskDao(Context context) {
 		this.context = context;
 		db = new DbHelper(context, "todo.db", null, 1).getWritableDatabase();
 	}
@@ -31,7 +31,8 @@ public class TaskDao {
 	}
 	
 	/** C: Inserts a new object */
-	long insert(Task t) {
+	public long insert(Task t) {
+		t.setModified(System.currentTimeMillis());
 		ContentValues cv = GruntWork.taskToContentValuesWithout_ID(t);
 		Log.d(TAG, "Inserting task " + t);
 		Long _id = cv.getAsLong(_ID);
@@ -56,7 +57,7 @@ public class TaskDao {
 	}
 	
 	/** R: Find All */
-	List<Task> findAll() {
+	public List<Task> findAll() {
 		Cursor c = db.query(TABLE_TODO, null, null, null, null, null, "priority asc, name asc");
 		return GruntWork.cursorToTaskList(c);
 	}
@@ -67,6 +68,7 @@ public class TaskDao {
 			throw new RuntimeException("Update but Task has no _id!");
 		}
 		long _id = ((AndroidTask) t).get_Id();
+		t.setModified(System.currentTimeMillis());
 		int rc = db.update(TABLE_TODO, GruntWork.taskToContentValues(t), "_id = ?", new String[]{Long.toString(_id)});
 		if (!(rc == 1)) {
 			Log.d(TAG, "Warning: Update Failed!");

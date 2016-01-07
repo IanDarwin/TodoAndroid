@@ -3,7 +3,6 @@
     <string name="app_name">TodoList</string>
     <string name="add_item">New Todo Item Here</string>
     <string name="add_button">Add</string>
-    <string name="priority">Priority</string>
     <string name="prompt_username">Account</string>
     <string name="prompt_password">Password</string>
     <string name="action_test">Test</string>
@@ -23,4 +22,17 @@
 	<!-- Specific to Sync Adapter, Dummy Authenticator, etc -->
 	<string name="accountType">todomore.android.todomore</string>
 	<string name="datasync_provider_authority">todomore.android.datasync.provider</string>
+
+	<!-- Field names used by MetaWidget -->
+	<string name="summary">Summary</string>
+	<string name="description">Description</string>
+	<string name="priority">Priority</string>
+	<string name="status">Status</string>
+	<string name="context">Context</string>
+	<string name="project">Project</string>
+	<string name="creationDate">creationDate</string>
+	<string name="modified">Modified</string>
+	<string name="dueDate">Due</string>
+	<string name="completedDate">Completed</string>
+
 </resources>

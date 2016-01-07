@@ -44,6 +44,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import todomore.android.TodoMoreApplication;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -59,8 +60,11 @@ public class MainActivity extends /*AccountAuthenticator*/Activity {
 	private int ACTIVITY_ID_LOGIN;
 	private static SharedPreferences mPrefs;
 	// Keys for mPrefs lookups
-	protected static String KEY_USERNAME, KEY_PASSWORD, KEY_HOSTNAME, KEY_HOSTPORT;
-	static String KEY_HOSTPATH;
+	public static String KEY_USERNAME;
+	public static String KEY_PASSWORD;
+	public static String KEY_HOSTNAME;
+	public static String KEY_HOSTPORT;
+	public static String KEY_HOSTPATH;
 
 	/** The account name */
     public static final String ACCOUNT = "account";

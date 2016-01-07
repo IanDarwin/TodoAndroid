@@ -35,15 +35,22 @@ public class GruntWork {
 	}
 	
 	private static ContentValues taskToContentValues(Task t, boolean include_ID) {
+		Log.d(TAG, "taskToConentValues(" + t + ")");
 		ContentValues cv = new ContentValues();
 		cv.put("id", t.getId());
 		if (include_ID && t instanceof AndroidTask) {
 			cv.put("_id", ((AndroidTask)t).get_Id());
 		}
 		cv.put("name", t.getName());
-		cv.put("priority", t.getPriority().ordinal());
 		cv.put("description", t.getDescription());
-		cv.put("status", t.getStatus().ordinal());
+		Priority priority = t.getPriority();
+		if (priority != null) {
+			cv.put("priority", priority.ordinal());
+		}
+		Status status = t.getStatus();
+		if (status != null) {
+			cv.put("status", status.ordinal());
+		}
 //		Date creationDate = new Date(); // when you decided you had to do it
 //		Project project;	// what this task is part of
 //		Context context;	// where to do it
@@ -59,7 +66,7 @@ public class GruntWork {
 			return null;
 		}
 		AndroidTask t = new AndroidTask();
-		dumpCursor(c);
+		// sdumpCursor(c);
 		t.set_Id(c.getInt(c.getColumnIndex("_id")));// our idea of pkey
 		t.setId(c.getInt(c.getColumnIndex("id")));	// remote's idea of pkey
 		t.setName(c.getString(c.getColumnIndex("name")));
@@ -74,9 +81,10 @@ public class GruntWork {
 	static void dumpCursor(Cursor c) {
 		int n = c.getColumnCount();
 		for (int i = 0; i < n; i++) {
-			System.out.println(c.getColumnName(i));
-			System.out.println("\t");
+			System.out.print(c.getColumnName(i));
+			System.out.print("\t");
 		}
+		System.out.println();
 		for (int i = 0; i < n; i++) {
 			// bleah
 			System.out.println(c.getInt(i));

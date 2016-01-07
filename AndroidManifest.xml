@@ -40,7 +40,7 @@
         
         <!-- Synch Adapter-->
         <service
-                android:name="TodoSyncService"
+                android:name=".sync.TodoSyncService"
                 android:exported="true"
                 android:process=":sync">
             <intent-filter>
@@ -52,7 +52,7 @@
         </service>
         <!-- Bloat-ware - dummy authenticator - needed by Sync Adapter -->
         <service 
-            android:name="TodoDummyAuthenticatorService">
+            android:name=".sync.TodoDummyAuthenticatorService">
 			<!-- Required filter used by the system to launch our account service. -->
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator" />
@@ -68,7 +68,6 @@
                 android:exported="false" 
                 android:syncable="true"
                 />
-        
 
     </application>
 </manifest>

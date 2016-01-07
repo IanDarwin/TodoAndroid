@@ -1,4 +1,4 @@
-package todomore.android;
+package todomore.android.sync;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;

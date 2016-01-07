@@ -1,4 +1,4 @@
-package todomore.android;
+package todomore.android.sync;
 
 import java.net.URI;
 import java.util.List;
@@ -34,6 +34,8 @@ import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
+import todomore.android.MainActivity;
+import todomore.android.TaskDao;
 
 
 /**

@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<metawidget xmlns="http://metawidget.org"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://metawidget.org http://metawidget.org/xsd/metawidget-1.0.xsd" version="1.0">
+
+	<androidMetawidget xmlns="java:org.metawidget.android.widget">
+		<bundle>
+			<class>todomore.android.R$string</class>
+		</bundle>
+		<inspector>
+			<compositeInspector xmlns="java:org.metawidget.inspector.composite" config="CompositeInspectorConfig">
+				<inspectors>
+					<array>
+						<propertyTypeInspector xmlns="java:org.metawidget.inspector.propertytype"/>
+						<metawidgetAnnotationInspector xmlns="java:org.metawidget.inspector.annotation"/>		
+					</array>
+				</inspectors>
+			</compositeInspector>
+		</inspector>
+		<widgetProcessors>
+		    <array>
+		        <simpleBindingProcessor xmlns="java:org.metawidget.android.widget.widgetprocessor.binding.simple" config="SimpleBindingProcessorConfig">
+		            <converter>
+		                <class>com.darwinsys.todo.model.Priority</class>
+		                <priorityConverter xmlns="java:todomore.android.uiconverter"/>
+		            </converter>
+		            <converter>
+		                <class>com.darwinsys.todo.model.Status</class>
+		                <statusConverter xmlns="java:todomore.android.uiconverter"/>
+		            </converter>
+				</simpleBindingProcessor>
+		    </array>
+		</widgetProcessors>
+	</androidMetawidget>
+
+</metawidget>
