@@ -12,11 +12,14 @@
 	<string name="error_invalid_email">Not a valid username?</string>
 	<string name="error_invalid_user">Username must be alphabetic</string>
 	
+	<!-- For Prefs -->
+	<string name="testNetwork">Test Network</string>
+	
 	<!-- Specific for DetailsActivity -->
 	<string name="toggleEditable">Edit</string>
 	<string name="save">Save</string>
 	<!-- Next two both used with "Done" button, depending on mode -->
-	<string name="doneDetails">Done</string>
+	<string name="done">Done</string>
 	<string name="cancelEditing">Cancel</string>
 	
 	<!-- Specific to Sync Adapter, Dummy Authenticator, etc -->
