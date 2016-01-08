@@ -23,6 +23,7 @@ public class DetailsActivity extends Activity {
 	private static final String TAG = DetailsActivity.class.getSimpleName();
 	private Task mTask;
 	private AndroidMetawidget mMetawidget;
+	private Button enableEditButton;
 
 	public void onCreate(Bundle saved) {
 		super.onCreate(saved);
@@ -47,7 +48,7 @@ public class DetailsActivity extends Activity {
             enableEditing();
         }
         
-        Button enableEditButton = (Button) findViewById(R.id.enableEditButton);
+        enableEditButton = (Button) findViewById(R.id.enableEditButton);
         enableEditButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				Log.d(TAG, "onClick");
@@ -88,6 +89,8 @@ public class DetailsActivity extends Activity {
 		view.requestFocus();
 		// Change the "Done" button to "Cancel"
 		((Button) findViewById(R.id.cancelDetailsButton)).setText(R.string.cancelEditing);
+		// Lose the Edit button
+		enableEditButton.setVisibility(View.GONE);
 		// Let the Save button appear, and become active
 		Button save = (Button) findViewById(R.id.saveButton);
 		save.setVisibility(View.VISIBLE);
