@@ -51,7 +51,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class MainActivity extends /*AccountAuthenticator*/Activity {
+public class MainActivity extends Activity {
 
 	public static final String TAG = MainActivity.class.getSimpleName();
 	private EditText addTF;
@@ -169,6 +169,9 @@ public class MainActivity extends /*AccountAuthenticator*/Activity {
 			return true;
 		case R.id.help_menuitem:
 			Toast.makeText(this, "Help not written yet", Toast.LENGTH_SHORT).show();
+			return true;
+		case R.id.about_menuitem:
+			Toast.makeText(this, "TodoMore Android 0.0", Toast.LENGTH_SHORT).show();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
