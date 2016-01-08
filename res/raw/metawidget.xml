@@ -12,7 +12,10 @@
 				<inspectors>
 					<array>
 						<propertyTypeInspector xmlns="java:org.metawidget.inspector.propertytype"/>
-						<metawidgetAnnotationInspector xmlns="java:org.metawidget.inspector.annotation"/>		
+						<metawidgetAnnotationInspector xmlns="java:org.metawidget.inspector.annotation"/>
+						<!-- See pom.xml
+						<jpaInspector xmlns="java:org.metawidget.inspector.jpa"/>
+						-->
 						<xmlInspector xmlns="java:org.metawidget.inspector.xml" config="XmlInspectorConfig">
 							<inputStream>
 								<resource>@todomore.android:raw/metawidget_metadata</resource>

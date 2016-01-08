@@ -14,6 +14,7 @@
 	<properties>
 		<javase-version>1.6</javase-version>
 		<platform.version>4.1.1.4</platform.version>
+		<metawidget-version>4.2</metawidget-version>
 		<maven.compiler.source>${javase.version}</maven.compiler.source>
 		<maven.compiler.target>${javase.version}</maven.compiler.target>
 		<maven.compiler.testSource>${javase.version}</maven.compiler.testSource>
@@ -38,11 +39,14 @@
 			<version>1.0.7</version>
 		</dependency>
 
-		<!-- Let's try MetaWidget for UI (OIM) -->
+		<!-- Let's try MetaWidget for UI (OIM).
+		 ** We don't include org.metawidget.modules:metawidget-jpa because it requires
+		 ** to have JPA on your classpath, and Java EE seems just too big a classpath component.
+		 -->
 		<dependency>
 			<groupId>org.metawidget.modules.android</groupId>
 			<artifactId>metawidget-android</artifactId>
-			<version>4.2</version>
+			<version>${metawidget-version}</version>
 		</dependency>
 
         <!-- Jackson Core, databind, used in REST service -->
