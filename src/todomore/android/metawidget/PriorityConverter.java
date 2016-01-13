@@ -1,4 +1,4 @@
-package todomore.android.uiconverter;
+package todomore.android.metawidget;
 
 import com.darwinsys.todo.model.Priority;
 

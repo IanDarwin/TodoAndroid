@@ -1,4 +1,4 @@
-package todomore.android.uiconverter;
+package todomore.android.metawidget;
 
 import org.metawidget.android.widget.widgetprocessor.binding.simple.Converter;
 

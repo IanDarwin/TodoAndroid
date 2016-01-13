@@ -28,7 +28,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // package org.metawidget.example.android.addressbook.converter;
-package todomore.android.uiconverter;
+package todomore.android.metawidget;
 
 import org.metawidget.android.widget.widgetprocessor.binding.simple.Converter;
 
