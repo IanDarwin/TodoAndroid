@@ -168,10 +168,10 @@ public class MainActivity extends Activity {
 			startActivity(new Intent(this, PrefsActivity.class));
 			return true;
 		case R.id.help_menuitem:
-			Toast.makeText(this, "Help not written yet", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.helpText, Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.about_menuitem:
-			Toast.makeText(this, "TodoMore Android 0.0", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.aboutText, Toast.LENGTH_SHORT).show();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
