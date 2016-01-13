@@ -25,20 +25,34 @@
 				</inspectors>
 			</compositeInspector>
 		</inspector>
+		<widgetBuilder>
+		<compositeWidgetBuilder
+			xmlns="java:org.metawidget.widgetbuilder.composite"
+			config="CompositeWidgetBuilderConfig">
+			<widgetBuilders>
+				<array>
+					<overriddenWidgetBuilder xmlns="java:org.metawidget.android.widget.widgetbuilder"/>
+					<readOnlyWidgetBuilder xmlns="java:org.metawidget.android.widget.widgetbuilder"/>
+					<todoMoreAndroidWidgetBuilder xmlns="java:todomore.android.metawidget"/>
+					<androidWidgetBuilder xmlns="java:org.metawidget.android.widget.widgetbuilder"/>
+				</array>
+			</widgetBuilders>
+		</compositeWidgetBuilder>
+	</widgetBuilder>
 		<widgetProcessors>
 		    <array>
 		        <simpleBindingProcessor xmlns="java:org.metawidget.android.widget.widgetprocessor.binding.simple" config="SimpleBindingProcessorConfig">
 		            <converter>
 		                <class>com.darwinsys.todo.model.Date</class>
-		                <dateConverter xmlns="java:todomore.android.uiconverter"/>
+		                <dateConverter xmlns="java:todomore.android.metawidget"/>
 		            </converter>
 		            <converter>
 		                <class>com.darwinsys.todo.model.Priority</class>
-		                <priorityConverter xmlns="java:todomore.android.uiconverter"/>
+		                <priorityConverter xmlns="java:todomore.android.metawidget"/>
 		            </converter>
 		            <converter>
 		                <class>com.darwinsys.todo.model.Status</class>
-		                <statusConverter xmlns="java:todomore.android.uiconverter"/>
+		                <statusConverter xmlns="java:todomore.android.metawidget"/>
 		            </converter>
 				</simpleBindingProcessor>
 		    </array>
