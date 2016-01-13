@@ -1,7 +1,12 @@
 package todomore.android;
 
 import org.metawidget.android.widget.AndroidMetawidget;
+import org.metawidget.android.widget.widgetbuilder.AndroidWidgetBuilder;
+import org.metawidget.android.widget.widgetbuilder.OverriddenWidgetBuilder;
+import org.metawidget.android.widget.widgetbuilder.ReadOnlyWidgetBuilder;
 import org.metawidget.android.widget.widgetprocessor.binding.simple.SimpleBindingProcessor;
+import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilder;
+import org.metawidget.widgetbuilder.composite.CompositeWidgetBuilderConfig;
 
 import com.darwinsys.todo.model.Task;
 
@@ -11,7 +16,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import todomore.android.TodoMoreApplication;
+import todomore.android.metawidget.TodoMoreAndroidWidgetBuilder;
 
 /** 
  * An Activity that shows all the Details of one Task, using MetaWidget.
@@ -82,6 +87,16 @@ public class DetailsActivity extends Activity {
 	private void enableEditing() {
 		Log.d(TAG, "enableEditing");
 		mMetawidget.setReadOnly(false);
+		/*
+		mMetawidget.setWidgetBuilder(
+			new CompositeWidgetBuilder(new CompositeWidgetBuilderConfig<View, AndroidMetawidget>()
+				.setWidgetBuilders(
+					new OverriddenWidgetBuilder(), 
+					new ReadOnlyWidgetBuilder(),
+					new TodoAndroidWidgetBuilder(), 
+					new AndroidWidgetBuilder()
+				)));
+		*/
 		mMetawidget.buildWidgets();
 		View view = mMetawidget.findViewWithTag("name");
 		view.setFocusable(true);
