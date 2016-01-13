@@ -12,6 +12,9 @@
 	<string name="error_invalid_email">Not a valid username?</string>
 	<string name="error_invalid_user">Username must be alphabetic</string>
 	
+	<string name="aboutText">TodoMore 0.0. See http://darwinsys.com/TodoMore</string>
+	<string name="helpText">Help not available yet. See http://darwinsys.com/TodoMore</string>
+	
 	<!-- For Prefs -->
 	<string name="testNetwork">Test Network</string>
 	
