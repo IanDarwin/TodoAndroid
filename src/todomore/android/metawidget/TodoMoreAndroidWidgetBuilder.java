@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.darwinsys.todo.model.Date;
+
 public class TodoMoreAndroidWidgetBuilder implements WidgetBuilder<View, AndroidMetawidget> {
 
 	private static final String TAG = "TAWB";
@@ -29,7 +31,7 @@ public class TodoMoreAndroidWidgetBuilder implements WidgetBuilder<View, Android
 		String type = attributes.get("type");
 		String readOnlyStr = attributes.get("read-only");
 		boolean readOnly = Boolean.parseBoolean(readOnlyStr);
-		if (elementName.equals("entity") && type.equals("com.darwinsys.todo.model.Date")) {
+		if (type.equals(Date.class.getName())) {
 			return readOnly ? new TextView(context) : new EditText(context);
 		}
 		return null;
