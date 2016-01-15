@@ -38,6 +38,14 @@
             <!-- No intent filter or other goo needed here -->
         </activity>
         
+        <activity android:name="HelpActivity">
+            <!-- No intent filter or other goo needed here -->
+        </activity>
+        
+        <activity android:name="AboutActivity">
+            <!-- No intent filter or other goo needed here -->
+        </activity>
+
         <!-- Synch Adapter-->
         <service
                 android:name=".sync.TodoSyncService"
