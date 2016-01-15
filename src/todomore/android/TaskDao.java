@@ -97,7 +97,7 @@ public class TaskDao {
 					+ "description varchar,"		// Longer description
 					+ "priority integer,"			// 0 = top, 1, 2, 3 = lowest
 					+ "status integer,"
-					+ "modified integer,"			// currentTimeMillis when last modified
+					+ "modified long integer,"			// currentTimeMillis when last modified
 					+ "creationdate date,"
 					+ "duedate date,"
 					+ "completeddate date"
