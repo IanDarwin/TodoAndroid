@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import com.darwinsys.todo.model.Date;
 import com.darwinsys.todo.model.Priority;
 import com.darwinsys.todo.model.Status;
 import com.darwinsys.todo.model.Task;
@@ -51,12 +52,18 @@ public class GruntWork {
 		if (status != null) {
 			cv.put("status", status.ordinal());
 		}
-//		Date creationDate = new Date(); // when you decided you had to do it
-//		Project project;	// what this task is part of
-//		Context context;	// where to do it
-//		Date dueDate;		// when to do it by
-//		Date completedDate = null; // when you actually did it
+		Date creationDate = t.getCreationDate();
+		if (creationDate != null)
+		cv.put("creationDate", creationDate.toString());		// when you decided you had to do it
+			Date dueDate = t.getDueDate();
+		if (dueDate != null)
+			cv.put("dueDate", dueDate.toString());				// when you hoped to do it by
+		Date completedDate = t.getCompletedDate();
+		if (completedDate != null)
+			cv.put("completedDate", completedDate.toString());	// when you actually did it by
 		cv.put("modified", t.getModified());
+		// XXX Project project;	// what this task is part of
+		// XXX Context context;	// where to do it
 		return cv;
 	}
  
@@ -74,7 +81,17 @@ public class GruntWork {
 		t.setPriority(Priority.values()[c.getInt(c.getColumnIndex("priority"))]);
 		t.setStatus(Status.values()[c.getInt(c.getColumnIndex("status"))]);
 		t.setModified(c.getLong(c.getColumnIndex("modified")));
-		// XXX moar
+		String creationDateString = c.getString(c.getColumnIndex("creationdate"));
+		if (creationDateString != null)
+			t.setCreationDate(new Date(creationDateString));
+		String dueDateString = c.getString(c.getColumnIndex("duedate"));
+		if (dueDateString != null)
+			t.setDueDate(new Date(dueDateString));
+		String completedDateString = c.getString(c.getColumnIndex("completeddate"));
+		if (completedDateString != null)
+			t.setCompletedDate(new Date(completedDateString));
+		// XXX Project project;	// what this task is part of
+		// XXX Context context;	// where to do it
 		return t;
 	}
 	
@@ -124,9 +141,19 @@ public class GruntWork {
 				t.setPriority(Priority.valueOf(o.getString("priority")));
 				t.setStatus(Status.valueOf(o.getString("status")));
 				t.setName(o.getString("name"));
-				t.setModified(o.getLong("modified"));
 				t.setDescription(o.getString("description"));
-				// XXX moar!!
+				String creationDateString = o.getString("creationDate");
+				if (creationDateString != null && !"null".equals(creationDateString))
+					t.setCreationDate(new Date(creationDateString));
+				t.setModified(o.getLong("modified"));
+				String dueDateString = o.getString("dueDate");
+				if (dueDateString != null && !"null".equals(dueDateString))
+					t.setDueDate(new Date(dueDateString));
+				String completedDateString = o.getString("completedDate");
+				if (completedDateString != null && !"null".equals(completedDateString))
+					t.setCompletedDate(new Date(completedDateString));
+				// XXX Project project;	// what this task is part of
+				// XXX Context context;	// where to do it
 				ret.add(t);
 			}
 		} catch (JSONException e) {

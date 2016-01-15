@@ -16,17 +16,17 @@ public class GruntWorkTest {
 	public void testJsonToTaskList() {
 		String input = 
 				"[{\"id\":94,\"priority\":\"High\",\"name\":\"TEST 2\","
-				+ "\"creationDate\":{\"year\":2015,\"month\":11,\"day\":18},\"project\":null,\"context\":null,"
-				+ "\"dueDate\":null,\"status\":\"NEW\",\"completedDate\":null,\"modified\":12345678,"
+				+ "\"creationDate\":\"2015-11-18\",\"project\":null,\"context\":null,"
+				+ "\"dueDate\":\"2015-11-18\",\"status\":\"NEW\",\"completedDate\":null,\"modified\":12345678,"
 				+ "\"description\":null,\"complete\":false},"
 				// Start of second Task
 				+ "{\"id\":51,\"priority\":\"Medium\",\"name\":\"Phillishave 5821 cutters and plastic cap?\","
-				+ "\"creationDate\":{\"year\":2015,\"month\":10,\"day\":18},\"project\":null,\"context\":null,"
-				+ "\"dueDate\":{\"year\":2012,\"month\":12,\"day\":12},\"status\":\"NEW\",\"completedDate\":null,\"modified\":123,"
+				+ "\"creationDate\":\"2015-11-18\",\"project\":null,\"context\":null,"
+				+ "\"dueDate\":\"2015-11-18\",\"status\":\"NEW\",\"completedDate\":null,\"modified\":123,"
 				+ "\"description\":null,\"complete\":false},"
 				// Start of third Task
 				+ "{\"id\":103,\"priority\":\"Low\",\"name\":\"Low prio item\","
-				+ "\"creationDate\":{\"year\":2015,\"month\":10,\"day\":23},"
+				+ "\"creationDate\":\"2015-11-18\","
 				+ "\"project\":null,\"context\":{\"id\":80,\"name\":\"Home\"},"
 				+ "\"dueDate\":null,\"status\":\"NEW\","
 				+ "\"completedDate\":null,\"modified\":1448312330383,"
