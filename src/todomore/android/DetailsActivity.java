@@ -67,6 +67,17 @@ public class DetailsActivity extends Activity {
 				finish();
 			}
 		});
+		((Button) findViewById(R.id.deleteButton)).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				deleteCurrent();
+			}
+		});
+	}
+
+	private void deleteCurrent() {
+		((TodoMoreApplication) getApplication()).getTaskDao().delete((AndroidTask)mTask);
+		finish();
 	}
 	
 	private final View.OnClickListener saver = new View.OnClickListener() {
@@ -110,5 +121,6 @@ public class DetailsActivity extends Activity {
 		Button save = (Button) findViewById(R.id.saveButton);
 		save.setVisibility(View.VISIBLE);
 		save.setOnClickListener(saver);
+
 	}
 }

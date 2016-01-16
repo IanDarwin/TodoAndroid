@@ -16,13 +16,13 @@ public class TaskDao {
 	
 	private static final String TAG = "TodoMore.TaskDao";
 
-	Context context;
 	private static final String TABLE_TODO = "todo";
+	private static final String TABLE_DELQ = "delete_q";
+
 	private String _ID = "_ID";
 	SQLiteDatabase db;
 	
 	public TaskDao(Context context) {
-		this.context = context;
 		db = new DbHelper(context, "todo.db", null, 1).getWritableDatabase();
 	}
 	
@@ -77,8 +77,14 @@ public class TaskDao {
 	}
 	
 	/** D: Delete */
-	public boolean delete(Task t) {
-		throw new UnsupportedOperationException("Delete not supported yet");
+	public boolean delete(AndroidTask t) {
+		String taskIdString = Long.toString(t.get_Id());
+		int deleted = db.delete(TABLE_TODO, "_id = ?", new String[]{taskIdString});
+		Log.d(TAG, "TaskDao.delete(" + taskIdString + ") --> " + deleted);
+		if (t.getId() != 0) {
+			db.execSQL(String.format("insert into " + TABLE_DELQ + "(remoteId) values(%s)", t.getId()));
+		}
+		return true;
 	}
 
 	class DbHelper extends SQLiteOpenHelper {
@@ -101,6 +107,11 @@ public class TaskDao {
 					+ "creationdate date,"
 					+ "duedate date,"
 					+ "completeddate date"
+					+ ")"
+					);
+			db.execSQL("create table " + TABLE_DELQ + "("
+					+ "_id integer primary key,"
+					+ "remoteId string"
 					+ ")"
 					);
 		}

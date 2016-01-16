@@ -21,6 +21,7 @@
 	<!-- Specific for DetailsActivity -->
 	<string name="toggleEditable">Edit</string>
 	<string name="save">Save</string>
+	<string name="delete">Delete</string>
 	<!-- Next two both used with "Done" button, depending on mode -->
 	<string name="done">Done</string>
 	<string name="cancelEditing">Cancel</string>

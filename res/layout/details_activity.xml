@@ -39,7 +39,7 @@
 		android:layout_height="wrap_content"
 		android:text="@string/toggleEditable"
 		/>
-	
+
 	<Button
 	    android:visibility="gone"
 	    android:id="@+id/saveButton"
@@ -48,6 +48,15 @@
 		android:layout_height="wrap_content"
 		android:text="@string/save"
 		/>
+
+	<Button
+	    android:id="@+id/deleteButton"
+	    style="?android:attr/buttonBarButtonStyle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/delete"
+		/>
+
 	</LinearLayout>
 	        
 </LinearLayout>
