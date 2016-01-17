@@ -24,4 +24,12 @@ public class AndroidTask extends Task {
 	public void set_Id(long _id) {
 		this._id = _id;
 	}
+	
+	/** Convenience */
+	public long getRemoteId() {
+		return getId();
+	}
+	public void setRemoteId(long id) {
+		setId(id);
+	}
 }
