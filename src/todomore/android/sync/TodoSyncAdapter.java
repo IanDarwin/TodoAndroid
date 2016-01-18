@@ -97,7 +97,9 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			.setCredentials(new AuthScope(
 					mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"), 
 					mPrefs.getInt(MainActivity.KEY_HOSTPORT, 80)),
-					creds);  
+					creds);
+			
+			// Zeroeth, delete any remote items we previously deleted locally.
 			
 			// First, get list of items FROM the remote server
 			try {
@@ -117,7 +119,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			Log.d(TAG, "Done Getting Items, list size = " + newToDos.size());
 		
 			// NOW SEND ANY ITEMS WE'VE CREATED/MODIFIED, going FROM the Task DAO
-			// TO the remote sync server.
+			// TO the remote web service.
 
 			final URI postUri = new URI(String.format("http://%s:%d/%s/new/tasks", 
 					mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"),
