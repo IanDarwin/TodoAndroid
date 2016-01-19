@@ -101,6 +101,7 @@ public class MainActivity extends Activity {
 		// Specify the layout to use when the list of choices appears
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		prioSpinner.setAdapter(adapter);
+		prioSpinner.setSelection(Priority.High.ordinal());
 
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		KEY_USERNAME = getString(R.string.key_username);
@@ -178,7 +179,11 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	/** Called from the View when the Add button is pressed */
+	/** 
+	 * Adds a new item to the list, from the main screen.
+	 * Called from the View when the Add button is pressed;
+	 * registered via onClick= so no Listener code
+	 */
 	public void addItem(View v) {
 		String name = addTF.getText().toString();
 		Log.d(TAG, "addItem: " + name);
@@ -210,6 +215,9 @@ public class MainActivity extends Activity {
 
 		// If we get here, remove text from TF so task doesn't get added twice
 		addTF.setText("");
+
+		// And update the list
+		loadListFromDB();
 	}
 
 	private boolean isLoginSet() {
