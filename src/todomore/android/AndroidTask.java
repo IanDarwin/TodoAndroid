@@ -26,6 +26,7 @@ public class AndroidTask extends Task {
 	}
 	
 	/** Convenience */
+	@UiHidden
 	public long getRemoteId() {
 		return getId();
 	}
