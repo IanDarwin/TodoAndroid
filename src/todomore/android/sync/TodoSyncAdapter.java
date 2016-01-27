@@ -68,7 +68,23 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			this.mPrefs = prefs;
 			mDao = new TaskDao(context);
 		}
-
+		/**
+		 * Do the actual synch. One possible algorithm would be:
+		 *
+		 * Form list of remoteids in local db
+		 *
+		 * Download list or tasks.
+		 *
+		 * For each task in local db
+		 *   If it's remote is is null, add it to upload list.
+		 *   If it's mtime is > lastsynchrime, add it "
+		 *
+		 * For each task in downloaded list
+		 *     If it's I'd not in.list, add to local db
+		 *     If it's mtime gt lastsynchtime, update it into local db
+		 *
+		 * Update lastsynchtime.
+		 */
 		@Override
 		public void onPerformSync(Account account, 
 				Bundle extras, 
