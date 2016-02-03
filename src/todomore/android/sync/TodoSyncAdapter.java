@@ -30,10 +30,8 @@ import android.content.SharedPreferences;
 import android.content.SyncResult;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
+import todomore.android.AndroidTask;
 import todomore.android.MainActivity;
 import todomore.android.TaskDao;
 
@@ -68,21 +66,23 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			this.mPrefs = prefs;
 			mDao = new TaskDao(context);
 		}
+		
 		/**
 		 * Do the actual synch. One possible algorithm would be:
 		 *
-		 * Form list of remoteids in local db
+		 * Form list of entries with remoteids in local db
 		 *
-		 * Download list or tasks.
+		 * Download list of tasks from remote.
 		 *
 		 * For each task in local db
-		 *   If it's remote is is null, add it to upload list.
-		 *   If it's mtime is > lastsynchrime, add it "
+		 *   If its remoteId is null, add it to upload list.
+		 *   If its mtime is > lastsynchrime, add it "
 		 *
 		 * For each task in downloaded list
-		 *     If it's I'd not in.list, add to local db
-		 *     If it's mtime gt lastsynchtime, update it into local db
-		 *
+		 *     If its remoteId not in list, add to local db
+		 *     If its mtime > lastsynchtime, update it into local db
+		 * For each task in local Delete quueu
+		 * 		Send a Delete request.
 		 * Update lastsynchtime.
 		 */
 		@Override
@@ -93,7 +93,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 				SyncResult syncResult) {
 			Log.d(TAG, "ToDoSyncAdapter.onPerformSync()");
 
-			final long lastLocalUpdate_Tstamp = mPrefs.getLong(LAST_SYNC_TSTAMP, 0L);
+			final long lastSynchTime = mPrefs.getLong(LAST_SYNC_TSTAMP, 0L);
 			
 			// Get the username and password, which must be in mPrefs by now
 			String userName = mPrefs.getString("KEY_USERNAME", null);
@@ -144,9 +144,13 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			
 			for (Task t : mDao.findAll()) {
 
-				// Send a POST request with to upload this Task
-				Log.d(TAG, "Connecting to server for " + postUri);
+				AndroidTask at = (AndroidTask) t;
+				// Send this task if it has no remoteId or if it's modified since last sync
+				if (!(at.getRemoteId() == 0 || at.getModified() > lastSynchTime)) {
+					continue;
+				}
 
+				Log.d(TAG, "Connecting to server for " + postUri);
 				HttpPost postAccessor = new HttpPost();
 				postAccessor.setURI(postUri);
 				postAccessor.addHeader("Content-Type", "application/json");
@@ -186,6 +190,8 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 				mDao.insert(t);
 				Log.d(TAG, "Downloaded and inserted this new Task: " + t);
 			}
+			
+			// Finally send deletions
 			
 			// Finally, update our timestamp!
 			mPrefs.edit().putLong(LAST_SYNC_TSTAMP, System.currentTimeMillis());
