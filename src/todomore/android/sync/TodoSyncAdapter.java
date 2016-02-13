@@ -105,6 +105,9 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 				return;
 			}
 			
+			// XXX THIS *HAS* TO BE BROKEN INTO SMALLER PARTS FOR TESTABILITY
+			// XXX Sync algorithm vs details of getting and puttings lists various places - ugh!
+
 			Log.d(TAG, "Starting TODO Sync for " + userName);
 			
 			HttpClient client = new DefaultHttpClient();
