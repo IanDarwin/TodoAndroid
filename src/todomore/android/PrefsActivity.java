@@ -1,9 +1,7 @@
 package todomore.android;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.view.Menu;
