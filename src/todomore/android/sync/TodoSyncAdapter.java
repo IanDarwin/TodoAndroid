@@ -1,6 +1,9 @@
 package todomore.android.sync;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -8,6 +11,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -17,6 +21,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import com.darwinsys.todo.model.Task;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -51,6 +58,8 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	private TaskDao mDao;
 	
 		ObjectMapper jacksonMapper = new ObjectMapper();
+
+		private String pathStr;
 		
 		public TodoSyncAdapter(Context context, SharedPreferences prefs, boolean autoInitialize) {
 			this(context, prefs, autoInitialize, false);
@@ -94,7 +103,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			Log.d(TAG, "ToDoSyncAdapter.onPerformSync()");
 
 			final long lastSynchTime = mPrefs.getLong(LAST_SYNC_TSTAMP, 0L);
-			
+
 			// Get the username and password, which must be in mPrefs by now
 			String userName = mPrefs.getString("KEY_USERNAME", null);
 			String password = mPrefs.getString("KEY_PASSWORD",  null);
@@ -104,48 +113,72 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 				Log.d(TAG, "Can't synch until you set username and password in Preferences");
 				return;
 			}
-			
-			// XXX THIS *HAS* TO BE BROKEN INTO SMALLER PARTS FOR TESTABILITY
-			// XXX Sync algorithm vs details of getting and puttings lists various places - ugh!
 
 			Log.d(TAG, "Starting TODO Sync for " + userName);
-			
-			HttpClient client = new DefaultHttpClient();
+
+			HttpClient client = syncSetupRestConnection(userName, password);
+
+			try {
+				// Zeroeth, delete any remote items we previously deleted locally.
+				syncRunDeleteQueue();
+
+				// First, get list of items FROM the remote server
+				final List<Task> newToDos = syncGetTasksFromRemote(client);
+
+				// NOW SEND ANY ITEMS WE'VE CREATED/MODIFIED, going FROM the Task DAO
+				// TO the remote web service.
+
+				final URI postUri = new URI(String.format("http://%s:%d/%s/new/tasks", 
+						mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"),
+						Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80")),
+						pathStr.startsWith("/") ? pathStr.substring(1) : pathStr));
+
+				final List<Task> localTasks = mDao.findAll();
+				syncSendLocalTasks(lastSynchTime, client, postUri, localTasks);
+
+				// NOW GET ONES UPDATED ON THE SERVER
+
+				// Order matters - use list we fetched earlier,
+				// to avoid possibility of bouncing items back to the server that we just got
+
+				syncUpdateRemotelyChangedTasks(newToDos);
+
+				// Finally send deletions
+				syncSendDeletions();
+
+				// Finally, update our timestamp!
+				mPrefs.edit().putLong(LAST_SYNC_TSTAMP, System.currentTimeMillis());
+
+			} catch (Exception e) {
+				Log.wtf(TAG, "ERROR in synchronization!: " + e, e);
+			}
+		}
+
+		private HttpClient syncSetupRestConnection(String userName, String password) {
+			final DefaultHttpClient client = new DefaultHttpClient();
 			Credentials creds = new UsernamePasswordCredentials(userName, password);        
 			((AbstractHttpClient)client).getCredentialsProvider()
 			.setCredentials(new AuthScope(
 					mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"), 
 					mPrefs.getInt(MainActivity.KEY_HOSTPORT, 80)),
 					creds);
-			
-			// Zeroeth, delete any remote items we previously deleted locally.
-			
-			// First, get list of items FROM the remote server
-			try {
-				String pathStr = mPrefs.getString(MainActivity.KEY_HOSTPATH, "/");
-				URI getUri = new URI(String.format("http://%s:%d/%s/%s/tasks", mPrefs.getString(MainActivity.KEY_HOSTNAME, null),
-						Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80")),
-						pathStr.startsWith("/") ? pathStr.substring(1) : pathStr, mPrefs.getString(MainActivity.KEY_USERNAME, null)));
-			Log.d(TAG, "Getting Items From " + getUri);
-			HttpGet httpAccessor = new HttpGet();
-			httpAccessor.setURI(getUri);
-			httpAccessor.addHeader("Content-Type", "application/json");
-			httpAccessor.addHeader("Accept", "application/json");
-			HttpResponse getResponse = client.execute(httpAccessor);	// CONNECT
-			final HttpEntity getResults = getResponse.getEntity();
-			final String tasksStr = EntityUtils.toString(getResults);
-			List<Task> newToDos = jacksonMapper.readValue(tasksStr, List.class);
-			Log.d(TAG, "Done Getting Items, list size = " + newToDos.size());
-		
-			// NOW SEND ANY ITEMS WE'VE CREATED/MODIFIED, going FROM the Task DAO
-			// TO the remote web service.
+			return client;
+		}
 
-			final URI postUri = new URI(String.format("http://%s:%d/%s/new/tasks", 
-					mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"),
-					Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80")),
-					pathStr.startsWith("/") ? pathStr.substring(1) : pathStr));
-			
-			for (Task t : mDao.findAll()) {
+		private void syncUpdateRemotelyChangedTasks(final List<Task> newToDos)
+				throws IOException, JsonParseException, JsonMappingException {
+			for (Object o : newToDos) {
+				System.out.println(o);
+				Task t = jacksonMapper.readValue(o.toString(), Task.class);
+				mDao.insert(t);
+				Log.d(TAG, "Downloaded and inserted this new Task: " + t);
+			}
+		}
+
+		private void syncSendLocalTasks(final long lastSynchTime, HttpClient client, final URI postUri,
+				final List<Task> localTasks)
+				throws JsonProcessingException, UnsupportedEncodingException, IOException, ClientProtocolException {
+			for (Task t : localTasks) {
 
 				AndroidTask at = (AndroidTask) t;
 				// Send this task if it has no remoteId or if it's modified since last sync
@@ -182,25 +215,34 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 				}
 				Log.d(TAG, "UPDATED " + t + ", new  Remote ID = " + t.getId());
 			}
-			
-			// NOW GET ONES UPDATED ON THE SERVER
-			
-			// Order matters to avoid possibility of bouncing items back to the server that we just got
+		}
+		// Step 0
+		private void syncRunDeleteQueue() {
+			// TODO
+		}
+		
+		// Step 1
+		private List<Task> syncGetTasksFromRemote(HttpClient client) throws Exception {
 
-			for (Object o : newToDos) {
-				System.out.println(o);
-				Task t = jacksonMapper.readValue(o.toString(), Task.class);
-				mDao.insert(t);
-				Log.d(TAG, "Downloaded and inserted this new Task: " + t);
-			}
-			
-			// Finally send deletions
-			
-			// Finally, update our timestamp!
-			mPrefs.edit().putLong(LAST_SYNC_TSTAMP, System.currentTimeMillis());
-	
-	} catch (Exception e) {
-		Log.wtf(TAG, "ERROR in synchronization!: " + e, e);
-	}
-}
+			pathStr = mPrefs.getString(MainActivity.KEY_HOSTPATH, "/");
+			URI getUri = new URI(String.format("http://%s:%d/%s/%s/tasks", mPrefs.getString(MainActivity.KEY_HOSTNAME, null),
+					Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80")),
+					pathStr.startsWith("/") ? pathStr.substring(1) : pathStr, mPrefs.getString(MainActivity.KEY_USERNAME, null)));
+			Log.d(TAG, "Getting Items From " + getUri);
+			HttpGet httpAccessor = new HttpGet();
+			httpAccessor.setURI(getUri);
+			httpAccessor.addHeader("Content-Type", "application/json");
+			httpAccessor.addHeader("Accept", "application/json");
+			HttpResponse getResponse = client.execute(httpAccessor);	// CONNECT
+			final HttpEntity getResults = getResponse.getEntity();
+			final String tasksStr = EntityUtils.toString(getResults);
+			@SuppressWarnings("unchecked")
+			List<Task> newToDos = jacksonMapper.readValue(tasksStr, List.class);
+			Log.d(TAG, "Done Getting Items, list size = " + newToDos.size());
+			return newToDos;
+		}
+		
+		private void syncSendDeletions() {
+			// XXX
+		}
 }
