@@ -1,18 +1,20 @@
 package todomore.android;
 
+import static org.mockito.Mockito.mock;
+
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 import com.darwinsys.todo.model.Priority;
 import com.darwinsys.todo.model.Task;
 
 import android.content.ContentValues;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
+@RunWith(RobolectricTestRunner.class)
 public class DaoTest {
 	
 	TaskDao mDao;

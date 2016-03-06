@@ -15,6 +15,14 @@ public class AndroidTask extends Task {
 
 	/** "id" is the field in the remote database, "_id" is the field in the local db */
 	private long _id;
+	
+	public AndroidTask() {
+		// empty
+	}
+	
+	public AndroidTask(String name, String project, String context) {
+		super(name, project, context);
+	}
 
 	@UiHidden
 	public long get_Id() {

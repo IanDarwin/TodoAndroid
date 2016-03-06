@@ -3,7 +3,7 @@ package todomore.android.sync;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -103,6 +103,9 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			Log.d(TAG, "ToDoSyncAdapter.onPerformSync()");
 
 			final long lastSynchTime = mPrefs.getLong(LAST_SYNC_TSTAMP, 0L);
+			ArrayList<Task> toSaveRemotely = new ArrayList<>();
+			ArrayList<Task> toSaveLocally = new ArrayList<>();
+			ArrayList<Task> toDeleteRemotely = new ArrayList<>();
 
 			// Get the username and password, which must be in mPrefs by now
 			String userName = mPrefs.getString("KEY_USERNAME", null);
@@ -123,7 +126,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 				syncRunDeleteQueue();
 
 				// First, get list of items FROM the remote server
-				final List<Task> newToDos = syncGetTasksFromRemote(client);
+				final List<Task> remote = syncGetTasksFromRemote(client);
 
 				// NOW SEND ANY ITEMS WE'VE CREATED/MODIFIED, going FROM the Task DAO
 				// TO the remote web service.
@@ -133,15 +136,17 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 						Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80")),
 						pathStr.startsWith("/") ? pathStr.substring(1) : pathStr));
 
-				final List<Task> localTasks = mDao.findAll();
-				syncSendLocalTasks(lastSynchTime, client, postUri, localTasks);
+				final List<Task> local = mDao.findAll();
+				syncSendLocalTasks(lastSynchTime, client, postUri, local);
 
-				// NOW GET ONES UPDATED ON THE SERVER
+				// NOW RUN LOGIC TO FIGURE OUT WHAT TO PUT WHERE
+				TodoSyncAdapter.onSynchCore(local, remote, 
+						lastSynchTime,
+						toSaveRemotely, toSaveLocally);
 
 				// Order matters - use list we fetched earlier,
 				// to avoid possibility of bouncing items back to the server that we just got
-
-				syncUpdateRemotelyChangedTasks(newToDos);
+				syncUpdateRemotelyChangedTasks(remote);
 
 				// Finally send deletions
 				syncSendDeletions();
@@ -152,6 +157,25 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			} catch (Exception e) {
 				Log.wtf(TAG, "ERROR in synchronization!: " + e, e);
 			}
+		}
+		
+		/**
+		 * DO THE ACTUAL SYNCHRONIZATION LOGIC HERE
+		 * Isolated to just deal with lists, to make testing easier(possible).
+		 * It is expected that the items in toDeleteRemotely will be deleted after
+		 * this method completes, but before lastSyncTime is updated.
+		 * @param local The list of existing Tasks in the local database
+		 * @param remote The list of existing Tasks in the remote database
+		 * @param lastSyncTime  Completion time viewed locally when last synch operation finished.
+		 * @param toSaveLocally  The list of Tasks to be saved (added OR updated) locally
+		 * @param toSaveRemotely The list of Tasks to be saved (added OR updated) remotely
+		 * @param toDeleteRemotely The list of Tasks to be deleted locally.
+		 */
+		public static void onSynchCore(List<Task> local, List<Task> remote, 
+				long lastSyncTime, 
+				List<Task> toSaveLocally, List<Task> toSaveRemotely) {
+			// KLUDGE just to pass tests initially DO NOT USE
+			toSaveRemotely.addAll(local);
 		}
 
 		private HttpClient syncSetupRestConnection(String userName, String password) {
