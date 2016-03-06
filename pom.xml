@@ -12,7 +12,7 @@
 	<url>http://darwinsys.com/TodoMore</url>
 
 	<properties>
-		<javase-version>1.6</javase-version>
+		<javase-version>1.7</javase-version>
 		<platform.version>4.1.1.4</platform.version>
 		<metawidget-version>4.2</metawidget-version>
 		<maven.compiler.source>${javase.version}</maven.compiler.source>
@@ -63,6 +63,12 @@
 
 		<!-- Testing -->
 		<dependency>
+			<groupId>org.robolectric</groupId>
+			<artifactId>robolectric</artifactId>
+			<version>3.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>1.10.19</version>
@@ -77,6 +83,19 @@
 		<outputDirectory>bin/classes</outputDirectory>
 		<testOutputDirectory>bin/classes</testOutputDirectory>
 		<plugins>
+			<!-- Configure the compiler plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5</version>
+				<configuration>
+					<source>${javase.version}</source>
+					<target>${javase.version}</target>
+					<testSource>${javase.version}</testSource>
+					<testTarget>${javase.version}</testTarget>
+				</configuration>
+			</plugin>
+
 			<!-- Use the Android Plugin -->
 			<plugin>
 				<groupId>com.simpligility.maven.plugins</groupId>
@@ -94,7 +113,6 @@
 				</configuration>
 				<extensions>true</extensions>
 			</plugin>
-
 		</plugins>
 		<pluginManagement>
 			<plugins>
