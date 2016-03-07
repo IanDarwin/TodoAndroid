@@ -67,7 +67,7 @@ public class GruntWork {
 		return cv;
 	}
  
-	public static Task cursorToTask(Cursor c) {
+	public static AndroidTask cursorToTask(Cursor c) {
 		if (c.isAfterLast()) {
 			Log.d(TAG, "Cursor has no more rows");
 			return null;
@@ -108,8 +108,8 @@ public class GruntWork {
 		}
 	}
 	
-	public static List<Task> cursorToTaskList(Cursor c) {
-		List<Task> list = new ArrayList<Task>();
+	public static List<AndroidTask> cursorToTaskList(Cursor c) {
+		List<AndroidTask> list = new ArrayList<>();
 		while (c.moveToNext()) {
 			list.add(cursorToTask(c));
 		}
@@ -130,13 +130,13 @@ public class GruntWork {
 	 * "description":"","complete":false}]
 	 * into a proper List<Task>.
 	 */
-	public static List<Task> jsonStringToListTask(String resultStr) {
-		List<Task> ret = new ArrayList<Task>();
+	public static List<AndroidTask> jsonStringToListTask(String resultStr) {
+		List<AndroidTask> ret = new ArrayList<>();
 		try {
 			JSONArray array = (JSONArray) new JSONTokener(resultStr).nextValue();
 			for (int i = 0; i < array.length(); i++) {
 				JSONObject o = array.getJSONObject(i);
-				Task t = new AndroidTask();
+				AndroidTask t = new AndroidTask();
 				t.setId(o.getLong("id"));
 				t.setPriority(Priority.valueOf(o.getString("priority")));
 				t.setStatus(Status.valueOf(o.getString("status")));

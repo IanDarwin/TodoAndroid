@@ -3,8 +3,6 @@ package todomore.android;
 import org.metawidget.android.widget.AndroidMetawidget;
 import org.metawidget.android.widget.widgetprocessor.binding.simple.SimpleBindingProcessor;
 
-import com.darwinsys.todo.model.Task;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,7 +18,7 @@ import android.widget.Toast;
 public class DetailsActivity extends Activity {
 
 	private static final String TAG = DetailsActivity.class.getSimpleName();
-	private Task mTask;
+	private AndroidTask mTask;
 	private AndroidMetawidget mMetawidget;
 	private Button enableEditButton;
 

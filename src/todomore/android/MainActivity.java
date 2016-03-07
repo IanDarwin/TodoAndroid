@@ -73,7 +73,7 @@ public class MainActivity extends Activity {
 	
 	// Data
 	List<String> fullTitlesList;
-	List<Task> fullTaskList;
+	List<AndroidTask> fullTaskList;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -257,15 +257,15 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	private class SendObjectAsyncTask extends AsyncTask<Task, Void, Long> {
+	private class SendObjectAsyncTask extends AsyncTask<AndroidTask, Void, Long> {
 		final ObjectMapper jacksonMapper = new ObjectMapper();
 
 		@Override
-		protected Long doInBackground(Task... params) {
+		protected Long doInBackground(AndroidTask... params) {
 			// ensureLogin();
 
 			// The number shalle be one...
-			Task t = params[0];
+			AndroidTask t = params[0];
 			Log.d(TAG, "Starting TODO send of task " + t + " for user " + mPrefs.getString(KEY_USERNAME, null));
 
 			HttpClient client = new DefaultHttpClient();
@@ -324,10 +324,10 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	private class GetListAsyncTask extends AsyncTask<Void, Void, List<Task>> {
+	private class GetListAsyncTask extends AsyncTask<Void, Void, List<AndroidTask>> {
 		
 		@Override
-		protected List<Task> doInBackground(Void... params) {
+		protected List<AndroidTask> doInBackground(Void... params) {
 			Log.d(TAG, "Starting TODO list-fetch for " + mPrefs.getString(KEY_USERNAME, null));
 
 			HttpClient client = new DefaultHttpClient();
@@ -365,7 +365,7 @@ public class MainActivity extends Activity {
 		}
 
 		@Override
-		protected void onPostExecute(List<Task> list) {
+		protected void onPostExecute(List<AndroidTask> list) {
 			fullTitlesList = new ArrayList<String>();
 			for (Task t : list) {
 				fullTitlesList.add(t.getName());

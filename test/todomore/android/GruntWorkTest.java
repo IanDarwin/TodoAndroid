@@ -8,7 +8,6 @@ import java.util.List;
 import org.junit.Test;
 
 import com.darwinsys.todo.model.Priority;
-import com.darwinsys.todo.model.Task;
 
 public class GruntWorkTest {
 
@@ -32,7 +31,7 @@ public class GruntWorkTest {
 				+ "\"completedDate\":null,\"modified\":1448312330383,"
 				+ "\"description\":\"\",\"complete\":false}]";
 
-		List<Task> actual = GruntWork.jsonStringToListTask(input);
+		List<AndroidTask> actual = GruntWork.jsonStringToListTask(input);
 		assertEquals(3, actual.size());
 		assertEquals("TEST 2", actual.get(0).getName());
 		assertSame(Priority.High, actual.get(0).getPriority());

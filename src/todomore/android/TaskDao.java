@@ -2,8 +2,6 @@ package todomore.android;
 
 import java.util.List;
 
-import com.darwinsys.todo.model.Task;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -31,7 +29,7 @@ public class TaskDao {
 	}
 	
 	/** C: Inserts a new object */
-	public long insert(Task t) {
+	public long insert(AndroidTask t) {
 		t.setModified(System.currentTimeMillis());
 		ContentValues cv = GruntWork.taskToContentValuesWithout_ID(t);
 		Log.d(TAG, "Inserting task " + t);
@@ -50,23 +48,21 @@ public class TaskDao {
 	}
 	
 	/** R: Find by id */
-	Task findById(long id) {
+	AndroidTask findById(long id) {
 		Cursor c = db.query(TABLE_TODO, null, "_id = ?", new String[]{Long.toString(id)}, null, null, null);
 		c.moveToFirst();
 		return GruntWork.cursorToTask(c);
 	}
 	
 	/** R: Find All */
-	public List<Task> findAll() {
+	public List<AndroidTask> findAll() {
 		Cursor c = db.query(TABLE_TODO, null, null, null, null, null, "priority asc, name asc");
 		return GruntWork.cursorToTaskList(c);
 	}
 	
 	/** U: Update */
-	public boolean update(Task t) {
-		if (!(t instanceof AndroidTask)) {
-			throw new RuntimeException("Update but Task has no _id!");
-		}
+	public boolean update(AndroidTask t) {
+
 		long _id = ((AndroidTask) t).get_Id();
 		t.setModified(System.currentTimeMillis());
 		int rc = db.update(TABLE_TODO, GruntWork.taskToContentValues(t), "_id = ?", new String[]{Long.toString(_id)});
