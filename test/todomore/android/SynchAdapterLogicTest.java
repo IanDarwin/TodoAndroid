@@ -32,11 +32,17 @@ public class SynchAdapterLogicTest {
 	public void configureLists() {
 		local = new ArrayList<>();
 		remote  = new ArrayList<>();
-		// Moderator
-		lastSyncTime = System.currentTimeMillis();
 		// Outputs
 		toSaveRemotely  = new ArrayList<>();
 		toSaveLocally  = new ArrayList<>();
+		
+		lastSyncTime = System.currentTimeMillis();
+		// Let the clock tick so mtimes are after fake synch time used in tests
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// Can't happen
+		}
 		
 		// Test objects
 		localTaskWithBothIds = new AndroidTask("localTaskWithBothIds", null, "Writing");
@@ -48,13 +54,6 @@ public class SynchAdapterLogicTest {
 		
 		aRemoteTask = new AndroidTask("remoteTask", "Upgrades", "Work");
 		aRemoteTask.setId(54321);
-		
-		// Let the clock tick so mtimes are before fake synch time used in tests
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			// Can't happen
-		}
 	}
 
 	@Test
@@ -90,7 +89,21 @@ public class SynchAdapterLogicTest {
 		assertTrue(toSaveRemotely.contains(localTaskWithBothIds));
 		assertEquals("Size", 2, toSaveRemotely.size());
 	}
+	
+	@Test
+	public void testSaveNewRemoteItem() {
+		remote.add(aRemoteTask);
+		TodoSyncAdapter.algorithm(local, remote, lastSyncTime, toSaveLocally, toSaveRemotely);
+		assertTrue(toSaveLocally.contains(aRemoteTask));
+	}
 
-
+	@Test
+	public void testSaveModifiedRemoteItem() {
+		aRemoteTask.set_Id(222); // So it won't be saved for not having a local ID
+		aRemoteTask.setModified(System.currentTimeMillis() + 1000); // Should be saved for mtime
+		remote.add(aRemoteTask);
+		TodoSyncAdapter.algorithm(local, remote, lastSyncTime, toSaveLocally, toSaveRemotely);
+		assertTrue(toSaveLocally.contains(aRemoteTask));
+	}
 }
 
