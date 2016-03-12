@@ -87,10 +87,12 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	private boolean isSynchEnabled() {
 		Log.d(TAG, "TodoSyncAdapter.synchIsEnabled()");
 		if (!mPrefs.getBoolean(MainActivity.KEY_ENABLE_SYNCH, false)) {
+			System.out.println("TodoSyncAdapter.isSynchEnabled(): FAIL ON B " + MainActivity.KEY_ENABLE_SYNCH);
 			return false;
 		}
 		for (String k : keys) {
 			if (mPrefs.getString(k, null) == null) {
+				System.out.println("TodoSyncAdapter.isSynchEnabled(): FAIL ON S " + k);
 				return false;
 			};
 		}
@@ -218,7 +220,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		((AbstractHttpClient)client).getCredentialsProvider()
 		.setCredentials(new AuthScope(
 				mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"), 
-				mPrefs.getInt(MainActivity.KEY_HOSTPORT, 80)),
+				Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80"))),
 				creds);
 		return client;
 	}

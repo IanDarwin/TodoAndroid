@@ -59,13 +59,15 @@ public class MainActivity extends Activity {
 	private ListView mListView;
 	private int ACTIVITY_ID_LOGIN;
 	private static SharedPreferences mPrefs;
-	// Keys for mPrefs lookups
-	public static String KEY_USERNAME;
-	public static String KEY_PASSWORD;
-	public static String KEY_HOSTNAME;
-	public static String KEY_HOSTPORT;
-	public static String KEY_HOSTPATH;
-	public static String KEY_ENABLE_SYNCH ;
+	// Keys for mPrefs lookups - Must be in "sync" with values/keys.xml!
+	// But must be initted here cuz used statically from outside app by SyncManager,
+	// and our onCreate() will not have been called.
+	public static String KEY_USERNAME = "KEY_USERNAME";
+	public static String KEY_PASSWORD = "KEY_PASSWORD";
+	public static String KEY_HOSTNAME = "KEY_HOSTNAME";
+	public static String KEY_HOSTPORT = "KEY_HOSTPORT";
+	public static String KEY_HOSTPATH = "KEY_HOSTPATH";
+	public static String KEY_ENABLE_SYNCH = "KEY_ENABLE_SYNCH";
 
 	/** The account name */
     public static final String ACCOUNT = "account";
@@ -105,12 +107,6 @@ public class MainActivity extends Activity {
 		prioSpinner.setSelection(Priority.High.ordinal());
 
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-		KEY_ENABLE_SYNCH = getString(R.string.key_enable_synch);
-		KEY_USERNAME = getString(R.string.key_username);
-		KEY_PASSWORD = getString(R.string.key_password);
-		KEY_HOSTNAME = getString(R.string.key_hostname);
-		KEY_HOSTPORT = getString(R.string.key_hostport);
-		KEY_HOSTPATH = getString(R.string.key_hostpath);
 
 		mAccount = createSyncAccount(this);
 		enableSynching(mPrefs.getBoolean(KEY_ENABLE_SYNCH, false));
