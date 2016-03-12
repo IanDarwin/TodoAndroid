@@ -10,8 +10,11 @@ The Synch Adapter part is close to working, but don'to use it unless you (a) hav
 The SyncAdapter starts running but hasn't been tested end-to-end yet, so don't run it against
 a database of real TODOs, unless you have a backup.
 
-Next up in this area will be a delete feature; it's harder because you have to atomically commit in two
-places, and you can't.
+Next up in this area will be a delete feature; it's harder because you have to atomically commit 
+in two places, and you can't (unless you implement full JDBC and a distributed transaction
+manager...). Right now delete is local only. Plan is to delete locally AND queue deletions,
+and have the sync adapter rm them remotely via REST before getting a list of the "rest" of the 
+remote todo's.
 
 == Security Warning
 
