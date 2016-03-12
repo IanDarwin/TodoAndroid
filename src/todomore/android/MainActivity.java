@@ -109,7 +109,7 @@ public class MainActivity extends Activity {
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 		mAccount = createSyncAccount(this);
-		enableSynching(mPrefs.getBoolean(KEY_ENABLE_SYNCH, false));
+		enableSynching(mPrefs.getBoolean(KEY_ENABLE_SYNCH, true));
 		
 		mPrefs.registerOnSharedPreferenceChangeListener(new MyPrefsListener());
 		loadListFromDB();
@@ -150,21 +150,26 @@ public class MainActivity extends Activity {
      * @param context The application context
      */
     public Account createSyncAccount(Context context) {
-        // Create the account type and default account
-        Account newAccount = new Account(ACCOUNT, getString(R.string.accountType));
-        // Get the Android account manager
-        AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
-        /*
-         * Add the account and account type, no password or user data
-         * If successful, return the Account object, otherwise report an error.
-         */
-        Log.d(TAG, "Adding Account Explicitly");
-        if (accountManager.addAccountExplicitly(newAccount, "top secret", null)) {
-            Log.d(TAG, "Added Account Explicitly Successfully");
-        } else {
-        	Log.d(TAG, "Account exists, or, other error");
-        }
-        return newAccount;
+    	// Get the Android account manager
+    	AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
+    	Account[] accounts = accountManager.getAccountsByType(
+    			getString(R.string.accountType));
+    	if (accounts.length == 0) {
+    		// Create the account type and default account
+    		Account newAccount = new Account(ACCOUNT, getString(R.string.accountType));
+    		/*
+    		 * Add the account and account type, no password or user data yet.
+    		 * If successful, return the Account object, otherwise report an error.
+    		 */
+    		if (accountManager.addAccountExplicitly(newAccount, "top secret", null)) {
+    			Log.d(TAG, "Add Account Explicitly: Successfully");
+    			return newAccount;
+    		} else {
+    			throw new IllegalStateException("Add Account Explicitly: Account exists, or, other error");
+    		}
+    	} else {
+    		return accounts[0];
+    	}
     }
 
 	@Override
