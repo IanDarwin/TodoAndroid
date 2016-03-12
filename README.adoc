@@ -1,12 +1,14 @@
 = TodoAndroid
 
-This will be the TodoMore Android client.
+This is the TodoMore Android client.
 
 == Unfinished Warning
 
-As of today it certainly is not fully working - don't try to use it unless you can code the parts that are missing.
-The next bit push is that the SyncAdapter starts but isn't really coded yet, so don't run it against
-a database of real TODOs.
+As of today it works fine as a local (on-device) To-do list manager.
+The Synch Adapter part is close to working, but don'to use it unless you (a) have a backup and 
+(b) can code the parts that are missing.
+The SyncAdapter starts running but hasn't been tested end-to-end yet, so don't run it against
+a database of real TODOs, unless you have a backup.
 
 Next up in this area will be a delete feature; it's harder because you have to atomically commit in two
 places, and you can't.
