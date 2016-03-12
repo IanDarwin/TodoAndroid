@@ -1,5 +1,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <CheckBoxPreference
+        android:key="@string/key_enable_synch"
+        android:title="Enable Sync"
+        android:hint="Sync"
+        />
+    
 	<PreferenceCategory 
 		android:title="TodoMore Account">
 		
@@ -24,7 +30,6 @@
 			android:key="@string/key_hostname"
 			android:title="Host Name"
 			android:hint="hostName"
-			android:defaultValue="10.0.2.2"
 		/>
 
 		<EditTextPreference

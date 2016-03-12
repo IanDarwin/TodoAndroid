@@ -13,7 +13,7 @@ import android.content.Context;
  */
 public class MockTaskDao extends TaskDao {
 
-	private List<AndroidTask> tasks = new ArrayList<>();
+	private List<AndroidTask> tasks = new ArrayList<AndroidTask>();
 	
 	public MockTaskDao(Context context) {
 		super(context);

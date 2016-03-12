@@ -14,7 +14,11 @@ import android.widget.Toast;
  */
 public class PrefsActivity extends Activity {
 
-    @Override
+	public static final String TAG = PrefsActivity.class.getName();
+	
+    static final int DEFAULT_MINUTES_INTERVAL = 60;
+
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
@@ -23,7 +27,7 @@ public class PrefsActivity extends Activity {
         
         getFragmentManager().beginTransaction()
         	.replace(android.R.id.content, new PrefsFragment())
-        	.commit();		
+        	.commit();
     }
     
     @Override
@@ -51,7 +55,6 @@ public class PrefsActivity extends Activity {
 	}
 
 	public static class PrefsFragment extends PreferenceFragment {
-    	
     	public void onCreate(Bundle savedInstanceState) {
     		super.onCreate(savedInstanceState);
     		addPreferencesFromResource(R.layout.prefs);

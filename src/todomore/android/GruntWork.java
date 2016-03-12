@@ -109,7 +109,7 @@ public class GruntWork {
 	}
 	
 	public static List<AndroidTask> cursorToTaskList(Cursor c) {
-		List<AndroidTask> list = new ArrayList<>();
+		List<AndroidTask> list = new ArrayList<AndroidTask>();
 		while (c.moveToNext()) {
 			list.add(cursorToTask(c));
 		}
@@ -131,7 +131,7 @@ public class GruntWork {
 	 * into a proper List<Task>.
 	 */
 	public static List<AndroidTask> jsonStringToListTask(String resultStr) {
-		List<AndroidTask> ret = new ArrayList<>();
+		List<AndroidTask> ret = new ArrayList<AndroidTask>();
 		try {
 			JSONArray array = (JSONArray) new JSONTokener(resultStr).nextValue();
 			for (int i = 0; i < array.length(); i++) {

@@ -53,7 +53,7 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
-	public static final String TAG = MainActivity.class.getSimpleName();
+	public static final String TAG = MainActivity.class.getName();
 	private EditText addTF;
 	private Spinner prioSpinner;
 	private ListView mListView;
@@ -65,11 +65,12 @@ public class MainActivity extends Activity {
 	public static String KEY_HOSTNAME;
 	public static String KEY_HOSTPORT;
 	public static String KEY_HOSTPATH;
+	public static String KEY_ENABLE_SYNCH ;
 
 	/** The account name */
     public static final String ACCOUNT = "account";
     /* The account */
-	private Account mAccount;
+	private static Account mAccount;
 	
 	// Data
 	List<String> fullTitlesList;
@@ -104,23 +105,52 @@ public class MainActivity extends Activity {
 		prioSpinner.setSelection(Priority.High.ordinal());
 
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+		KEY_ENABLE_SYNCH = getString(R.string.key_enable_synch);
 		KEY_USERNAME = getString(R.string.key_username);
 		KEY_PASSWORD = getString(R.string.key_password);
 		KEY_HOSTNAME = getString(R.string.key_hostname);
 		KEY_HOSTPORT = getString(R.string.key_hostport);
 		KEY_HOSTPATH = getString(R.string.key_hostpath);
 
-		mAccount = CreateSyncAccount(this);
+		mAccount = createSyncAccount(this);
+		enableSynching(mPrefs.getBoolean(KEY_ENABLE_SYNCH, false));
 		
+		mPrefs.registerOnSharedPreferenceChangeListener(new MyPrefsListener());
 		loadListFromDB();
 	}
 	
+	private class MyPrefsListener implements SharedPreferences.OnSharedPreferenceChangeListener {
+		public void onSharedPreferenceChanged (SharedPreferences sharedPreferences, String key) {
+			if (MainActivity.KEY_ENABLE_SYNCH.equals(key)) {
+				Log.d(TAG, "MainActivity.MyPrefsListener.onSharedPreferenceChanged(SYNCH)");
+				enableSynching(sharedPreferences.getBoolean(MainActivity.KEY_ENABLE_SYNCH, false));
+			}
+		}
+	}
+
+	void enableSynching(boolean enable) {
+		Log.d(TAG, "MainActivity.enableSynching(): " + enable);
+		String authority = getString(R.string.datasync_provider_authority);
+		Bundle extras = new Bundle();
+		if (enable) {
+			// Force immediate - will probably remove this later
+			Bundle immedExtras = new Bundle();
+			immedExtras.putBoolean("SYNC_EXTRAS_MANUAL", true);
+			ContentResolver.requestSync(mAccount, authority, immedExtras);
+			extras.clear();
+			// Request hourly synching - TODO add a prefs for the interval.
+			long pollFrequency = PrefsActivity.DEFAULT_MINUTES_INTERVAL * 60;
+			ContentResolver.addPeriodicSync(mAccount, authority, extras, pollFrequency);
+		} else {
+			ContentResolver.removePeriodicSync(mAccount, authority, extras);
+		}
+	}
 	/**
      * Create a new dummy account for the sync adapter.
      * @author Adapted from http://developer.android.com/ page on this topic.
      * @param context The application context
      */
-    public Account CreateSyncAccount(Context context) {
+    public Account createSyncAccount(Context context) {
         // Create the account type and default account
         Account newAccount = new Account(ACCOUNT, getString(R.string.accountType));
         // Get the Android account manager
@@ -257,6 +287,7 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	// This code must die...
 	private class SendObjectAsyncTask extends AsyncTask<AndroidTask, Void, Long> {
 		final ObjectMapper jacksonMapper = new ObjectMapper();
 
@@ -269,7 +300,9 @@ public class MainActivity extends Activity {
 			Log.d(TAG, "Starting TODO send of task " + t + " for user " + mPrefs.getString(KEY_USERNAME, null));
 
 			HttpClient client = new DefaultHttpClient();
-			Credentials creds = new UsernamePasswordCredentials(mPrefs.getString(KEY_USERNAME, null), mPrefs.getString(KEY_PASSWORD, null));
+			Credentials creds = new UsernamePasswordCredentials(
+					mPrefs.getString(KEY_USERNAME, null), 
+					mPrefs.getString(KEY_PASSWORD, null));
 			((AbstractHttpClient) client).getCredentialsProvider()
 					.setCredentials(new AuthScope(mPrefs.getString(KEY_HOSTNAME, "10.0.2.2"),
 							Integer.parseInt(mPrefs.getString(KEY_HOSTPORT, "80"))), creds);

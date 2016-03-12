@@ -50,7 +50,7 @@ import todomore.android.TaskDao;
  */
 public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 
-	private final static String TAG = TodoSyncAdapter.class.getSimpleName();
+	private final static String TAG = TodoSyncAdapter.class.getName();
 
 	private final static String LAST_SYNC_TSTAMP = "last sync";
 	private long lastSynchTime = 0;
@@ -58,8 +58,8 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	private SharedPreferences mPrefs;
 	private TaskDao mDao;
 
-	ObjectMapper jacksonMapper = new ObjectMapper();
-
+	private ObjectMapper jacksonMapper = new ObjectMapper();
+	private DefaultHttpClient client;
 	private String pathStr;
 
 	public TodoSyncAdapter(Context context, SharedPreferences prefs, boolean autoInitialize) {
@@ -75,6 +75,24 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 
 		this.mPrefs = prefs;
 		mDao = new TaskDao(context);
+	}
+	
+	final String[] keys = {
+			MainActivity.KEY_HOSTNAME,
+			MainActivity.KEY_HOSTPATH,
+			MainActivity.KEY_USERNAME,
+			MainActivity.KEY_PASSWORD
+	};
+	boolean synchIsEnabled() {
+		if (!mPrefs.getBoolean(MainActivity.KEY_ENABLE_SYNCH, false)) {
+			return false;
+		}
+		for (String k : keys) {
+			if (mPrefs.getString(k, null) == null) {
+				return false;
+			};
+		}
+		return true;
 	}
 
 	/**
@@ -102,10 +120,15 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			ContentProviderClient provider, 
 			SyncResult syncResult) {
 		Log.d(TAG, "ToDoSyncAdapter.onPerformSync()");
+		
+		if (!synchIsEnabled()) {
+			Log.d(TAG,  "onPerformSync called but not enabled");
+			return;
+		}
 
 		lastSynchTime = mPrefs.getLong(LAST_SYNC_TSTAMP, 0L);
-		ArrayList<AndroidTask> toSaveRemotely = new ArrayList<>();
-		ArrayList<AndroidTask> toSaveLocally = new ArrayList<>();
+		ArrayList<AndroidTask> toSaveRemotely = new ArrayList<AndroidTask>();
+		ArrayList<AndroidTask> toSaveLocally = new ArrayList<AndroidTask>();
 
 		// Get the username and password, which must be in mPrefs by now
 		String userName = mPrefs.getString("KEY_USERNAME", null);
@@ -138,7 +161,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 
 			// Order matters - use list we fetched earlier,
 			// to avoid possibility of bouncing items back to the server that we just got
-			synchSaveOrUpdateLocalTasks(toSaveRemotely);
+			synchSaveOrUpdateRemoteTasks(toSaveRemotely);
 
 			// Finally, update our timestamp!
 			mPrefs.edit().putLong(LAST_SYNC_TSTAMP, System.currentTimeMillis());
@@ -149,9 +172,10 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	}
 
 	/**
-	 * THE ACTUAL SYNCHRONIZATION LOGIC IS HERE:
+	 * THE LOGIC OF SYNCHRONIZATION IS HERE:
 	 * If the object exists here but not remotely, add to toSaveRemotely;
 	 * If the object exists here and is modified more recently than lastSynchTime, ditto;
+	 * Then the same for objects that exist remotely but not here, or, remotely and modified.
 	 * Isolated to just deal with Lists, to make testing easier(possible).
 	 * @param local The list of existing Tasks in the local database
 	 * @param remote The list of existing Tasks in the remote database
@@ -178,7 +202,6 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 
 		// Compute the list of local tasks that must be sent to the server.
 		for (AndroidTask t : local) {
-			System.out.println(t.getName() + " " + t.getModified() + "; last sync=" + lastSynchTime);
 			if (t.getRemoteId() == 0 || (t.getModified() > lastSynchTime)) {
 				toSaveRemotely.add(t);
 				continue;
@@ -187,7 +210,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	}
 
 	private HttpClient syncSetupRestConnection(String userName, String password) {
-		final DefaultHttpClient client = new DefaultHttpClient();
+		client = new DefaultHttpClient();
 		Credentials creds = new UsernamePasswordCredentials(userName, password);        
 		((AbstractHttpClient)client).getCredentialsProvider()
 		.setCredentials(new AuthScope(
@@ -224,21 +247,21 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	 * @throws URISyntaxException 
 	 * @throws NumberFormatException 
 	 */
-	private void syncSendLocalTasks(HttpClient client,
-			final List<AndroidTask> toSend)
+	private void synchSaveOrUpdateRemoteTasks(final List<AndroidTask> toSend)
 					throws JsonProcessingException, UnsupportedEncodingException, IOException, ClientProtocolException, NumberFormatException, URISyntaxException {
+
 		for (AndroidTask at : toSend) {
 
-			final URI postUri = new URI(String.format("http://%s:%d/%s/new/tasks", 
+			final URI postUriNew = new URI(String.format("http://%s:%d/%s/new/tasks", 
 					mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"),
 					Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80")),
 					pathStr.startsWith("/") ? pathStr.substring(1) : pathStr));
 
 			// Send each task in the list
 
-			Log.d(TAG, "Connecting to server for " + postUri);
+			Log.d(TAG, "Connecting to server for " + postUriNew);
 			HttpPost postAccessor = new HttpPost();
-			postAccessor.setURI(postUri);
+			postAccessor.setURI(postUriNew);
 			postAccessor.addHeader("Content-Type", "application/json");
 			postAccessor.addHeader("Accept", "application/json");
 

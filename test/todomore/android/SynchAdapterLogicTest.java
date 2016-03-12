@@ -30,11 +30,11 @@ public class SynchAdapterLogicTest {
 	// Configure the List<Task>s
 	@Before
 	public void configureLists() {
-		local = new ArrayList<>();
-		remote  = new ArrayList<>();
+		local = new ArrayList<AndroidTask>();
+		remote  = new ArrayList<AndroidTask>();
 		// Outputs
-		toSaveRemotely  = new ArrayList<>();
-		toSaveLocally  = new ArrayList<>();
+		toSaveRemotely  = new ArrayList<AndroidTask>();
+		toSaveLocally  = new ArrayList<AndroidTask>();
 		
 		lastSyncTime = System.currentTimeMillis();
 		// Let the clock tick so mtimes are after fake synch time used in tests
