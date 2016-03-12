@@ -5,6 +5,7 @@ import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 /**
  * Totally useless dummy authenticator, just required by Android.
@@ -12,6 +13,7 @@ import android.os.Bundle;
  */
 public class TodoDummyAuthenticator extends AbstractAccountAuthenticator {
     
+	private final static String TAG = "TodoDummyAuthenticator";
 	public TodoDummyAuthenticator(Context context) {
         super(context);
     }
@@ -24,6 +26,7 @@ public class TodoDummyAuthenticator extends AbstractAccountAuthenticator {
 	@Override
 	public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType,
 			String[] requiredFeatures, Bundle options) {
+		Log.d(TAG, "TodoDummyAuthenticator.addAccount()");
 		return null;
 	}
 

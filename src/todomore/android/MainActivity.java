@@ -122,8 +122,9 @@ public class MainActivity extends Activity {
 	private class MyPrefsListener implements SharedPreferences.OnSharedPreferenceChangeListener {
 		public void onSharedPreferenceChanged (SharedPreferences sharedPreferences, String key) {
 			if (MainActivity.KEY_ENABLE_SYNCH.equals(key)) {
-				Log.d(TAG, "MainActivity.MyPrefsListener.onSharedPreferenceChanged(SYNCH)");
-				enableSynching(sharedPreferences.getBoolean(MainActivity.KEY_ENABLE_SYNCH, false));
+				final boolean enable = sharedPreferences.getBoolean(MainActivity.KEY_ENABLE_SYNCH, false);
+				Log.d(TAG, "MainActivity.MyPrefsListener.onSharedPreferenceChanged(SYNCH, " + enable + ")");
+				enableSynching(enable);
 			}
 		}
 	}
@@ -133,16 +134,18 @@ public class MainActivity extends Activity {
 		String authority = getString(R.string.datasync_provider_authority);
 		Bundle extras = new Bundle();
 		if (enable) {
+			ContentResolver.setSyncAutomatically(mAccount, authority, true);
 			// Force immediate - will probably remove this later
 			Bundle immedExtras = new Bundle();
 			immedExtras.putBoolean("SYNC_EXTRAS_MANUAL", true);
 			ContentResolver.requestSync(mAccount, authority, immedExtras);
-			extras.clear();
+
 			// Request hourly synching - TODO add a prefs for the interval.
 			long pollFrequency = PrefsActivity.DEFAULT_MINUTES_INTERVAL * 60;
 			ContentResolver.addPeriodicSync(mAccount, authority, extras, pollFrequency);
 		} else {
-			ContentResolver.removePeriodicSync(mAccount, authority, extras);
+			// Cancel all outstanding syncs until further notice
+			ContentResolver.cancelSync(mAccount, authority);
 		}
 	}
 	/**
@@ -248,13 +251,6 @@ public class MainActivity extends Activity {
 
 		// And update the list
 		loadListFromDB();
-	}
-
-	private boolean isLoginSet() {
-		String userName = mPrefs.getString(KEY_USERNAME, null);
-		String password = mPrefs.getString(KEY_PASSWORD, null);
-		return userName != null && !userName.isEmpty() && 
-				password != null && !userName.isEmpty();
 	}
 
 	@Override

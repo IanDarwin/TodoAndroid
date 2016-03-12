@@ -83,7 +83,9 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			MainActivity.KEY_USERNAME,
 			MainActivity.KEY_PASSWORD
 	};
-	boolean synchIsEnabled() {
+	
+	private boolean isSynchEnabled() {
+		Log.d(TAG, "TodoSyncAdapter.synchIsEnabled()");
 		if (!mPrefs.getBoolean(MainActivity.KEY_ENABLE_SYNCH, false)) {
 			return false;
 		}
@@ -121,8 +123,8 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			SyncResult syncResult) {
 		Log.d(TAG, "ToDoSyncAdapter.onPerformSync()");
 		
-		if (!synchIsEnabled()) {
-			Log.d(TAG,  "onPerformSync called but not enabled");
+		if (!isSynchEnabled()) {
+			Log.d(TAG, "onPerformSync called but not enabled");
 			return;
 		}
 
@@ -159,15 +161,16 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			
 			synchSaveOrUpdateLocalTasks(toSaveLocally);
 
-			// Order matters - use list we fetched earlier,
-			// to avoid possibility of bouncing items back to the server that we just got
 			synchSaveOrUpdateRemoteTasks(toSaveRemotely);
 
-			// Finally, update our timestamp!
+			// Finally, update our synch timestamp!
 			mPrefs.edit().putLong(LAST_SYNC_TSTAMP, System.currentTimeMillis());
 
+			syncResult.clear();		// success
 		} catch (Exception e) {
 			Log.wtf(TAG, "ERROR in synchronization!: " + e, e);
+			e.printStackTrace();
+			syncResult.databaseError = true;
 		}
 	}
 
