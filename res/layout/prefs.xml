@@ -40,6 +40,12 @@
 			android:defaultValue="80"
 		/>
 		
+		<CheckBoxPreference
+        		android:key="@string/key_host_https"
+        		android:title="Use HTTPS"
+        		android:default="true"
+        		/>
+		
 		<EditTextPreference
 			android:key="@string/key_hostpath"
 			android:title="Host Path"
