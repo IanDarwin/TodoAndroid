@@ -8,5 +8,5 @@
     <string translatable="false" name="key_hostname">KEY_HOSTNAME</string>
     <string translatable="false" name="key_hostport">KEY_HOSTPORT</string>
     <string translatable="false" name="key_hostpath">KEY_HOSTPATH</string>
-    
+    <string translatable="false" name="key_host_https">KEY_HOST_HTTPS</string>
 </resources>
