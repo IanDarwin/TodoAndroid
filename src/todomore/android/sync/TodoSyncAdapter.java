@@ -98,6 +98,11 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 		return true;
 	}
+	
+	private boolean isHttps() {
+		Log.d(TAG, "TodoSyncAdapter.isHttps()");
+		return mPrefs.getBoolean(MainActivity.KEY_HOST_HTTPS, true);
+	}
 
 	/**
 	 * Do the actual synch. One possible algorithm would be:
@@ -216,12 +221,15 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 
 	private HttpClient syncSetupRestConnection(String userName, String password) {
 		client = new DefaultHttpClient();
-		Credentials creds = new UsernamePasswordCredentials(userName, password);        
+		Credentials creds = new UsernamePasswordCredentials(userName, password);
+		int port = Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80"));
+		if (port == 80 && is_https()) {
+			port = 443;
+		}
 		((AbstractHttpClient)client).getCredentialsProvider()
-		.setCredentials(new AuthScope(
-				mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"), 
-				Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80"))),
-				creds);
+		.setCredentials(
+			new AuthScope(mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"), port),
+			creds);
 		return client;
 	}
 
@@ -256,8 +264,9 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 					throws JsonProcessingException, UnsupportedEncodingException, IOException, ClientProtocolException, NumberFormatException, URISyntaxException {
 
 		for (AndroidTask at : toSend) {
-
-			final URI postUriNew = new URI(String.format("http://%s:%d/%s/new/tasks", 
+			String proto = isHttps() ? "https" : "http";
+			final URI postUriNew = new URI(String.format("%s://%s:%d/%s/new/tasks",
+					protocol,
 					mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"),
 					Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80")),
 					pathStr.startsWith("/") ? pathStr.substring(1) : pathStr));
@@ -304,7 +313,10 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	private List<AndroidTask> syncGetTasksFromRemote(HttpClient client) throws Exception {
 
 		pathStr = mPrefs.getString(MainActivity.KEY_HOSTPATH, "/");
-		URI getUri = new URI(String.format("http://%s:%d/%s/%s/tasks", mPrefs.getString(MainActivity.KEY_HOSTNAME, null),
+		String proto = isHttps() ? "https" : "http";
+		URI getUri = new URI(String.format("%s://%s:%d/%s/%s/tasks",
+				proto,
+				mPrefs.getString(MainActivity.KEY_HOSTNAME, null),
 				Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80")),
 				pathStr.startsWith("/") ? pathStr.substring(1) : pathStr, mPrefs.getString(MainActivity.KEY_USERNAME, null)));
 		Log.d(TAG, "Getting Items From " + getUri);
