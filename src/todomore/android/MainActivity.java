@@ -67,6 +67,7 @@ public class MainActivity extends Activity {
 	public static String KEY_HOSTNAME = "KEY_HOSTNAME";
 	public static String KEY_HOSTPORT = "KEY_HOSTPORT";
 	public static String KEY_HOSTPATH = "KEY_HOSTPATH";
+	public static String KEY_HOST_HTTPS = "KEY_HOST_HTTPS";
 	public static String KEY_ENABLE_SYNCH = "KEY_ENABLE_SYNCH";
 
 	/** The account name */
