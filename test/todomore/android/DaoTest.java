@@ -1,11 +1,11 @@
 package todomore.android;
 
 import static org.mockito.Mockito.mock;
+import static org.junit.Assert.*;
 
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -25,7 +25,7 @@ public class DaoTest {
 		mDao = mock(TaskDao.class);
 	}
 
-	@Test @Ignore
+	@Test
 	public void testFindAll() {
 		AndroidTask t = new AndroidTask();
 		t.setName("Buy a Tesla on the way home");
@@ -40,16 +40,15 @@ public class DaoTest {
     	}
 	}
 	
-	// Can't test w/o Robolectric or Android Unit Test
-//	@Test
-//	public void testCV() {
-//		ContentValues cv = new ContentValues();
-//		cv.put("string", "string");
-//		cv.put("long", 356L);
-//		dump("initial", cv);
-//		cv.remove("long");
-//		assertNull(cv.getAsLong("long"));
-//	}
+	@Test
+	public void testCV() {
+		ContentValues cv = new ContentValues();
+		cv.put("string", "string");
+		cv.put("long", 356L);
+		dump("initial", cv);
+		cv.remove("long");
+		assertNull(cv.getAsLong("long"));
+	}
 	
 	private void dump(String title, ContentValues cv) {
 		System.out.println("---" + title + "---");
