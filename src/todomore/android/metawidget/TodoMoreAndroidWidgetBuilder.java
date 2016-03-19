@@ -5,13 +5,13 @@ import java.util.Map;
 import org.metawidget.android.widget.AndroidMetawidget;
 import org.metawidget.widgetbuilder.iface.WidgetBuilder;
 
+import com.darwinsys.todo.model.Date;
+
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.darwinsys.todo.model.Date;
 
 public class TodoMoreAndroidWidgetBuilder implements WidgetBuilder<View, AndroidMetawidget> {
 
