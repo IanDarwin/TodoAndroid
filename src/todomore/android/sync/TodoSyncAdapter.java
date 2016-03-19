@@ -77,6 +77,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		mDao = new TaskDao(context);
 	}
 	
+	// Keys that must be set for synching to work.
 	final String[] keys = {
 			MainActivity.KEY_HOSTNAME,
 			MainActivity.KEY_HOSTPATH,
@@ -84,7 +85,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			MainActivity.KEY_PASSWORD
 	};
 	
-	private boolean isSynchEnabled() {
+	public boolean isSynchEnabled() {
 		Log.d(TAG, "TodoSyncAdapter.synchIsEnabled()");
 		if (!mPrefs.getBoolean(MainActivity.KEY_ENABLE_SYNCH, false)) {
 			System.out.println("TodoSyncAdapter.isSynchEnabled(): FAIL ON B " + MainActivity.KEY_ENABLE_SYNCH);
@@ -99,7 +100,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		return true;
 	}
 	
-	private boolean isHttps() {
+	public boolean isHttps() {
 		Log.d(TAG, "TodoSyncAdapter.isHttps()");
 		return mPrefs.getBoolean(MainActivity.KEY_HOST_HTTPS, true);
 	}
@@ -303,6 +304,16 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			Log.d(TAG, "UPDATED " + at + ", new  Remote ID = " + at.getId());
 		}
 	}
+	
+	public int getPort() {
+		final int prefsValue = Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "-1"));
+		if (prefsValue == 80 && isHttps())
+			return /* override port# pref with "use https" checkbox */ 443;
+		if (prefsValue == -1) {
+			return isHttps() ? 443 : 80;
+		}
+		return prefsValue;
+	}
 
 	// Step 0
 	private void syncRunDeleteQueue() {
@@ -317,7 +328,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		URI getUri = new URI(String.format("%s://%s:%d/%s/%s/tasks",
 				proto,
 				mPrefs.getString(MainActivity.KEY_HOSTNAME, null),
-				Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80")),
+				getPort(),
 				pathStr.startsWith("/") ? pathStr.substring(1) : pathStr, mPrefs.getString(MainActivity.KEY_USERNAME, null)));
 		Log.d(TAG, "Getting Items From " + getUri);
 		HttpGet httpAccessor = new HttpGet();
