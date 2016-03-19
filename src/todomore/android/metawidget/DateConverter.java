@@ -18,7 +18,7 @@ public class DateConverter implements Converter<Date> {
 	/** Convert from a Date to a String for display */
 	@Override
 	public Object convertForView(View widget, Date value) {
-		System.out.println("DateConverter.convertForView()");
+		// System.out.println("DateConverter.convertForView()");
 		if (value == null) {
 			return null;
 		}
@@ -28,7 +28,7 @@ public class DateConverter implements Converter<Date> {
 	/** Convert from a String in the View to a Date object */
 	@Override
 	public Date convertFromView(View widget, Object value, Class<?> intoClass) {
-		System.out.println("DateConverter.convertFromView()");
+		// System.out.println("DateConverter.convertFromView()");
 		if (value instanceof String) {
 			if (((String) value).isEmpty()) {
 				return null;
