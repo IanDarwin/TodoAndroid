@@ -1,6 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-   	<PreferenceCategory android:title="REST Access">
+   	<PreferenceCategory android:title="Synchronization">
 	    <CheckBoxPreference
 	        android:key="@string/key_enable_synch"
 	        android:title="Enable Sync"
@@ -43,7 +43,8 @@
 
 		<EditTextPreference
 			android:key="@string/key_hostport"
-			android:title="Host Port (-1 for default)"
+			android:title="Host Port"
+			android:hint="port number (-1 for default)"
 			android:inputType="number"
 			android:defaultValue="-1"
 		/>
