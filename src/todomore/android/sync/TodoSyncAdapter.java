@@ -223,7 +223,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		client = new DefaultHttpClient();
 		Credentials creds = new UsernamePasswordCredentials(userName, password);
 		int port = Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80"));
-		if (port == 80 && is_https()) {
+		if (port == 80 && isHttps()) {
 			port = 443;
 		}
 		((AbstractHttpClient)client).getCredentialsProvider()
@@ -266,7 +266,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		for (AndroidTask at : toSend) {
 			String proto = isHttps() ? "https" : "http";
 			final URI postUriNew = new URI(String.format("%s://%s:%d/%s/new/tasks",
-					protocol,
+					proto,
 					mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"),
 					Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80")),
 					pathStr.startsWith("/") ? pathStr.substring(1) : pathStr));

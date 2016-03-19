@@ -43,7 +43,7 @@
 		<CheckBoxPreference
         		android:key="@string/key_host_https"
         		android:title="Use HTTPS"
-        		android:default="true"
+        		android:defaultValue="true"
         		/>
 		
 		<EditTextPreference
