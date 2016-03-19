@@ -1,41 +1,19 @@
 package todomore.android;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.AbstractHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 
 import com.darwinsys.todo.model.Priority;
 import com.darwinsys.todo.model.Status;
 import com.darwinsys.todo.model.Task;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -44,7 +22,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import todomore.android.TodoMoreApplication;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -62,13 +39,14 @@ public class MainActivity extends Activity {
 	// Keys for mPrefs lookups - Must be in "sync" with values/keys.xml!
 	// But must be initted here cuz used statically from outside app by SyncManager,
 	// and our onCreate() will not have been called.
-	public static String KEY_USERNAME = "KEY_USERNAME";
+	public static final String KEY_USERNAME = "KEY_USERNAME";
 	public static String KEY_PASSWORD = "KEY_PASSWORD";
 	public static String KEY_HOSTNAME = "KEY_HOSTNAME";
 	public static String KEY_HOSTPORT = "KEY_HOSTPORT";
 	public static String KEY_HOSTPATH = "KEY_HOSTPATH";
 	public static String KEY_HOST_HTTPS = "KEY_HOST_HTTPS";
 	public static String KEY_ENABLE_SYNCH = "KEY_ENABLE_SYNCH";
+	public static String KEY_SYNC_INTERVAL = "KEY_SYNC_INTERVAL";
 
 	/** The account name */
     public static final String ACCOUNT = "account";
@@ -129,7 +107,6 @@ public class MainActivity extends Activity {
 	void enableSynching(boolean enable) {
 		Log.d(TAG, "MainActivity.enableSynching(): " + enable);
 		String authority = getString(R.string.datasync_provider_authority);
-		Bundle extras = new Bundle();
 		if (enable) {
 			ContentResolver.setSyncAutomatically(mAccount, authority, true);
 			// Force immediate - will probably remove this later
@@ -137,8 +114,9 @@ public class MainActivity extends Activity {
 			immedExtras.putBoolean("SYNC_EXTRAS_MANUAL", true);
 			ContentResolver.requestSync(mAccount, authority, immedExtras);
 
-			// Request hourly synching - TODO add a prefs for the interval.
-			long pollFrequency = PrefsActivity.DEFAULT_MINUTES_INTERVAL * 60;
+			// Request periodic synching
+			Bundle extras = new Bundle();
+			long pollFrequency = Integer.parseInt(mPrefs.getString(KEY_SYNC_INTERVAL, "60")) * 60;
 			ContentResolver.addPeriodicSync(mAccount, authority, extras, pollFrequency);
 		} else {
 			// Cancel all outstanding syncs until further notice
@@ -260,150 +238,6 @@ public class MainActivity extends Activity {
 		if (requestCode != ACTIVITY_ID_LOGIN) {
 			super.onActivityResult(requestCode, resultCode, data);
 			return;
-		}
-	}
-
-	protected static URI makeSendUri(SharedPreferences prefs) {
-		try {
-			String pathStr = prefs.getString(KEY_HOSTPATH, "/");
-			return new URI(String.format("http://%s:%d/%s/new/tasks", 
-					prefs.getString(KEY_HOSTNAME, null),
-					Integer.parseInt(prefs.getString(KEY_HOSTPORT, "80")),
-					pathStr.startsWith("/") ? pathStr.substring(1) : pathStr));
-		} catch (URISyntaxException e) {
-			throw new RuntimeException("Failed to create path! " + e, e);
-		}
-	}
-	protected static URI makeListUri(SharedPreferences prefs) {
-		try {
-			String pathStr = prefs.getString(KEY_HOSTPATH, "/");
-			return new URI(String.format("http://%s:%d/%s/%s/tasks", prefs.getString(KEY_HOSTNAME, null),
-					Integer.parseInt(prefs.getString(KEY_HOSTPORT, "80")),
-					pathStr.startsWith("/") ? pathStr.substring(1) : pathStr, mPrefs.getString(KEY_USERNAME, null)));
-		} catch (URISyntaxException e) {
-			throw new RuntimeException("Failed to create path! " + e, e);
-		}
-	}
-
-	// This code must die...
-	private class SendObjectAsyncTask extends AsyncTask<AndroidTask, Void, Long> {
-		final ObjectMapper jacksonMapper = new ObjectMapper();
-
-		@Override
-		protected Long doInBackground(AndroidTask... params) {
-			// ensureLogin();
-
-			// The number shalle be one...
-			AndroidTask t = params[0];
-			Log.d(TAG, "Starting TODO send of task " + t + " for user " + mPrefs.getString(KEY_USERNAME, null));
-
-			HttpClient client = new DefaultHttpClient();
-			Credentials creds = new UsernamePasswordCredentials(
-					mPrefs.getString(KEY_USERNAME, null), 
-					mPrefs.getString(KEY_PASSWORD, null));
-			((AbstractHttpClient) client).getCredentialsProvider()
-					.setCredentials(new AuthScope(mPrefs.getString(KEY_HOSTNAME, "10.0.2.2"),
-							Integer.parseInt(mPrefs.getString(KEY_HOSTPORT, "80"))), creds);
-			try {
-				final URI postUri = makeSendUri(mPrefs);
-
-				// Send a POST request with to upload this Task
-				Log.d(TAG, "Connecting to server for " + postUri);
-
-				HttpPost postAccessor = new HttpPost();
-				postAccessor.setURI(postUri);
-				postAccessor.addHeader("Content-Type", "application/json");
-				postAccessor.addHeader("Accept", "text/plain");
-
-				final ObjectWriter w = jacksonMapper.writer();
-				String json = w.with(SerializationFeature.INDENT_OUTPUT).without(SerializationFeature.WRAP_EXCEPTIONS)
-						.writeValueAsString(t);
-
-				postAccessor.setEntity(new StringEntity(json));
-
-				// INVOKE
-				HttpResponse response = client.execute(postAccessor);
-
-				// Get the response body from the response
-				StatusLine stat = response.getStatusLine();
-				final int resp = stat.getStatusCode();
-				Log.d(TAG, "Result from SEND: " + resp);
-
-				// on success it should send us the URL of the new ID, we need to save the remote id in our db
-				if (resp != 201) {
-					runOnUiThread(new Runnable() { 
-						public void run() {
-							Toast.makeText(MainActivity.this, "Failed to create " + resp, Toast.LENGTH_LONG).show();
-						}
-					});
-					return -1L;
-				}
-				String resultStr = response.getFirstHeader("location").getValue();
-				Uri resultUri = Uri.parse(resultStr);
-				long id = ContentUris.parseId(resultUri);
-				t.setId(id);
-				if (!((TodoMoreApplication) getApplication()).getTaskDao().update(t)) {
-					Log.e(TAG, "FAILED TO UPDATE");
-				}
-				Log.d(TAG, "UPDATED " + t + ", new Remote ID = " + t.getId());
-				return id;
-			} catch (RuntimeException e) { // Avoid bloating the stack trace
-				throw e;
-			} catch (Exception e) {
-				throw new RuntimeException("Send failed!" + e, e);
-			}
-		}
-	}
-
-	private class GetListAsyncTask extends AsyncTask<Void, Void, List<AndroidTask>> {
-		
-		@Override
-		protected List<AndroidTask> doInBackground(Void... params) {
-			Log.d(TAG, "Starting TODO list-fetch for " + mPrefs.getString(KEY_USERNAME, null));
-
-			HttpClient client = new DefaultHttpClient();
-			Credentials creds = new UsernamePasswordCredentials(mPrefs.getString(KEY_USERNAME, null), mPrefs.getString(KEY_PASSWORD, null));
-			((AbstractHttpClient) client).getCredentialsProvider()
-					.setCredentials(new AuthScope(mPrefs.getString(KEY_HOSTNAME, "10.0.2.2"),
-							Integer.parseInt(mPrefs.getString(KEY_HOSTPORT, "80"))), creds);
-			try {
-				final URI postUri = makeListUri(mPrefs);
-
-				// Send a GET request with to list the Tasks
-				Log.d(TAG, "Connecting to server for " + postUri);
-
-				HttpGet httpAccessor = new HttpGet();
-				httpAccessor.setURI(postUri);
-				httpAccessor.addHeader("Accept", "application/json");
-
-				// INVOKE
-				HttpResponse response = client.execute(httpAccessor);
-
-				// Get the response body from the response
-				HttpEntity postResults = response.getEntity();
-				final String resultStr = EntityUtils.toString(postResults);
-
-				// Service sends the list of Tasks in JSON
-				fullTaskList = GruntWork.jsonStringToListTask(resultStr);
-				Log.d(TAG, "LIST SIZE = " + fullTaskList.size());
-				// List is loaded into UI in onPostExecute() below...
-				return fullTaskList;
-			} catch (RuntimeException e) { // Avoid bloating the stack trace
-				throw e;
-			} catch (Exception e) {
-				throw new RuntimeException("Get List failed!" + e, e);
-			}
-		}
-
-		@Override
-		protected void onPostExecute(List<AndroidTask> list) {
-			fullTitlesList = new ArrayList<String>();
-			for (Task t : list) {
-				fullTitlesList.add(t.getName());
-			}
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(
-	                MainActivity.this, android.R.layout.simple_list_item_1, fullTitlesList);
-	        mListView.setAdapter(adapter);
 		}
 	}
 }
