@@ -1,7 +1,6 @@
 package todomore.android;
 
 import android.app.Application;
-import todomore.android.TaskDao;
 
 public class TodoMoreApplication extends Application {
 
