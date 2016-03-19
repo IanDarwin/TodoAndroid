@@ -1,10 +1,20 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <CheckBoxPreference
-        android:key="@string/key_enable_synch"
-        android:title="Enable Sync"
-        android:hint="Sync"
-        />
+   	<PreferenceCategory android:title="REST Access">
+	    <CheckBoxPreference
+	        android:key="@string/key_enable_synch"
+	        android:title="Enable Sync"
+	        android:hint="Sync"
+	        />
+	    
+   		<EditTextPreference
+			android:key="@string/key_sync_interval"
+			android:title="Sync Interval (minutes)"
+			android:inputType="number"
+			android:defaultValue="60"
+		/>
+		
+	</PreferenceCategory>
     
 	<PreferenceCategory 
 		android:title="TodoMore Account">
@@ -29,15 +39,13 @@
 		<EditTextPreference
 			android:key="@string/key_hostname"
 			android:title="Host Name"
-			android:hint="hostName"
 		/>
 
 		<EditTextPreference
 			android:key="@string/key_hostport"
-			android:title="Host Port"
-			android:hint="hostPort"
+			android:title="Host Port (-1 for default)"
 			android:inputType="number"
-			android:defaultValue="80"
+			android:defaultValue="-1"
 		/>
 		
 		<CheckBoxPreference
