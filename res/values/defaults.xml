@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<!-- Default values for things, mostly in prefs/settings area... -->
+
+	<string name="default_host_path" translatable="false">/todolist/rs</string>
+
+</resources>
