@@ -43,8 +43,8 @@ public class PreferencesHelpersTest {
 		editor.putString(MainActivity.KEY_USERNAME, "abcdefg");
 		editor.putString(MainActivity.KEY_PASSWORD, "abcdefg");
 		editor.commit();
-		assertTrue(adapter.isHttps());
-		assertTrue(adapter.isSynchEnabled());
+		assertTrue(adapter.isHttps(mPrefs));
+		assertTrue(adapter.isSynchEnabled(mPrefs));
 		// With https=true and no port, The number shalle be 443
 		assertEquals(443, adapter.getPort());
 		mPrefs.edit().putString(MainActivity.KEY_HOSTPORT, Integer.toString(80)).commit();
