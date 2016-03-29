@@ -59,7 +59,7 @@
 			android:key="@string/key_hostpath"
 			android:title="Host Path"
 			android:hint="hostPath"
-			android:defaultValue="/todolist/rs"
+			android:defaultValue="@string/default_host_path"
 		/>
 			
 	</PreferenceCategory>
