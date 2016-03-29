@@ -144,7 +144,7 @@ public class MainActivity extends Activity {
     			Log.d(TAG, "Add Account Explicitly: Successfully");
     			return newAccount;
     		} else {
-    			throw new IllegalStateException("Add Account Explicitly: Account exists, or, other error");
+    			throw new IllegalStateException("Add Account Explicitly failed...");
     		}
     	} else {
     		return accounts[0];
