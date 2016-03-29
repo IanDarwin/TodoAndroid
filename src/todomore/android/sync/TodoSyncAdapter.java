@@ -1,9 +1,14 @@
 package todomore.android.sync;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +45,8 @@ import android.os.Bundle;
 import android.util.Log;
 import todomore.android.AndroidTask;
 import todomore.android.MainActivity;
+import todomore.android.R;
 import todomore.android.TaskDao;
-
 
 /**
  * Android Synch Adapter for Todo List Tasks;
@@ -78,32 +83,42 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	}
 	
 	// Keys that must be set for synching to work.
-	final String[] keys = {
+	final static String[] keys = {
 			MainActivity.KEY_HOSTNAME,
 			MainActivity.KEY_HOSTPATH,
 			MainActivity.KEY_USERNAME,
 			MainActivity.KEY_PASSWORD
 	};
 	
-	public boolean isSynchEnabled() {
+	public static boolean isSynchEnabled(SharedPreferences mPrefs) {
 		Log.d(TAG, "TodoSyncAdapter.synchIsEnabled()");
 		if (!mPrefs.getBoolean(MainActivity.KEY_ENABLE_SYNCH, false)) {
 			System.out.println("TodoSyncAdapter.isSynchEnabled(): FAIL ON B " + MainActivity.KEY_ENABLE_SYNCH);
-			return false;
+			// return false;
 		}
 		for (String k : keys) {
 			if (mPrefs.getString(k, null) == null) {
 				System.out.println("TodoSyncAdapter.isSynchEnabled(): FAIL ON S " + k);
-				return false;
+				// return false;
 			};
 		}
 		return true;
 	}
 	
-	public boolean isHttps() {
+	public static boolean isHttps(SharedPreferences mPrefs) {
 		Log.d(TAG, "TodoSyncAdapter.isHttps()");
 		return mPrefs.getBoolean(MainActivity.KEY_HOST_HTTPS, true);
 	}
+	
+    public static String read(InputStream in) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        BufferedReader r = new BufferedReader(new InputStreamReader(in), 1000);
+        for (String line = r.readLine(); line != null; line = r.readLine()) {
+            sb.append(line);
+        }
+        in.close();
+        return sb.toString();
+    }
 
 	/**
 	 * Do the actual synch. One possible algorithm would be:
@@ -131,7 +146,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			SyncResult syncResult) {
 		Log.d(TAG, "ToDoSyncAdapter.onPerformSync()");
 		
-		if (!isSynchEnabled()) {
+		if (!isSynchEnabled(mPrefs)) {
 			Log.d(TAG, "onPerformSync called but not enabled");
 			return;
 		}
@@ -223,15 +238,42 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	private HttpClient syncSetupRestConnection(String userName, String password) {
 		client = new DefaultHttpClient();
 		Credentials creds = new UsernamePasswordCredentials(userName, password);
-		int port = Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80"));
-		if (port == 80 && isHttps()) {
+		int port = Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "-1"));
+		if ((port == -1 || port == 80) && isHttps(mPrefs)) {
 			port = 443;
+		} else {
+			if (port == -1)
+				port = 80;
 		}
 		((AbstractHttpClient)client).getCredentialsProvider()
 		.setCredentials(
 			new AuthScope(mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"), port),
 			creds);
 		return client;
+	}
+	
+	public static URL makeRequestUrl(SharedPreferences mPrefs, String finalPath) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(isHttps(mPrefs) ? "https" : "http")
+			.append("://")
+			.append(mPrefs.getString(MainActivity.KEY_HOSTNAME, "localhost"));
+		int port = Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "-1"));
+		if (port != -1) {
+			if (port == 80 && isHttps(mPrefs)) {
+				port = 443;
+			}
+		}
+		if (port != -1) {
+			sb.append(":").append(port);
+		}
+		sb.append("/")
+			.append(mPrefs.getString(MainActivity.KEY_HOSTPATH, "todorest/rs"))
+			.append(finalPath);
+		try {
+			return new URL(sb.toString());
+		} catch (MalformedURLException e) {
+			throw new IllegalArgumentException("Messed up URL: " + e, e);
+		}
 	}
 
 	private void synchSaveOrUpdateLocalTasks(final List<AndroidTask> remote)
@@ -265,7 +307,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 					throws JsonProcessingException, UnsupportedEncodingException, IOException, ClientProtocolException, NumberFormatException, URISyntaxException {
 
 		for (AndroidTask at : toSend) {
-			String proto = isHttps() ? "https" : "http";
+			String proto = isHttps(mPrefs) ? "https" : "http";
 			final URI postUriNew = new URI(String.format("%s://%s:%d/%s/new/tasks",
 					proto,
 					mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"),
@@ -307,12 +349,16 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	
 	public int getPort() {
 		final int prefsValue = Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "-1"));
-		if (prefsValue == 80 && isHttps())
+		if (prefsValue == 80 && isHttps(mPrefs))
 			return /* override port# pref with "use https" checkbox */ 443;
 		if (prefsValue == -1) {
-			return isHttps() ? 443 : 80;
+			return isHttps(mPrefs) ? 443 : 80;
 		}
 		return prefsValue;
+	}
+	
+	public String getPath() {
+		return mPrefs.getString(MainActivity.KEY_HOSTPATH, getContext().getString(R.string.default_host_path));
 	}
 
 	// Step 0
@@ -324,7 +370,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	private List<AndroidTask> syncGetTasksFromRemote(HttpClient client) throws Exception {
 
 		pathStr = mPrefs.getString(MainActivity.KEY_HOSTPATH, "/");
-		String proto = isHttps() ? "https" : "http";
+		String proto = isHttps(mPrefs) ? "https" : "http";
 		URI getUri = new URI(String.format("%s://%s:%d/%s/%s/tasks",
 				proto,
 				mPrefs.getString(MainActivity.KEY_HOSTNAME, null),
