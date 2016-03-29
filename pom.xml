@@ -12,7 +12,7 @@
 	<url>http://darwinsys.com/TodoMore</url>
 
 	<properties>
-		<javase-version>1.7</javase-version>
+		<javase.version>1.7</javase.version>
 		<platform.version>4.1.1.4</platform.version>
 		<metawidget-version>4.2</metawidget-version>
 		<maven.compiler.source>${javase.version}</maven.compiler.source>
