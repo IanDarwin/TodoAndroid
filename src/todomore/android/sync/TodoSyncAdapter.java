@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -28,6 +29,7 @@ import org.apache.http.util.EntityUtils;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -174,8 +176,8 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			syncRunDeleteQueue();
 
 			// First, get list of items FROM the remote server
-			final List<AndroidTask> remote = syncGetTasksFromRemote(client);
 			final List<AndroidTask> local = mDao.findAll();
+			final List<AndroidTask> remote = syncGetTasksFromRemote(client);
 
 			// NOW RUN LOGIC TO FIGURE OUT WHAT TO PUT WHERE
 			TodoSyncAdapter.algorithm(local, remote, 
@@ -292,7 +294,6 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 
 	/**
 	 * Send the local tasks that are new or modified.
-	 * XXX rewrite with Volley
 	 * @param client
 	 * @param postUri
 	 * @param toSend
@@ -304,23 +305,29 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	 * @throws NumberFormatException 
 	 */
 	private void synchSaveOrUpdateRemoteTasks(final List<AndroidTask> toSend)
-					throws JsonProcessingException, UnsupportedEncodingException, IOException, ClientProtocolException, NumberFormatException, URISyntaxException {
+			throws JsonProcessingException, UnsupportedEncodingException, IOException, ClientProtocolException, NumberFormatException, URISyntaxException {
 
+		String proto = isHttps(mPrefs) ? "https" : "http";
+		int portNum = Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "-1"));
+		if (portNum == -1) { // not manually set
+			portNum = isHttps(mPrefs) ? 443 : 80;
+		}
+		// /{userName}/task/new
+		final URI postUriNew = new URI(String.format("%s://%s:%d/%s/%s/task/new",
+				proto,
+				mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"),
+				portNum,
+				pathStr.startsWith("/") ? pathStr.substring(1) : pathStr,
+				"idarwin"));
+		Log.d(TAG, "Connecting to server for " + postUriNew);
+
+		// Send each task in the list
 		for (AndroidTask at : toSend) {
-			String proto = isHttps(mPrefs) ? "https" : "http";
-			final URI postUriNew = new URI(String.format("%s://%s:%d/%s/new/tasks",
-					proto,
-					mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"),
-					Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "80")),
-					pathStr.startsWith("/") ? pathStr.substring(1) : pathStr));
 
-			// Send each task in the list
-
-			Log.d(TAG, "Connecting to server for " + postUriNew);
 			HttpPost postAccessor = new HttpPost();
 			postAccessor.setURI(postUriNew);
 			postAccessor.addHeader("Content-Type", "application/json");
-			postAccessor.addHeader("Accept", "application/json");
+			postAccessor.addHeader("Accept", "text/plain");
 
 			final ObjectWriter w = jacksonMapper.writer();
 			String json = w
@@ -333,7 +340,11 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			// INVOKE
 			HttpResponse response = client.execute(postAccessor);
 
+			System.out.println("POST response: " + response.getStatusLine());
+			
 			// Get the "created" response body from the response
+			for (Header h : response.getAllHeaders())
+				System.out.println(h);
 			final String resultStr = response.getFirstHeader("Location").getValue();
 
 			// it actually sends the URL of the new ID
@@ -384,8 +395,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		HttpResponse getResponse = client.execute(httpAccessor);	// CONNECT
 		final HttpEntity getResults = getResponse.getEntity();
 		final String tasksStr = EntityUtils.toString(getResults);
-		@SuppressWarnings("unchecked")
-		List<AndroidTask> newToDos = jacksonMapper.readValue(tasksStr, List.class);
+		List<AndroidTask> newToDos = jacksonMapper.readValue(tasksStr, new TypeReference<List<AndroidTask>>(){});
 		Log.d(TAG, "Done Getting Items, list size = " + newToDos.size());
 		return newToDos;
 	}
