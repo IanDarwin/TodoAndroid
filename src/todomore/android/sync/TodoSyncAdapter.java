@@ -10,9 +10,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -21,8 +22,6 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -49,6 +48,8 @@ import todomore.android.AndroidTask;
 import todomore.android.MainActivity;
 import todomore.android.R;
 import todomore.android.TaskDao;
+import todomore.android.TodoMoreApplication;
+import todomore.android.netio.UrlConnector;
 
 /**
  * Android Synch Adapter for Todo List Tasks;
@@ -66,7 +67,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	private TaskDao mDao;
 
 	private ObjectMapper jacksonMapper = new ObjectMapper();
-	private DefaultHttpClient client;
+	private DefaultHttpClient client; // XXX Only used in syncGetTasksFromRemote(client)
 	private String pathStr;
 
 	public TodoSyncAdapter(Context context, SharedPreferences prefs, boolean autoInitialize) {
@@ -175,7 +176,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			// Zeroeth, delete any remote items we previously deleted locally.
 			syncRunDeleteQueue();
 
-			// First, get list of items FROM the remote server
+			// First, get list of items FROM the local DB and the remote server
 			final List<AndroidTask> local = mDao.findAll();
 			final List<AndroidTask> remote = syncGetTasksFromRemote(client);
 
@@ -204,6 +205,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	 * If the object exists here but not remotely, add to toSaveRemotely;
 	 * If the object exists here and is modified more recently than lastSynchTime, ditto;
 	 * Then the same for objects that exist remotely but not here, or, remotely and modified.
+	 * WARNING: Does not handle the case of both versions being modified!
 	 * Isolated to just deal with Lists, to make testing easier(possible).
 	 * @param local The list of existing Tasks in the local database
 	 * @param remote The list of existing Tasks in the remote database
@@ -215,6 +217,14 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	public static void algorithm(List<AndroidTask> local, List<AndroidTask> remote, 
 			long lastSynchTime, 
 			List<AndroidTask> toSaveLocally, List<AndroidTask> toSaveRemotely) {
+
+		// Pre-compute list of entries in local DB that have remote ids.
+		List<Integer> localsWithRemoteId = new ArrayList<>();
+		for (AndroidTask t : local) {
+			if (t.getRemoteId() != 0) {
+				localsWithRemote.add(t.getRemoteId());
+			}
+		}
 
 		// Compute the list of remote tasks that must be saved/updated locally
 		for (AndroidTask t : remote) {
@@ -237,6 +247,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 	}
 
+	// XXX Only used in syncGetTasksFromRemote(client)
 	private HttpClient syncSetupRestConnection(String userName, String password) {
 		client = new DefaultHttpClient();
 		Credentials creds = new UsernamePasswordCredentials(userName, password);
@@ -294,18 +305,15 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 
 	/**
 	 * Send the local tasks that are new or modified.
-	 * @param client
-	 * @param postUri
-	 * @param toSend
-	 * @throws JsonProcessingException
-	 * @throws UnsupportedEncodingException
-	 * @throws IOException
-	 * @throws ClientProtocolException
-	 * @throws URISyntaxException 
-	 * @throws NumberFormatException 
+	 * @param toSend The List of local tasks to be sent to the central server.
+	 * @throws JsonProcessingException On error
+	 * @throws UnsupportedEncodingException On error
+	 * @throws IOException On error
+	 * @throws ClientProtocolException On error
+	 * @throws URISyntaxException  On error
 	 */
 	private void synchSaveOrUpdateRemoteTasks(final List<AndroidTask> toSend)
-			throws JsonProcessingException, UnsupportedEncodingException, IOException, ClientProtocolException, NumberFormatException, URISyntaxException {
+			throws JsonProcessingException, UnsupportedEncodingException, IOException, ClientProtocolException, URISyntaxException {
 
 		String proto = isHttps(mPrefs) ? "https" : "http";
 		int portNum = Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "-1"));
@@ -313,21 +321,22 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			portNum = isHttps(mPrefs) ? 443 : 80;
 		}
 		// /{userName}/task/new
-		final URI postUriNew = new URI(String.format("%s://%s:%d/%s/%s/task/new",
+		final URL postUriNew = new URL(String.format("%s://%s:%d/%s/%s/task/new",
 				proto,
 				mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"),
 				portNum,
 				pathStr.startsWith("/") ? pathStr.substring(1) : pathStr,
-				"idarwin"));
+				"iadmin"));
 		Log.d(TAG, "Connecting to server for " + postUriNew);
 
+		Map<String,String> headers = new HashMap<>();
+		headers.put("Content-Type", "application/json");
+		headers.put("Accept", "text/plain");
+		//Context c = getContext().getApplicationContext();
+		headers.put("Authorization", TodoMoreApplication.makeBasicAuthString());
+		
 		// Send each task in the list
 		for (AndroidTask at : toSend) {
-
-			HttpPost postAccessor = new HttpPost();
-			postAccessor.setURI(postUriNew);
-			postAccessor.addHeader("Content-Type", "application/json");
-			postAccessor.addHeader("Accept", "text/plain");
 
 			final ObjectWriter w = jacksonMapper.writer();
 			String json = w
@@ -335,17 +344,14 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 					.without(SerializationFeature.WRAP_EXCEPTIONS)
 					.writeValueAsString(at);
 
-			postAccessor.setEntity(new StringEntity(json));
-
 			// INVOKE
-			HttpResponse response = client.execute(postAccessor);
+			String response = UrlConnector.converse(postUriNew, json, headers);
 
-			System.out.println("POST response: " + response.getStatusLine());
+			System.out.println("POST response: " + response);
 			
 			// Get the "created" response body from the response
-			for (Header h : response.getAllHeaders())
-				System.out.println(h);
-			final String resultStr = response.getFirstHeader("Location").getValue();
+
+			final String resultStr = response;
 
 			// it actually sends the URL of the new ID
 			Uri resultUri = Uri.parse(resultStr);
