@@ -176,7 +176,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			synchSaveOrUpdateRemoteTasks(toSaveRemotely);
 
 			// Finally, update our synch timestamp!
-			mPrefs.edit().putLong(LAST_SYNC_TSTAMP, System.currentTimeMillis());
+			mPrefs.edit().putLong(LAST_SYNC_TSTAMP, System.currentTimeMillis()).commit();
 
 			syncResult.clear();		// success
 		} catch (Exception e) {
