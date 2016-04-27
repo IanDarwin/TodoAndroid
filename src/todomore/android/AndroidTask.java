@@ -3,6 +3,7 @@ package todomore.android;
 import org.metawidget.inspector.annotation.UiHidden;
 
 import com.darwinsys.todo.model.Task;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /** 
  * A TodoMore "Todo Task" with an added _id, because with a SyncAdapter
@@ -24,7 +25,7 @@ public class AndroidTask extends Task {
 		super(name, project, context);
 	}
 
-	@UiHidden
+	@UiHidden @JsonIgnore // Remote doesn't grok our id, what if 2 devices?
 	public long get_Id() {
 		return _id;
 	}
@@ -34,7 +35,7 @@ public class AndroidTask extends Task {
 	}
 	
 	/** Convenience */
-	@UiHidden
+	@UiHidden  @JsonIgnore
 	public long getRemoteId() {
 		return getId();
 	}
