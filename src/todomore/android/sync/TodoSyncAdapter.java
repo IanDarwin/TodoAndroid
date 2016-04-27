@@ -6,25 +6,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.AbstractHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -67,7 +54,6 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	private TaskDao mDao;
 
 	private ObjectMapper jacksonMapper = new ObjectMapper();
-	private DefaultHttpClient client; // XXX Only used in syncGetTasksFromRemote(client)
 	private String pathStr;
 
 	public TodoSyncAdapter(Context context, SharedPreferences prefs, boolean autoInitialize) {
@@ -170,15 +156,13 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 
 		Log.d(TAG, "Starting TODO Sync for " + userName);
 
-		HttpClient client = syncSetupRestConnection(userName, password);
-
 		try {
 			// Zeroeth, delete any remote items we previously deleted locally.
 			syncRunDeleteQueue();
 
 			// First, get list of items FROM the local DB and the remote server
 			final List<AndroidTask> local = mDao.findAll();
-			final List<AndroidTask> remote = syncGetTasksFromRemote(client);
+			final List<AndroidTask> remote = syncGetTasksFromRemote();
 
 			// NOW RUN LOGIC TO FIGURE OUT WHAT TO PUT WHERE
 			TodoSyncAdapter.algorithm(local, remote, 
@@ -246,24 +230,6 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			}
 		}
 	}
-
-	// XXX Only used in syncGetTasksFromRemote(client)
-	private HttpClient syncSetupRestConnection(String userName, String password) {
-		client = new DefaultHttpClient();
-		Credentials creds = new UsernamePasswordCredentials(userName, password);
-		int port = Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "-1"));
-		if ((port == -1 || port == 80) && isHttps(mPrefs)) {
-			port = 443;
-		} else {
-			if (port == -1)
-				port = 80;
-		}
-		((AbstractHttpClient)client).getCredentialsProvider()
-		.setCredentials(
-			new AuthScope(mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"), port),
-			creds);
-		return client;
-	}
 	
 	public static URL makeRequestUrl(SharedPreferences mPrefs, String finalPath) {
 		StringBuilder sb = new StringBuilder();
@@ -313,7 +279,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	 * @throws URISyntaxException  On error
 	 */
 	private void synchSaveOrUpdateRemoteTasks(final List<AndroidTask> toSend)
-			throws JsonProcessingException, UnsupportedEncodingException, IOException, ClientProtocolException, URISyntaxException {
+			throws Exception {
 
 		String proto = isHttps(mPrefs) ? "https" : "http";
 		int portNum = Integer.parseInt(mPrefs.getString(MainActivity.KEY_HOSTPORT, "-1"));
@@ -384,23 +350,22 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	}
 
 	// Step 1
-	private List<AndroidTask> syncGetTasksFromRemote(HttpClient client) throws Exception {
+	private List<AndroidTask> syncGetTasksFromRemote() throws Exception {
 
+		Map<String,String> headers = new HashMap<>();
+		headers.put("Content-Type", "application/json");
+		headers.put("Accept", "application/json");
+		headers.put("Authorization", TodoMoreApplication.makeBasicAuthString());
+		
 		pathStr = mPrefs.getString(MainActivity.KEY_HOSTPATH, "/");
 		String proto = isHttps(mPrefs) ? "https" : "http";
-		URI getUri = new URI(String.format("%s://%s:%d/%s/%s/tasks",
+		URL getUri = new URL(String.format("%s://%s:%d/%s/%s/tasks",
 				proto,
 				mPrefs.getString(MainActivity.KEY_HOSTNAME, null),
 				getPort(),
 				pathStr.startsWith("/") ? pathStr.substring(1) : pathStr, mPrefs.getString(MainActivity.KEY_USERNAME, null)));
 		Log.d(TAG, "Getting Items From " + getUri);
-		HttpGet httpAccessor = new HttpGet();
-		httpAccessor.setURI(getUri);
-		httpAccessor.addHeader("Content-Type", "application/json");
-		httpAccessor.addHeader("Accept", "application/json");
-		HttpResponse getResponse = client.execute(httpAccessor);	// CONNECT
-		final HttpEntity getResults = getResponse.getEntity();
-		final String tasksStr = EntityUtils.toString(getResults);
+		String tasksStr = UrlConnector.converse(getUri, null, headers);
 		List<AndroidTask> newToDos = jacksonMapper.readValue(tasksStr, new TypeReference<List<AndroidTask>>(){});
 		Log.d(TAG, "Done Getting Items, list size = " + newToDos.size());
 		return newToDos;
