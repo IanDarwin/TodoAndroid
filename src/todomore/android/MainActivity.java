@@ -114,12 +114,12 @@ public class MainActivity extends Activity {
 			immedExtras.putBoolean("SYNC_EXTRAS_MANUAL", true);
 			ContentResolver.requestSync(mAccount, authority, immedExtras);
 
-			// Request periodic synching
+			// Request periodic synching - interval is in seconds NOT mSec.
 			Bundle extras = new Bundle();
 			long pollFrequency = Integer.parseInt(mPrefs.getString(KEY_SYNC_INTERVAL, "60")) * 60;
 			ContentResolver.addPeriodicSync(mAccount, authority, extras, pollFrequency);
 		} else {
-			// Cancel all outstanding syncs until further notice
+			// Disabling, so cancel all outstanding syncs until further notice
 			ContentResolver.cancelSync(mAccount, authority);
 		}
 	}
