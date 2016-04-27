@@ -86,10 +86,36 @@ public class TaskDao {
 		String taskIdString = Long.toString(t.getDeviceId());
 		int deleted = db.delete(TABLE_TODO, "_id = ?", new String[]{taskIdString});
 		Log.d(TAG, "TaskDao.delete(" + taskIdString + ") --> " + deleted);
-		if (t.getServerId() > 0) {
-			db.execSQL(String.format("insert into " + TABLE_DELQ + "(remoteId) values(%d)", t.getServerId()));
+		// If it made it to the server, queue it for deletion from there too
+		final long serverId = t.getServerId();
+		if (serverId > 0) {
+			Log.d(TAG, "TaskDao.delete: queuing remote delete " + serverId);
+			db.execSQL(String.format("insert into " + TABLE_DELQ + "(remoteId) values(%d)", serverId));
 		}
 		return true;
+	}
+	
+	/** Used only the the SyncAdapter, to delete remote entries
+	 * that got deleted here.
+	 * @return An array of the serverIds of tasks deleted locally
+	 */
+	public long[] findDeletions() {
+		Cursor c = db.query(TABLE_DELQ, null, null, null, null, null, null);
+		int n = c.getCount();
+		long[] ret = new long[n];
+		while (c.moveToNext()) {
+			ret[--n] = c.getLong(1);
+		}
+		Log.d(TAG, "TaskDao.findDeletions: " + ret.length + " entries.");
+		return ret;
+	}
+	
+	/**
+	 * After the Sync Adapter deletes it remotely, remove it from the queue
+	 * @author ian
+	 */
+	public void deleteDeletion(long id) {
+		db.delete(TABLE_DELQ, "remoteId = ?", new String[]{Long.toString(id)});
 	}
 
 	class DbHelper extends SQLiteOpenHelper {

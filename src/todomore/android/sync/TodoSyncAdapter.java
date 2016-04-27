@@ -145,7 +145,8 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		Log.d(TAG, "Starting TODO Sync for " + userName);
 
 		try {
-			// Zeroeth, delete any remote items we previously deleted locally.
+			// Zeroeth, delete any remote items we previously deleted locally;
+			// must precede all else, so we don't get zombies appearing!
 			syncRunDeleteQueue();
 
 			// First, get list of items FROM the local DB and the remote server
@@ -332,8 +333,33 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	}
 
 	// Step 0
-	private void syncRunDeleteQueue() {
-		// TODO
+	private void syncRunDeleteQueue() throws MalformedURLException {
+		long[] deletions = mDao.findDeletions();
+		if (deletions.length == 0) {
+			// Common, no local deletions yet or since last sync.
+			return;
+		}
+
+		Map<String,String> headers = new HashMap<>();
+		headers.put("Accept", "text/plain");
+		headers.put("Content-type", "application/json");
+		headers.put("Authorization", TodoMoreApplication.makeBasicAuthString());
+		
+		pathStr = mPrefs.getString(MainActivity.KEY_HOSTPATH, "/");
+		URL url = new URL(String.format("%s://%s:%d/%s/%s/task/smersh",
+				isHttps(mPrefs) ? "https" : "http",
+				mPrefs.getString(MainActivity.KEY_HOSTNAME, null),
+				getPort(),
+				pathStr.startsWith("/") ? pathStr.substring(1) : pathStr, 
+				mPrefs.getString(MainActivity.KEY_USERNAME, null)));
+		
+		for (long id : deletions) {
+			UrlConnector.converse(url,
+				// Only a bare-naked-minimum "Task" object is needed here:
+				String.format("{\"serverId\":%d}", id), headers);
+			// Nothing to do - it will throw an exception if it fails.
+			mDao.deleteDeletion(id);
+		}
 	}
 
 	// Step 1
@@ -344,9 +370,8 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		headers.put("Authorization", TodoMoreApplication.makeBasicAuthString());
 		
 		pathStr = mPrefs.getString(MainActivity.KEY_HOSTPATH, "/");
-		String proto = isHttps(mPrefs) ? "https" : "http";
 		URL getUri = new URL(String.format("%s://%s:%d/%s/%s/tasks",
-				proto,
+				isHttps(mPrefs) ? "https" : "http",
 				mPrefs.getString(MainActivity.KEY_HOSTNAME, null),
 				getPort(),
 				pathStr.startsWith("/") ? pathStr.substring(1) : pathStr, 

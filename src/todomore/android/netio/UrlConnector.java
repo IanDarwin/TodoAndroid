@@ -21,7 +21,7 @@ public class UrlConnector {
     	try {
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			boolean isPost = postBody != null;
-			Log.d(TAG, String.format("converse: %s %s %s", url, isPost?"POST":"GET", headers));
+			Log.d(TAG, String.format("converse: %s %s", url, isPost?"POST":"GET"));
 			if (isPost) {
 				conn.setRequestMethod("POST");
 				conn.setDoInput(true);
