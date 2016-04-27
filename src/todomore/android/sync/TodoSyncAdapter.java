@@ -219,10 +219,10 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			List<AndroidTask> toSaveLocally, List<AndroidTask> toSaveRemotely) {
 
 		// Pre-compute list of entries in local DB that have remote ids.
-		List<Integer> localsWithRemoteId = new ArrayList<>();
+		List<Long> localsWithRemoteId = new ArrayList<>();
 		for (AndroidTask t : local) {
 			if (t.getRemoteId() != 0) {
-				localsWithRemote.add(t.getRemoteId());
+				localsWithRemoteId.add(t.getRemoteId());
 			}
 		}
 
