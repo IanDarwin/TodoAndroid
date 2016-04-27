@@ -88,7 +88,7 @@ public class PrefsActivity extends Activity {
 				try {
 					URL url = TodoSyncAdapter.makeRequestUrl(mPrefs, "/status");
 					HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-					conn.addRequestProperty("Authorization", makeBasicAuthString(mPrefs));
+					conn.addRequestProperty("Authorization", TodoMoreApplication.makeBasicAuthString());
 					InputStream is = conn.getInputStream();
 					publishProgress("Connection status code " + conn.getResponseCode());
 					String response = read(is);
@@ -106,14 +106,6 @@ public class PrefsActivity extends Activity {
 		}.execute();
 	}
 
-	private String makeBasicAuthString(SharedPreferences mPrefs) {
-		String userName = mPrefs.getString(MainActivity.KEY_USERNAME, "nonesuch");
-        String password = mPrefs.getString(MainActivity.KEY_PASSWORD, "don't use this");
-        String authInfo = "Basic " + Base64.encodeToString(
-            (userName + ":" + password).getBytes(), 0);
-        return authInfo;
-	}
-	
     private static String read(InputStream in) throws IOException {
         StringBuilder sb = new StringBuilder();
         BufferedReader r = new BufferedReader(new InputStreamReader(in), 1000);
