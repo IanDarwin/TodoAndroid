@@ -86,8 +86,8 @@ public class TaskDao {
 		String taskIdString = Long.toString(t.getDeviceId());
 		int deleted = db.delete(TABLE_TODO, "_id = ?", new String[]{taskIdString});
 		Log.d(TAG, "TaskDao.delete(" + taskIdString + ") --> " + deleted);
-		if (t.getServerId() != 0) {
-			db.execSQL(String.format("insert into " + TABLE_DELQ + "(remoteId) values(%ld)", t.getServerId()));
+		if (t.getServerId() > 0) {
+			db.execSQL(String.format("insert into " + TABLE_DELQ + "(remoteId) values(%d)", t.getServerId()));
 		}
 		return true;
 	}
