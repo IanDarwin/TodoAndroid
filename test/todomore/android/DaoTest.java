@@ -1,7 +1,7 @@
 package todomore.android;
 
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
-import static org.junit.Assert.*;
 
 import java.util.List;
 
@@ -27,12 +27,12 @@ public class DaoTest {
 
 	@Test
 	public void testFindAll() {
-		AndroidTask t = new AndroidTask();
+		Task t = new Task();
 		t.setName("Buy a Tesla on the way home");
 		t.setPriority(Priority.High);
 		mDao.insert(t);
 		
-    	List<AndroidTask> todos = mDao.findAll();
+    	List<Task> todos = mDao.findAll();
     	// Mock DAO doesn't have this much logic yet
     	// assertEquals(1, todos.size());
     	for (Task td : todos) {

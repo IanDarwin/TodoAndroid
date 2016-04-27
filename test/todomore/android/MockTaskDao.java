@@ -5,6 +5,8 @@ import static org.mockito.Mockito.mock;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.darwinsys.todo.model.Task;
+
 import android.content.Context;
 
 /**
@@ -13,7 +15,7 @@ import android.content.Context;
  */
 public class MockTaskDao extends TaskDao {
 
-	private List<AndroidTask> tasks = new ArrayList<AndroidTask>();
+	private List<Task> tasks = new ArrayList<Task>();
 	
 	public MockTaskDao(Context context) {
 		super(context);
@@ -24,13 +26,13 @@ public class MockTaskDao extends TaskDao {
 	}
 	
 	@Override
-	public long insert(AndroidTask t) {
+	public long insert(Task t) {
 		tasks.add(t);
 		return tasks.size() -1;
 	}
 
 	@Override
-	public List<AndroidTask> findAll() {
+	public List<Task> findAll() {
 		return tasks;
 	}
 }

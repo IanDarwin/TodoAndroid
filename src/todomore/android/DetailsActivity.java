@@ -3,6 +3,8 @@ package todomore.android;
 import org.metawidget.android.widget.AndroidMetawidget;
 import org.metawidget.android.widget.widgetprocessor.binding.simple.SimpleBindingProcessor;
 
+import com.darwinsys.todo.model.Task;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,7 +20,7 @@ import android.widget.Toast;
 public class DetailsActivity extends Activity {
 
 	private static final String TAG = DetailsActivity.class.getSimpleName();
-	private AndroidTask mTask;
+	private Task mTask;
 	private AndroidMetawidget mMetawidget;
 	private Button enableEditButton;
 
@@ -31,7 +33,7 @@ public class DetailsActivity extends Activity {
 		if (id > 0) {
 			mTask = ((TodoMoreApplication) getApplication()).getTaskDao().findById(id);
 		} else {
-			mTask = new AndroidTask();
+			mTask = new Task();
 		}
 
 		mMetawidget = (AndroidMetawidget) findViewById(R.id.metawidget);
@@ -68,7 +70,7 @@ public class DetailsActivity extends Activity {
 	}
 
 	private void deleteCurrent() {
-		((TodoMoreApplication) getApplication()).getTaskDao().delete((AndroidTask)mTask);
+		((TodoMoreApplication) getApplication()).getTaskDao().delete((Task)mTask);
 		finish();
 	}
 	

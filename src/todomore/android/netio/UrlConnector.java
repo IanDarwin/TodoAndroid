@@ -8,25 +8,30 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
+import android.util.Log;
+
 /**
  * Send a request to a URL and read its response data from a URLConnection
  */
 public class UrlConnector {
+	
+    private final static String TAG = UrlConnector.class.getSimpleName();
     
     public static String converse(URL url, String postBody, Map<String,String> headers) {
     	try {
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			boolean isPost = postBody != null;
+			Log.d(TAG, String.format("converse: %s %s %s", url, isPost?"POST":"GET", headers));
 			if (isPost) {
 				conn.setRequestMethod("POST");
 				conn.setDoInput(true);
 			}
-			conn.setDoOutput(true);
-			conn.setAllowUserInteraction(true);
+			// conn.setDoOutput(true);
+			// conn.setAllowUserInteraction(true);
 			
 			if (headers != null) {
 				for (String s : headers.keySet()) {
-					conn.addRequestProperty(s, headers.get(s));
+					conn.setRequestProperty(s, headers.get(s));
 				}
 			}
 			

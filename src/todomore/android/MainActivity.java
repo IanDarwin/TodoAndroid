@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
 	
 	// Data
 	List<String> fullTitlesList;
-	List<AndroidTask> fullTaskList;
+	List<Task> fullTaskList;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -68,8 +68,8 @@ public class MainActivity extends Activity {
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 			//@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				AndroidTask androidTask = (AndroidTask)fullTaskList.get(position);
-				long _id = androidTask.get_Id();
+				Task task = fullTaskList.get(position);
+				long _id = task.getDeviceId();
 				Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
 				intent.putExtra("taskId", _id);
 				startActivity(intent);
@@ -206,7 +206,7 @@ public class MainActivity extends Activity {
 		}
 
 		// Do the work here! Save to local DB, let Sync Adapter send it to the server...
-		AndroidTask t = new AndroidTask();
+		Task t = new Task();
 		t.setName(addTF.getText().toString());
 		t.setPriority(Priority.values()[prioSpinner.getSelectedItemPosition()]);
 		t.setModified(System.currentTimeMillis());

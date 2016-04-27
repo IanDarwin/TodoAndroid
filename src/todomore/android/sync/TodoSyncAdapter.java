@@ -13,6 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.client.ClientProtocolException;
+
+import com.darwinsys.todo.model.Task;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -31,7 +34,6 @@ import android.content.SyncResult;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import todomore.android.AndroidTask;
 import todomore.android.MainActivity;
 import todomore.android.R;
 import todomore.android.TaskDao;
@@ -45,7 +47,7 @@ import todomore.android.netio.UrlConnector;
  */
 public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 
-	private final static String TAG = TodoSyncAdapter.class.getName();
+	private final static String TAG = TodoSyncAdapter.class.getSimpleName();
 
 	private final static String LAST_SYNC_TSTAMP = "last sync";
 	private long lastSynchTime = 0;
@@ -141,8 +143,8 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 
 		lastSynchTime = mPrefs.getLong(LAST_SYNC_TSTAMP, 0L);
-		ArrayList<AndroidTask> toSaveRemotely = new ArrayList<AndroidTask>();
-		ArrayList<AndroidTask> toSaveLocally = new ArrayList<AndroidTask>();
+		ArrayList<Task> toSaveRemotely = new ArrayList<Task>();
+		ArrayList<Task> toSaveLocally = new ArrayList<Task>();
 
 		// Get the username and password, which must be in mPrefs by now
 		String userName = mPrefs.getString("KEY_USERNAME", null);
@@ -161,13 +163,13 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			syncRunDeleteQueue();
 
 			// First, get list of items FROM the local DB and the remote server
-			final List<AndroidTask> local = mDao.findAll();
-			final List<AndroidTask> remote = syncGetTasksFromRemote();
+			final List<Task> local = mDao.findAll();
+			final List<Task> remote = syncGetTasksFromRemote();
 
 			// NOW RUN LOGIC TO FIGURE OUT WHAT TO PUT WHERE
 			TodoSyncAdapter.algorithm(local, remote, 
 					lastSynchTime,
-					toSaveRemotely, toSaveLocally);
+					toSaveLocally, toSaveRemotely);
 			
 			synchSaveOrUpdateLocalTasks(toSaveLocally);
 
@@ -198,21 +200,23 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	 * @param toSaveRemotely The list of Tasks to be saved (added OR updated) remotely
 	 * @param toDeleteRemotely The list of Tasks to be deleted locally.
 	 */
-	public static void algorithm(List<AndroidTask> local, List<AndroidTask> remote, 
+	public static void algorithm(List<Task> local, List<Task> remote, 
 			long lastSynchTime, 
-			List<AndroidTask> toSaveLocally, List<AndroidTask> toSaveRemotely) {
+			List<Task> toSaveLocally, List<Task> toSaveRemotely) {
 
 		// Pre-compute list of entries in local DB that have remote ids.
 		List<Long> localsWithRemoteId = new ArrayList<>();
-		for (AndroidTask t : local) {
-			if (t.getRemoteId() != 0) {
-				localsWithRemoteId.add(t.getRemoteId());
+		for (Task t : local) {
+			if (t.getServerId() != 0) {
+				localsWithRemoteId.add(t.getServerId());
 			}
 		}
 
 		// Compute the list of remote tasks that must be saved/updated locally
-		for (AndroidTask t : remote) {
-			if (t.get_Id() == 0) {
+		for (Task t : remote) {
+			// Objects in list "remote" cannot have a deviceId yet
+			long serverId = t.getServerId();
+			if (!localsWithRemoteId.contains(serverId)) {
 				toSaveLocally.add(t);	// it's newly created remotely
 				continue;
 			}
@@ -223,8 +227,8 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 
 		// Compute the list of local tasks that must be sent to the server.
-		for (AndroidTask t : local) {
-			if (t.getRemoteId() == 0 || (t.getModified() > lastSynchTime)) {
+		for (Task t : local) {
+			if (t.getServerId() == 0 || (t.getModified() > lastSynchTime)) {
 				toSaveRemotely.add(t);
 				continue;
 			}
@@ -255,17 +259,16 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 	}
 
-	private void synchSaveOrUpdateLocalTasks(final List<AndroidTask> remote)
+	private void synchSaveOrUpdateLocalTasks(final List<Task> tasks)
 			throws IOException, JsonParseException, JsonMappingException {
-		for (AndroidTask t : remote) {
+		for (Task t : tasks) {
 			System.out.println(t);
-			if (t.get_Id() > 0) {
+			if (t.getDeviceId() != null) {
 				mDao.update(t);
 			} else {
-				long _id = mDao.insert(t);
-				t.set_Id(_id);
+				mDao.insert(t); // sets deviceId in object for us
 			}	
-			Log.d(TAG, "Downloaded and inserted this new Task: " + t);
+			Log.d(TAG, "Saved/Updated this Task: " + t);
 		}
 	}
 
@@ -278,7 +281,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	 * @throws ClientProtocolException On error
 	 * @throws URISyntaxException  On error
 	 */
-	private void synchSaveOrUpdateRemoteTasks(final List<AndroidTask> toSend)
+	private void synchSaveOrUpdateRemoteTasks(final List<Task> toSend)
 			throws Exception {
 
 		String proto = isHttps(mPrefs) ? "https" : "http";
@@ -298,35 +301,33 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		Map<String,String> headers = new HashMap<>();
 		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "text/plain");
-		//Context c = getContext().getApplicationContext();
 		headers.put("Authorization", TodoMoreApplication.makeBasicAuthString());
 		
 		// Send each task in the list
-		for (AndroidTask at : toSend) {
+		for (Task t : toSend) {
 
 			final ObjectWriter w = jacksonMapper.writer();
 			String json = w
 					.with(SerializationFeature.INDENT_OUTPUT)
 					.without(SerializationFeature.WRAP_EXCEPTIONS)
-					.writeValueAsString(at);
+					.writeValueAsString(t);
 
 			// INVOKE
 			String response = UrlConnector.converse(postUriNew, json, headers);
-
-			System.out.println("POST response: " + response);
 			
-			// Get the "created" response body from the response
+			// Hopefully get a "created" response body from the response
+			System.out.println("POST response: " + response);
 
 			final String resultStr = response;
 
 			// it actually sends the URL of the new ID
 			Uri resultUri = Uri.parse(resultStr);
 			long id = ContentUris.parseId(resultUri);
-			at.setId(id);
-			if (mDao.update(at)) {
+			t.setServerId(id);
+			if (!mDao.update(t)) {
 				Log.e(TAG, "FAILED TO UPDATE");
 			}
-			Log.d(TAG, "UPDATED " + at + ", new  Remote ID = " + at.getId());
+			Log.d(TAG, "UPDATED " + t + ", new  Remote ID = " + t.getServerId());
 		}
 	}
 	
@@ -350,10 +351,9 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	}
 
 	// Step 1
-	private List<AndroidTask> syncGetTasksFromRemote() throws Exception {
+	private List<Task> syncGetTasksFromRemote() throws Exception {
 
 		Map<String,String> headers = new HashMap<>();
-		headers.put("Content-Type", "application/json");
 		headers.put("Accept", "application/json");
 		headers.put("Authorization", TodoMoreApplication.makeBasicAuthString());
 		
@@ -363,10 +363,11 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 				proto,
 				mPrefs.getString(MainActivity.KEY_HOSTNAME, null),
 				getPort(),
-				pathStr.startsWith("/") ? pathStr.substring(1) : pathStr, mPrefs.getString(MainActivity.KEY_USERNAME, null)));
+				pathStr.startsWith("/") ? pathStr.substring(1) : pathStr, 
+				mPrefs.getString(MainActivity.KEY_USERNAME, null)));
 		Log.d(TAG, "Getting Items From " + getUri);
 		String tasksStr = UrlConnector.converse(getUri, null, headers);
-		List<AndroidTask> newToDos = jacksonMapper.readValue(tasksStr, new TypeReference<List<AndroidTask>>(){});
+		List<Task> newToDos = jacksonMapper.readValue(tasksStr, new TypeReference<List<Task>>(){});
 		Log.d(TAG, "Done Getting Items, list size = " + newToDos.size());
 		return newToDos;
 	}

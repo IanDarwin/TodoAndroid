@@ -19,7 +19,7 @@ import android.util.Log;
 
 /** 
  * This class encapsulates various make-work functions that 
- * WOULD NOT BE NEEDED IF ANDROID'S API WERE OBJECT ORIENTED!
+ * WOULD NOT BE NEEDED IF ANDROID'S DB API WERE OBJECT ORIENTED!
  * @author Ian Darwin
  */
 public class GruntWork {
@@ -38,10 +38,8 @@ public class GruntWork {
 	private static ContentValues taskToContentValues(Task t, boolean include_ID) {
 		Log.d(TAG, "taskToConentValues(" + t + ")");
 		ContentValues cv = new ContentValues();
-		cv.put("id", t.getId());
-		if (include_ID && t instanceof AndroidTask) {
-			cv.put("_id", ((AndroidTask)t).get_Id());
-		}
+		cv.put("_id", t.getDeviceId());
+		cv.put("server_id", t.getServerId());
 		cv.put("name", t.getName());
 		cv.put("description", t.getDescription());
 		Priority priority = t.getPriority();
@@ -67,15 +65,15 @@ public class GruntWork {
 		return cv;
 	}
  
-	public static AndroidTask cursorToTask(Cursor c) {
+	public static Task cursorToTask(Cursor c) {
 		if (c.isAfterLast()) {
 			Log.d(TAG, "Cursor has no more rows");
 			return null;
 		}
-		AndroidTask t = new AndroidTask();
+		Task t = new Task();
 		// sdumpCursor(c);
-		t.set_Id(c.getInt(c.getColumnIndex("_id")));// our idea of pkey
-		t.setId(c.getInt(c.getColumnIndex("id")));	// remote's idea of pkey
+		t.setDeviceId((long)c.getInt(c.getColumnIndex("_id")));// our idea of pkey
+		t.setServerId(c.getInt(c.getColumnIndex("server_id")));	// remote's idea of pkey
 		t.setName(c.getString(c.getColumnIndex("name")));
 		t.setDescription(c.getString(c.getColumnIndex("description")));
 		t.setPriority(Priority.values()[c.getInt(c.getColumnIndex("priority"))]);
@@ -108,8 +106,8 @@ public class GruntWork {
 		}
 	}
 	
-	public static List<AndroidTask> cursorToTaskList(Cursor c) {
-		List<AndroidTask> list = new ArrayList<AndroidTask>();
+	public static List<Task> cursorToTaskList(Cursor c) {
+		List<Task> list = new ArrayList<Task>();
 		while (c.moveToNext()) {
 			list.add(cursorToTask(c));
 		}
@@ -130,14 +128,14 @@ public class GruntWork {
 	 * "description":"","complete":false}]
 	 * into a proper List<Task>.
 	 */
-	public static List<AndroidTask> jsonStringToListTask(String resultStr) {
-		List<AndroidTask> ret = new ArrayList<AndroidTask>();
+	public static List<Task> jsonStringToListTask(String resultStr) {
+		List<Task> ret = new ArrayList<Task>();
 		try {
 			JSONArray array = (JSONArray) new JSONTokener(resultStr).nextValue();
 			for (int i = 0; i < array.length(); i++) {
 				JSONObject o = array.getJSONObject(i);
-				AndroidTask t = new AndroidTask();
-				t.setId(o.getLong("id"));
+				Task t = new Task();
+				t.setServerId(o.getLong("serverId"));
 				t.setPriority(Priority.valueOf(o.getString("priority")));
 				t.setStatus(Status.valueOf(o.getString("status")));
 				t.setName(o.getString("name"));
@@ -161,6 +159,5 @@ public class GruntWork {
 		}
 		return ret;
 	}
-
 }
 

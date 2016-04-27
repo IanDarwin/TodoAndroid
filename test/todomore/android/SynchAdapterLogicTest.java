@@ -9,32 +9,34 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.darwinsys.todo.model.Task;
+
 import todomore.android.sync.TodoSyncAdapter;
 
 public class SynchAdapterLogicTest {
 
 	// Inputs
-	List<AndroidTask> local;
-	List<AndroidTask> remote;
+	List<Task> local;
+	List<Task> remote;
 	// Outputs
-	List<AndroidTask> toSaveRemotely;
-	List<AndroidTask> toSaveLocally;
+	List<Task> toSaveRemotely;
+	List<Task> toSaveLocally;
 	
 	// Test objects
-	AndroidTask localTaskWithLocalId;
-	AndroidTask localTaskWithBothIds;
-	AndroidTask aRemoteTask;
+	Task localTaskWithLocalId;
+	Task localTaskWithBothIds;
+	Task aRemoteTask;
 	
 	long lastSyncTime;
 
 	// Configure the List<Task>s
 	@Before
 	public void configureLists() {
-		local = new ArrayList<AndroidTask>();
-		remote  = new ArrayList<AndroidTask>();
+		local = new ArrayList<Task>();
+		remote  = new ArrayList<Task>();
 		// Outputs
-		toSaveRemotely  = new ArrayList<AndroidTask>();
-		toSaveLocally  = new ArrayList<AndroidTask>();
+		toSaveRemotely  = new ArrayList<Task>();
+		toSaveLocally  = new ArrayList<Task>();
 		
 		lastSyncTime = System.currentTimeMillis();
 		// Let the clock tick so mtimes are after fake synch time used in tests
@@ -45,15 +47,15 @@ public class SynchAdapterLogicTest {
 		}
 		
 		// Test objects
-		localTaskWithBothIds = new AndroidTask("localTaskWithBothIds", null, "Writing");
-		localTaskWithBothIds.setId(1234);	// remote id
-		localTaskWithBothIds.set_Id(1);	// Local Id
+		localTaskWithBothIds = new Task("localTaskWithBothIds", null, "Writing");
+		localTaskWithBothIds.setServerId(1234);	// remote id
+		localTaskWithBothIds.setDeviceId(1L);	// Local Id
 		
-		localTaskWithLocalId = new AndroidTask("localTaskWithLocalId", "Reno", "Home");
-		localTaskWithLocalId.set_Id(2);	// Local Id
+		localTaskWithLocalId = new Task("localTaskWithLocalId", "Reno", "Home");
+		localTaskWithLocalId.setDeviceId(2L);	// Local Id
 		
-		aRemoteTask = new AndroidTask("remoteTask", "Upgrades", "Work");
-		aRemoteTask.setId(54321);
+		aRemoteTask = new Task("remoteTask", "Upgrades", "Work");
+		aRemoteTask.setServerId(54321);
 	}
 
 	@Test
@@ -101,11 +103,12 @@ public class SynchAdapterLogicTest {
 
 	@Test
 	public void testSaveModifiedRemoteItem() {
-		aRemoteTask.set_Id(222); // So it won't be saved for not having a local ID
+		aRemoteTask.setDeviceId(222L); // So it won't be saved for not having a local ID
 		aRemoteTask.setModified(System.currentTimeMillis() + 1000); // Should be saved for mtime
 		remote.add(aRemoteTask);
 		TodoSyncAdapter.algorithm(local, remote, lastSyncTime, toSaveLocally, toSaveRemotely);
 		assertTrue(toSaveLocally.contains(aRemoteTask));
+		assertTrue(!toSaveRemotely.contains(aRemoteTask));
 	}
 }
 
