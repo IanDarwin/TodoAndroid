@@ -275,13 +275,13 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		if (portNum == -1) { // not manually set
 			portNum = isHttps(mPrefs) ? 443 : 80;
 		}
-		// /{userName}/task/new
-		final URL postUriNew = new URL(String.format("%s://%s:%d/%s/%s/task/new",
+		// /{userName}/task/save
+		final URL postUriNew = new URL(String.format("%s://%s:%d/%s/%s/task/save",
 				proto,
 				mPrefs.getString(MainActivity.KEY_HOSTNAME, "10.0.2.2"),
 				portNum,
 				pathStr.startsWith("/") ? pathStr.substring(1) : pathStr,
-				"iadmin"));
+				mPrefs.getString(MainActivity.KEY_USERNAME, "USERNAME NOT SET!?")));
 		Log.d(TAG, "Connecting to server for " + postUriNew);
 
 		Map<String,String> headers = new HashMap<>();
