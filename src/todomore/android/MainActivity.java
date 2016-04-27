@@ -64,7 +64,6 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		addTF = (EditText) findViewById(R.id.addTF);
-		prioSpinner = (Spinner) findViewById(R.id.prioSpinner);
 		mListView = (ListView) findViewById(R.id.listView);
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 			//@Override
@@ -81,6 +80,7 @@ public class MainActivity extends Activity {
 			ArrayAdapter.createFromResource(this, R.array.priorities_array,
 				android.R.layout.simple_spinner_item);
 		// Specify the layout to use when the list of choices appears
+		prioSpinner = (Spinner) findViewById(R.id.prioSpinner);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		prioSpinner.setAdapter(adapter);
 		prioSpinner.setSelection(Priority.High.ordinal());
