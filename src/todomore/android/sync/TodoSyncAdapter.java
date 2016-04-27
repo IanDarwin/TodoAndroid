@@ -1,9 +1,6 @@
 package todomore.android.sync;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -97,21 +94,10 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	}
 	
 	public static boolean isHttps(SharedPreferences mPrefs) {
-		Log.d(TAG, "TodoSyncAdapter.isHttps()");
 		return mPrefs.getBoolean(MainActivity.KEY_HOST_HTTPS, true);
 	}
 	
-    public static String read(InputStream in) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        BufferedReader r = new BufferedReader(new InputStreamReader(in), 1000);
-        for (String line = r.readLine(); line != null; line = r.readLine()) {
-            sb.append(line);
-        }
-        in.close();
-        return sb.toString();
-    }
-
-	/**
+    /**
 	 * Do the actual synch. One possible algorithm would be:
 	 *
 	 * Form list of entries with remoteids in local db
