@@ -38,7 +38,8 @@ public class GruntWork {
 	private static ContentValues taskToContentValues(Task t, boolean include_ID) {
 		Log.d(TAG, "taskToConentValues(" + t + ")");
 		ContentValues cv = new ContentValues();
-		cv.put("_id", t.getDeviceId());
+		if (t.getDeviceId() != null)
+			cv.put("_id", t.getDeviceId());
 		cv.put("server_id", t.getServerId());
 		cv.put("name", t.getName());
 		cv.put("description", t.getDescription());
@@ -93,19 +94,6 @@ public class GruntWork {
 		return t;
 	}
 	
-	static void dumpCursor(Cursor c) {
-		int n = c.getColumnCount();
-		for (int i = 0; i < n; i++) {
-			System.out.print(c.getColumnName(i));
-			System.out.print("\t");
-		}
-		System.out.println();
-		for (int i = 0; i < n; i++) {
-			// bleah
-			System.out.println(c.getInt(i));
-		}
-	}
-	
 	public static List<Task> cursorToTaskList(Cursor c) {
 		List<Task> list = new ArrayList<Task>();
 		while (c.moveToNext()) {
@@ -116,12 +104,12 @@ public class GruntWork {
 
 	/**
 	 * Convert JSON goo like this:
-	 * [{"id":102,"priority":"High","name":"TEST 2",
+	 * [{"serverId":102,"priority":"High","name":"TEST 2",
 	 * "creationDate":{"year":2015,"month":11,"day":1},
 	 * "project":null,"context":{"id":100,"name":"Life"},
 	 * "dueDate":null,"status":"ACTIVE","completedDate":null,
 	 * "modified":1448292432791,"description":"None","complete":false},
-	 * {"id":103,"priority":"Low","name":"Low prio item",
+	 * {"serverId":103,"priority":"Low","name":"Low prio item",
 	 * "creationDate":{"year":2015,"month":10,"day":23},"project":null,
 	 * "context":{"id":80,"name":"Home"},"dueDate":null,"status":"NEW",
 	 * "completedDate":null,"modified":1448312330383,
