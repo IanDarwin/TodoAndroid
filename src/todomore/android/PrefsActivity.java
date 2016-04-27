@@ -1,13 +1,9 @@
 package todomore.android;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -20,6 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+import todomore.android.netio.UrlConnector;
 import todomore.android.sync.TodoSyncAdapter;
 
 
@@ -86,16 +83,16 @@ public class PrefsActivity extends Activity {
 			protected Boolean doInBackground(Void... args) {
 				try {
 					URL url = TodoSyncAdapter.makeRequestUrl(mPrefs, "/status");
-					HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-					conn.addRequestProperty("Authorization", TodoMoreApplication.makeBasicAuthString());
-					InputStream is = conn.getInputStream();
-					publishProgress("Connection status code " + conn.getResponseCode());
-					String response = read(is);
+					Map<String,String> headers = new HashMap<>();
+					headers.put("Accept", "application/json");
+					headers.put("Authorization", TodoMoreApplication.makeBasicAuthString());
+					String response = UrlConnector.converse(url, null, headers);
+					publishProgress("Connection OK ");
 					JSONObject result = new JSONObject(response);
 					String status = "OK! " + result.getString("status");
 					publishProgress(status);
 					return Boolean.TRUE;
-				} catch (IOException | JSONException e) {
+				} catch (Exception e) {
 					final String message = "REST error: " + e;
 					Log.e(TAG, message, e);
 					publishProgress(message);
@@ -104,16 +101,6 @@ public class PrefsActivity extends Activity {
 			}
 		}.execute();
 	}
-
-    private static String read(InputStream in) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        BufferedReader r = new BufferedReader(new InputStreamReader(in), 1000);
-        for (String line = r.readLine(); line != null; line = r.readLine()) {
-            sb.append(line);
-        }
-        in.close();
-        return sb.toString();
-    }
 }
 
 
