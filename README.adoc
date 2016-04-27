@@ -4,17 +4,16 @@ This is the TodoMore Android client.
 
 == Unfinished Warning
 
-As of today it works fine as a local (on-device) To-do list manager.
-The Synch Adapter part is close to working, but don'to use it unless you (a) have a backup and 
-(b) can code the parts that are missing.
-The SyncAdapter starts running but hasn't been tested end-to-end yet, so don't run it against
-a database of real TODOs, unless you have a backup.
+As of today it works fine as a local (on-device) To-do list manager.  The
+Synch Adapter part is barely working, but don't use it unless you (a) have
+a backup and (b) can code the parts that are missing.  The SyncAdapter
+works, but neither end deletes the other end's deletions.  And, conflicts
+aren't detected yes.
 
-Next up in this area will be a delete feature; it's harder because you have to atomically commit 
-in two places, and you can't (unless you implement full JDBC and a distributed transaction
-manager...). Right now delete is local only. Plan is to delete locally AND queue deletions,
-and have the sync adapter rm them remotely via REST before getting a list of the "rest" of the 
-remote todo's.
+Next up in this area will be a delete feature; Right now delete is local
+only. Delete does remove locally AND queue deletions, so the plan is to have
+the sync adapter rm them remotely via REST before getting a list of the
+"rest" of the remote todo's.
 
 == Security Warning
 
