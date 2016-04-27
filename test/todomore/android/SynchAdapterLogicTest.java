@@ -93,8 +93,10 @@ public class SynchAdapterLogicTest {
 	@Test
 	public void testSaveNewRemoteItem() {
 		remote.add(aRemoteTask);
+		aRemoteTask.setModified(lastSyncTime - 1000);
 		TodoSyncAdapter.algorithm(local, remote, lastSyncTime, toSaveLocally, toSaveRemotely);
 		assertTrue(toSaveLocally.contains(aRemoteTask));
+		assertTrue(!toSaveRemotely.contains(aRemoteTask));
 	}
 
 	@Test
