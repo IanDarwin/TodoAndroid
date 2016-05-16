@@ -10,20 +10,21 @@ import android.os.IBinder;
  */
 public class TodoDummyAuthenticatorService extends Service {
 	
-	    // Instance field that stores the authenticator object
-	    private TodoDummyAuthenticator mAuthenticator;
-	    
-	    @Override
-	    public void onCreate() {
-	        // Create a new authenticator object
-	        mAuthenticator = new TodoDummyAuthenticator(this);
-	    }
-	    /*
-	     * When the system binds to this Service to make the RPC call
-	     * return the authenticator's IBinder.
-	     */
-	    @Override
-	    public IBinder onBind(Intent intent) {
-	        return mAuthenticator.getIBinder();
-	    }
+		// Instance field that stores the authenticator object,
+		// so we only create it once for multiple uses.
+		private TodoDummyAuthenticator mAuthenticator;
+		
+		@Override
+		public void onCreate() {
+			// Create the authenticator object
+			mAuthenticator = new TodoDummyAuthenticator(this);
+		}
+		/*
+		 * Called when the system binds to this Service to make the IPC call;
+		 * just return the authenticator's IBinder.
+		 */
+		@Override
+		public IBinder onBind(Intent intent) {
+			return mAuthenticator.getIBinder();
+		}
 	}
