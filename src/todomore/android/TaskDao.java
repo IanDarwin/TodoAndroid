@@ -2,6 +2,7 @@ package todomore.android;
 
 import java.util.List;
 
+import com.darwinsys.todo.model.Status;
 import com.darwinsys.todo.model.Task;
 
 import android.content.ContentValues;
@@ -62,6 +63,12 @@ public class TaskDao {
 	/** R: Find All */
 	public List<Task> findAll() {
 		Cursor c = db.query(TABLE_TODO, null, null, null, null, null, "priority asc, name asc");
+		return GruntWork.cursorToTaskList(c);
+	}
+	
+	public List<Task> findUncompleted() {
+		String select = "status < " + Status.COMPLETE.ordinal();
+		Cursor c = db.query(TABLE_TODO, null, select, null, null, null, "priority asc, name asc");
 		return GruntWork.cursorToTaskList(c);
 	}
 	

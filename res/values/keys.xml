@@ -10,4 +10,6 @@
     <string translatable="false" name="key_hostport">KEY_HOSTPORT</string>
     <string translatable="false" name="key_hostpath">KEY_HOSTPATH</string>
     <string translatable="false" name="key_host_https">KEY_HOST_HTTPS</string>
+    
+    <string translatable="false" name="key_show_completed">KEY_SHOW_COMPLETED</string>
 </resources>

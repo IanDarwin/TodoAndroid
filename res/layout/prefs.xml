@@ -62,8 +62,14 @@
 			android:defaultValue="@string/default_host_path"
 		/>
 			
-	</PreferenceCategory>
-	
+	</PreferenceCategory><PreferenceCategory android:title="Display" >
+
+        <CheckBoxPreference
+            android:hint="Show Completed"
+            android:key="@string/key_show_completed"
+            android:title="Show Completed" />
+        
+    </PreferenceCategory>
 
 </PreferenceScreen>
 

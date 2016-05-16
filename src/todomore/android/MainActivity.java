@@ -36,7 +36,8 @@ public class MainActivity extends Activity {
 	private ListView mListView;
 	private int ACTIVITY_ID_LOGIN;
 	private static SharedPreferences mPrefs;
-	// Keys for mPrefs lookups - Must be in "sync" with values/keys.xml!
+	
+	// Keys for mPrefs lookups - **MUST** be in "sync" with values/keys.xml!
 	// But must be initted here cuz used statically from outside app by SyncManager,
 	// and our onCreate() will not have been called.
 	public static final String KEY_USERNAME = "KEY_USERNAME";
@@ -47,6 +48,7 @@ public class MainActivity extends Activity {
 	public static String KEY_HOST_HTTPS = "KEY_HOST_HTTPS";
 	public static String KEY_ENABLE_SYNCH = "KEY_ENABLE_SYNCH";
 	public static String KEY_SYNC_INTERVAL = "KEY_SYNC_INTERVAL";
+	public static String KEY_SHOW_COMPLETED = "KEY_SHOW_COMPLETED";
 
 	/** The account name */
     public static final String ACCOUNT = "account";
@@ -128,7 +130,7 @@ public class MainActivity extends Activity {
      * @author Adapted from http://developer.android.com/ page on this topic.
      * @param context The application context
      */
-    public Account createSyncAccount(Context context) {
+    Account createSyncAccount(Context context) {
     	// Get the Android account manager
     	AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
     	Account[] accounts = accountManager.getAccountsByType(
@@ -159,7 +161,10 @@ public class MainActivity extends Activity {
 	}
 	
 	private void loadListFromDB() {
-		fullTaskList = ((TodoMoreApplication)getApplication()).getTaskDao().findAll();
+		boolean showCompleted = mPrefs.getBoolean(KEY_SHOW_COMPLETED, false);
+		fullTaskList = showCompleted?
+				((TodoMoreApplication)getApplication()).getTaskDao().findAll() :
+				((TodoMoreApplication)getApplication()).getTaskDao().findUncompleted();
 		fullTitlesList = new ArrayList<String>();
 		for (Task t : fullTaskList) {
 			fullTitlesList.add(t.getName());
