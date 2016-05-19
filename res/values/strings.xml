@@ -22,9 +22,9 @@
 	<string name="toggleEditable">Edit</string>
 	<string name="save">Save</string>
 	<string name="delete">Delete</string>
-	<!-- Next two both used with "Done" button, depending on mode -->
+	<string name="cancel">Cancel</string>
 	<string name="done">Done</string>
-	<string name="cancelEditing">Cancel</string>
+	<string name="markAsDone">Mark Done</string>
 	
 	<!-- Specific to Sync Adapter, Dummy Authenticator, etc -->
 	<string name="accountType">todomore.android.todomore</string>

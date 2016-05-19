@@ -4,6 +4,7 @@ import org.metawidget.android.widget.AndroidMetawidget;
 import org.metawidget.android.widget.widgetprocessor.binding.simple.SimpleBindingProcessor;
 
 import com.darwinsys.todo.model.Task;
+import com.darwinsys.todo.model.Status;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ public class DetailsActivity extends Activity {
 	private Task mTask;
 	private AndroidMetawidget mMetawidget;
 	private Button enableEditButton;
+	private Button markAsDoneButton;
 
 	public void onCreate(Bundle saved) {
 		super.onCreate(saved);
@@ -54,6 +56,16 @@ public class DetailsActivity extends Activity {
 				enableEditing();
 			}
 		});
+
+		markAsDoneButton = (Button) findViewById(R.id.markAsDoneButton);
+        markAsDoneButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.d(TAG, "Mark As Done");
+				mTask.setStatus(Status.COMPLETE);
+				((TodoMoreApplication) getApplication()).getTaskDao().update(mTask);
+				finish();
+			}
+		});
         
         ((Button) findViewById(R.id.cancelDetailsButton)).setOnClickListener(new View.OnClickListener() {			
 			@Override
@@ -61,6 +73,7 @@ public class DetailsActivity extends Activity {
 				finish();
 			}
 		});
+
 		((Button) findViewById(R.id.deleteButton)).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -108,7 +121,7 @@ public class DetailsActivity extends Activity {
 		view.setFocusableInTouchMode(true);
 		view.requestFocus();
 		// Change the "Done" button to "Cancel"
-		((Button) findViewById(R.id.cancelDetailsButton)).setText(R.string.cancelEditing);
+		((Button) findViewById(R.id.cancelDetailsButton)).setText(R.string.cancel);
 		// Lose the Edit button
 		enableEditButton.setVisibility(View.GONE);
 		// Let the Save button appear, and become active
