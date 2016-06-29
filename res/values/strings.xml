@@ -3,6 +3,7 @@
     <string name="app_name">TodoList</string>
     <string name="add_item">New Todo Item Here</string>
     <string name="add_button">Add</string>
+    <string name="search_hint">Search&#8230;</string>
     <string name="prompt_username">Account</string>
     <string name="prompt_password">Password</string>
     <string name="action_test">Test</string>

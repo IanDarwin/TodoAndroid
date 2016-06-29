@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,14 +26,16 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements SearchView.OnQueryTextListener {
 
 	public static final String TAG = MainActivity.class.getName();
 	private EditText addTF;
 	private Spinner prioSpinner;
+	private SearchView mSearchView;
 	private ListView mListView;
 	private int ACTIVITY_ID_LOGIN;
 	private static SharedPreferences mPrefs;
@@ -51,8 +54,8 @@ public class MainActivity extends Activity {
 	public static String KEY_SHOW_COMPLETED = "KEY_SHOW_COMPLETED";
 
 	/** The account name */
-    public static final String ACCOUNT = "account";
-    /* The account */
+	public static final String ACCOUNT = "account";
+	/* The account */
 	private static Account mAccount;
 	
 	// Data
@@ -81,6 +84,15 @@ public class MainActivity extends Activity {
 		ArrayAdapter<CharSequence> adapter = 
 			ArrayAdapter.createFromResource(this, R.array.priorities_array,
 				android.R.layout.simple_spinner_item);
+		
+		// Tailor the adapter for the SearchView
+		mListView.setTextFilterEnabled(true);
+		
+		mSearchView = (SearchView) findViewById(R.id.searchView);
+		mSearchView.setIconifiedByDefault(false);
+		mSearchView.setOnQueryTextListener(this);
+		mSearchView.setSubmitButtonEnabled(false);
+		mSearchView.setQueryHint(getString(R.string.search_hint));
 		// Specify the layout to use when the list of choices appears
 		prioSpinner = (Spinner) findViewById(R.id.prioSpinner);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -126,32 +138,32 @@ public class MainActivity extends Activity {
 		}
 	}
 	/**
-     * Create a new dummy account for the sync adapter.
-     * @author Adapted from http://developer.android.com/ page on this topic.
-     * @param context The application context
-     */
-    Account createSyncAccount(Context context) {
-    	// Get the Android account manager
-    	AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
-    	Account[] accounts = accountManager.getAccountsByType(
-    			getString(R.string.accountType));
-    	if (accounts.length == 0) {
-    		// Create the account type and default account
-    		Account newAccount = new Account(ACCOUNT, getString(R.string.accountType));
-    		/*
-    		 * Add the account and account type, no password or user data yet.
-    		 * If successful, return the Account object, otherwise report an error.
-    		 */
-    		if (accountManager.addAccountExplicitly(newAccount, "top secret", null)) {
-    			Log.d(TAG, "Add Account Explicitly: Successfully");
-    			return newAccount;
-    		} else {
-    			throw new IllegalStateException("Add Account Explicitly failed...");
-    		}
-    	} else {
-    		return accounts[0];
-    	}
-    }
+	 * Create a new dummy account for the sync adapter.
+	 * @author Adapted from http://developer.android.com/ page on this topic.
+	 * @param context The application context
+	 */
+	Account createSyncAccount(Context context) {
+		// Get the Android account manager
+		AccountManager accountManager = (AccountManager) context.getSystemService(ACCOUNT_SERVICE);
+		Account[] accounts = accountManager.getAccountsByType(
+				getString(R.string.accountType));
+		if (accounts.length == 0) {
+			// Create the account type and default account
+			Account newAccount = new Account(ACCOUNT, getString(R.string.accountType));
+			/*
+			 * Add the account and account type, no password or user data yet.
+			 * If successful, return the Account object, otherwise report an error.
+			 */
+			if (accountManager.addAccountExplicitly(newAccount, "top secret", null)) {
+				Log.d(TAG, "Add Account Explicitly: Successfully");
+				return newAccount;
+			} else {
+				throw new IllegalStateException("Add Account Explicitly failed...");
+			}
+		} else {
+			return accounts[0];
+		}
+	}
 
 	@Override
 	protected void onResume() {
@@ -222,14 +234,14 @@ public class MainActivity extends Activity {
 
 		// Will schedule later; for now just trigger sync
 		Bundle settingsBundle = new Bundle();
-        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-        settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
-        
-        /*
-         * Request the sync for the default account, authority, and
-         * manual sync settings
-         */
-        ContentResolver.requestSync(mAccount, getString(R.string.datasync_provider_authority), settingsBundle);
+		settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+		settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+		
+		/*
+		 * Request the sync for the default account, authority, and
+		 * manual sync settings
+		 */
+		ContentResolver.requestSync(mAccount, getString(R.string.datasync_provider_authority), settingsBundle);
 
 		// If we get here, remove text from TF so task doesn't get added twice
 		addTF.setText("");
@@ -244,5 +256,19 @@ public class MainActivity extends Activity {
 			super.onActivityResult(requestCode, resultCode, data);
 			return;
 		}
+	}
+	
+	// Methods for the SearchView-ListView tie-in
+	
+	public boolean onQueryTextChange(String newText) {
+		if (TextUtils.isEmpty(newText)) {
+			mListView.clearTextFilter();
+		} else {
+			mListView.setFilterText(newText.toString());
+		}
+		return true;
+	}
+	public boolean onQueryTextSubmit(String query) {
+		return false;
 	}
 }
