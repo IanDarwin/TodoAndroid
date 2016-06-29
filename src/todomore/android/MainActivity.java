@@ -71,7 +71,7 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
 		addTF = (EditText) findViewById(R.id.addTF);
 		mListView = (ListView) findViewById(R.id.listView);
 		mListView.setOnItemClickListener(new OnItemClickListener() {
-			//@Override
+			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Task task = fullTaskList.get(position);
 				long _id = task.getDeviceId();
@@ -93,6 +93,7 @@ public class MainActivity extends Activity implements SearchView.OnQueryTextList
 		mSearchView.setOnQueryTextListener(this);
 		mSearchView.setSubmitButtonEnabled(false);
 		mSearchView.setQueryHint(getString(R.string.search_hint));
+		
 		// Specify the layout to use when the list of choices appears
 		prioSpinner = (Spinner) findViewById(R.id.prioSpinner);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
