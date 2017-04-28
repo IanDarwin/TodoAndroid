@@ -39,7 +39,7 @@ public class SynchAdapterLogicTest {
 		toSaveLocally  = new ArrayList<Task>();
 		
 		lastSyncTime = System.currentTimeMillis();
-		// Let the clock tick so mtimes are after fake synch time used in tests
+		// Let the clock tick, so mtimes are after fake synch time used in tests
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
@@ -101,11 +101,18 @@ public class SynchAdapterLogicTest {
 		assertTrue(!toSaveRemotely.contains(aRemoteTask));
 	}
 
+	/**
+	 * Test a remote object that's not yet in our database;
+	 * it will have a serverId and a deviceID, be in the local
+	 * database (so we don't try to delete it), and an
+	 * mtime > lastSyncTime so it should be saved locally.
+	 */
 	@Test
 	public void testSaveModifiedRemoteItem() {
 		aRemoteTask.setDeviceId(222L); // So it won't be saved for not having a local ID
 		aRemoteTask.setModified(System.currentTimeMillis() + 1000); // Should be saved for mtime
 		remote.add(aRemoteTask);
+		local.add(aRemoteTask);
 		TodoSyncAdapter.algorithm(local, remote, lastSyncTime, toSaveLocally, toSaveRemotely);
 		assertTrue(toSaveLocally.contains(aRemoteTask));
 		assertTrue(!toSaveRemotely.contains(aRemoteTask));
