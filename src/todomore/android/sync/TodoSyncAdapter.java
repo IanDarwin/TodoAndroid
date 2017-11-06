@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.apache.http.client.ClientProtocolException;
 
+import com.darwinsys.todo.model.Date;
 import com.darwinsys.todo.model.Task;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -143,6 +144,8 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 
 		Log.d(TAG, "Starting TODO Sync for " + userName);
+		
+		
 
 		try {
 			// Zeroeth, delete any remote items we previously deleted locally;
@@ -191,19 +194,41 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			long lastSynchTime, 
 			List<Task> toSaveLocally, List<Task> toSaveRemotely) {
 
-		// Pre-compute list of entries in local DB that have remote ids.
-		List<Long> localsWithRemoteId = new ArrayList<>();
-		for (Task t : local) {
-			if (t.getServerId() != 0) {
-				localsWithRemoteId.add(t.getServerId());
-			}
+		List<Task> toDeleteLocally = new ArrayList<>();
+
+		Date lastSynchDate = Date.forTimestamp(lastSynchTime);
+		
+		// First, if local is empty and remote is not, assume we just installed
+		// on a new device, install everything locally.
+		if (local.isEmpty() && !remote.isEmpty()) {
+			toSaveLocally.addAll(remote);
+			return;
 		}
 
-		// Compute the list of remote tasks that must be saved/updated locally
+		// Compute the list of local tasks that must be sent to the server.
+		// In same pass, pre-compute list of entries in local DB that have remote ids.
+		List<Long> localsWithServerId = new ArrayList<>();
+		for (Task t : local) {
+			if (t.getServerId() != 0) {
+				localsWithServerId.add(t.getServerId());
+			}
+			if (t.getServerId() == 0 || (t.getModified() > lastSynchTime)) {
+				toSaveRemotely.add(t);
+				continue;
+			}
+		}
+		
+		// Compute the list of remote tasks that must be saved/updated OR DELETED locally
 		for (Task t : remote) {
 			// Objects in list "remote" cannot have a deviceId yet
 			long serverId = t.getServerId();
-			if (!localsWithRemoteId.contains(serverId)) {
+			if (!localsWithServerId.contains(serverId)) { // Not in our local DB
+				// If remote object created before lastSync and not in local DB,
+				// then we know it got deleted on the server (by web site or user's other mobile)
+				 if (t.getCreationDate().isBefore(lastSynchDate)) {
+				 	toDeleteLocally.add(t);
+					continue;
+				 }
 				toSaveLocally.add(t);	// it's newly created remotely
 				continue;
 			}
@@ -212,14 +237,11 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 				continue;
 			}
 		}
-
-		// Compute the list of local tasks that must be sent to the server.
-		for (Task t : local) {
-			if (t.getServerId() == 0 || (t.getModified() > lastSynchTime)) {
-				toSaveRemotely.add(t);
-				continue;
-			}
+		System.out.print("SYNCH: TO-DELETE-LOCALLY: ");
+		for (Task t : toDeleteLocally) {
+			System.out.println(t.getDeviceId() + "--" + t.getName());
 		}
+		System.out.println();
 	}
 	
 	public static URL makeRequestUrl(SharedPreferences mPrefs, String finalPath) {
