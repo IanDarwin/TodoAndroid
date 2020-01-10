@@ -14,7 +14,6 @@
 	<properties>
 		<javase.version>1.7</javase.version>
 		<platform.version>4.1.1.4</platform.version>
-		<metawidget-version>4.2</metawidget-version>
 		<maven.compiler.source>${javase.version}</maven.compiler.source>
 		<maven.compiler.target>${javase.version}</maven.compiler.target>
 		<maven.compiler.testSource>${javase.version}</maven.compiler.testSource>
@@ -36,7 +35,7 @@
 		<dependency>
 			<groupId>com.darwinsys</groupId>
 			<artifactId>todo-datamodel</artifactId>
-			<version>1.0.10</version>
+			<version>1.0.11</version>
 		</dependency>
 
 		<!-- Let's try MetaWidget for UI (OIM).
@@ -46,7 +45,7 @@
 		<dependency>
 			<groupId>org.metawidget.modules.android</groupId>
 			<artifactId>metawidget-android</artifactId>
-			<version>${metawidget-version}</version>
+			<version>4.2</version>
 		</dependency>
 
         <!-- Jackson Core, databind, used in REST service -->

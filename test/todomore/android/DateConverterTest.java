@@ -5,9 +5,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.darwinsys.todo.metawidget.DateConverter;
 import com.darwinsys.todo.model.Date;
-
-import todomore.android.metawidget.DateConverter;
 
 
 public class DateConverterTest {

@@ -36,9 +36,9 @@ import android.view.View;
 import android.widget.Spinner;
 
 /**
+ * Generic Enum Converter.
  * @author <a href="http://kennardconsulting.com">Richard Kennard</a>
  */
-
 public abstract class EnumConverter<T extends Enum<T>>
 	implements Converter<T> {
 
