@@ -3,6 +3,6 @@
 
 	<!-- Default values for things, mostly in prefs/settings area... -->
 
-	<string name="default_host_path" translatable="false">todorest/rs</string>
+	<string name="default_host_path" translatable="false">todorest/todo</string>
 
 </resources>

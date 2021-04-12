@@ -261,7 +261,8 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			sb.append(":").append(port);
 		}
 		sb.append("/")
-			.append(mPrefs.getString(MainActivity.KEY_HOSTPATH, "todorest/rs"))
+			// XXX default value for HOSTPATH should be gotten from XML defaults file
+			.append(mPrefs.getString(MainActivity.KEY_HOSTPATH, "todorest/todo"))
 			.append(finalPath);
 		try {
 			return new URL(sb.toString());
