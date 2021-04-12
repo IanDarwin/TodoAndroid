@@ -8,7 +8,7 @@ As of today it works fine as a local (on-device) To-do list manager.  The
 Synch Adapter part is barely working, but don't use it unless you (a) have
 a backup and (b) can code the parts that are missing.  The SyncAdapter
 works, but neither end deletes the other end's deletions.  And, conflicts
-aren't detected yes.
+aren't detected yet.
 
 Next up in this area will be a delete feature; Right now delete is local
 only. Delete does remove locally AND queue deletions, so the plan is to have
