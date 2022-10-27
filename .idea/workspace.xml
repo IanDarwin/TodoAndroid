@@ -13,22 +13,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="062c9fc2-babc-4d52-89de-0ee1588770c0" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/app/libs/darwinsys-api-1.7.7-SNAPSHOT.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/j" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/todomore/android/GruntWork.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/GruntWork.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/todomore/android/TaskDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/TaskDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/DateConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/DateConverter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/PriorityConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/PriorityConverter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/StatusConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/StatusConverter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/TodoMoreAndroidWidgetBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/TodoMoreAndroidWidgetBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/todomore/android/sync/TodoSyncAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/sync/TodoSyncAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/raw/metawidget.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/raw/metawidget.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/raw/metawidget_metadata.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/raw/metawidget_metadata.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
