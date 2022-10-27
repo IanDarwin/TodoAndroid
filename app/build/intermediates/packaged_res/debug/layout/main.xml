@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context=".MainActivity"
+    >
+<EditText
+    android:id="@+id/addTF"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:inputType="textCapSentences"
+    android:hint="@string/add_item"
+    android:onClick="addItem"
+    />
+<Spinner
+    android:id="@+id/prioSpinner"
+    android:prompt="@string/priority"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    />
+<Button
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:text="@string/add_button"
+    android:id="@+id/addButton"
+    android:onClick="addItem"
+    />
+<SearchView
+    android:id="@+id/searchView"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"/>
+<ListView
+    android:id="@+id/listView"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    />
+</LinearLayout>

@@ -1,15 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AndroidLayouts">
+    <shared>
+      <config />
+    </shared>
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="062c9fc2-babc-4d52-89de-0ee1588770c0" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/AndroidManifest.xml" afterPath="$PROJECT_DIR$/AndroidManifest.xml" />
+      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/TodoAndroid.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/drawable-hdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/drawable-ldpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-ldpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/drawable-mdpi/ic_launcher.png" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_launcher.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/layout/activity_about.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_about.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/layout/activity_help.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_help.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/layout/details_activity.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/details_activity.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/layout/main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/layout/prefs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/prefs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/menu/main_menu.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/menu/main_menu.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/menu/prefs_menu.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/menu/prefs_menu.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/raw/about.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/raw/about.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/raw/help.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/raw/help.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/raw/metawidget.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/raw/metawidget.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/raw/metawidget_metadata.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/raw/metawidget_metadata.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/values/defaults.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/defaults.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/values/dimen.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/dimen.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/values/keys.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/keys.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/values/string_arrays.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/string_arrays.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/styles.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/xml/authenticator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/xml/authenticator.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/xml/synchadapter.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/xml/synchadapter.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/AboutActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/AboutActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/DetailsActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/DetailsActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/GruntWork.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/GruntWork.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/HelpActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/HelpActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/PrefsActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/PrefsActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/QuickNoteActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/QuickNoteActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/TaskDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/TaskDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/TodoContentProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/TodoContentProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/TodoMoreApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/TodoMoreApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/metawidget/DateConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/DateConverter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/metawidget/EnumConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/EnumConverter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/metawidget/PriorityConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/PriorityConverter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/metawidget/StatusConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/StatusConverter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/metawidget/TodoMoreAndroidWidgetBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/TodoMoreAndroidWidgetBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/netio/UrlConnector.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/netio/UrlConnector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/sync/TodoDummyAuthenticator.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/sync/TodoDummyAuthenticator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/sync/TodoDummyAuthenticatorService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/sync/TodoDummyAuthenticatorService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/sync/TodoSyncAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/sync/TodoSyncAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/todomore/android/sync/TodoSyncService.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/sync/TodoSyncService.java" afterDir="false" />
     </list>
-    <ignored path="TodoAndroid.iws" />
-    <ignored path=".idea/workspace.xml" />
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
-    <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -17,6 +69,29 @@
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[25041JEGR19415]" />
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="ToDoMore" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
   </component>
   <component name="FavoritesManager">
     <favorites_list name="TodoAndroid" />
@@ -34,6 +109,7 @@
     <option name="width" value="1440" />
     <option name="height" value="832" />
   </component>
+  <component name="ProjectId" id="2GinprP2vwELRG3H1REroTAKHug" />
   <component name="ProjectView">
     <navigator currentView="AndroidView" proportions="" version="1">
       <flattenPackages />
@@ -77,76 +153,32 @@
       <pane id="PackagesPane" />
     </panes>
   </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="android.sdk-updates" />
-    <property name="settings.editor.splitter.proportion" value="0.2" />
-    <property name="android.sdk.path" value="$USER_HOME$/android-sdk-macosx" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="android.project.structure.last.selected" value="SDK Location" />
     <property name="android.project.structure.proportion" value="0.15" />
+    <property name="android.sdk.path" value="$USER_HOME$/android-sdk-macosx" />
+    <property name="cidr.known.project.marker" value="true" />
+    <property name="dart.analysis.tool.window.visible" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.17" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="android.sdk-updates" />
+    <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
+  <component name="PsdUISettings">
+    <option name="MODULE_TAB" value="Default Config" />
   </component>
   <component name="RunManager">
-    <configuration default="true" type="Application" factoryName="Application">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="" />
-      <envs />
-    </configuration>
-    <configuration default="true" type="Remote" factoryName="Remote">
-      <option name="USE_SOCKET_TRANSPORT" value="true" />
-      <option name="SERVER_MODE" value="false" />
-      <option name="SHMEM_ADDRESS" value="javadebug" />
-      <option name="HOST" value="localhost" />
-      <option name="PORT" value="5005" />
-    </configuration>
-    <configuration default="true" type="TestNG" factoryName="TestNG">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <module name="" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="SUITE_NAME" />
-      <option name="PACKAGE_NAME" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="METHOD_NAME" />
-      <option name="GROUP_NAME" />
-      <option name="TEST_OBJECT" value="CLASS" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
-      <option name="OUTPUT_DIRECTORY" />
-      <option name="ANNOTATION_TYPE" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="singleModule" />
-      </option>
-      <option name="USE_DEFAULT_REPORTERS" value="false" />
-      <option name="PROPERTIES_FILE" />
-      <envs />
-      <properties />
-      <listeners />
-    </configuration>
     <configuration name="&lt;template&gt;" type="Applet" default="true" selected="false">
       <option name="MAIN_CLASS_NAME" />
       <option name="HTML_FILE_NAME" />
@@ -156,19 +188,88 @@
       <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
       <option name="VM_PARAMETERS" />
     </configuration>
-    <configuration name="&lt;template&gt;" type="JUnit" default="true" selected="false">
-      <option name="MAIN_CLASS_NAME" />
-      <option name="VM_PARAMETERS" value="-ea" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
-    </configuration>
     <configuration name="&lt;template&gt;" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" default="true" selected="false">
       <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
     </configuration>
+    <configuration name="app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+      <module name="ToDoMore.app.main" />
+      <option name="DEPLOY" value="true" />
+      <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
+      <option name="DEPLOY_AS_INSTANT" value="false" />
+      <option name="ARTIFACT_NAME" value="" />
+      <option name="PM_INSTALL_OPTIONS" value="" />
+      <option name="ALL_USERS" value="false" />
+      <option name="ALWAYS_INSTALL_WITH_PM" value="false" />
+      <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+      <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+      <option name="MODE" value="default_activity" />
+      <option name="CLEAR_LOGCAT" value="false" />
+      <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+      <option name="INSPECTION_WITHOUT_ACTIVITY_RESTART" value="false" />
+      <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Hybrid>
+      <Java />
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Native>
+      <Profilers>
+        <option name="ADVANCED_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Java/Kotlin Method Sample (legacy)" />
+        <option name="STARTUP_NATIVE_MEMORY_PROFILING_ENABLED" value="false" />
+        <option name="NATIVE_MEMORY_SAMPLE_RATE_BYTES" value="2048" />
+      </Profilers>
+      <option name="DEEP_LINK" value="" />
+      <option name="ACTIVITY_CLASS" value="" />
+      <option name="SEARCH_ACTIVITY_IN_GLOBAL_SCOPE" value="false" />
+      <option name="SKIP_ACTIVITY_VALIDATION" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <option name="TEST_OBJECT" value="class" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="TestNG">
+      <option name="TEST_OBJECT" value="CLASS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <properties />
+      <listeners />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
   </component>
-  <component name="ShelveChangesManager" show_recycled="false">
-    <option name="remove_strategy" value="false" />
-  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -218,6 +319,17 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
       <collection />
@@ -225,12 +337,5 @@
     <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
       <collection />
     </option>
-  </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager />
-    <watches-manager />
   </component>
 </project>

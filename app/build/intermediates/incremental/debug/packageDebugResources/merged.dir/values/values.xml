@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="priorities_array">
+        <item>Top</item>
+        <item>High</item>
+        <item>Medium</item>
+        <item>Low</item>
+	</string-array>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <string name="aboutText">TodoMore 0.0. See http://darwinsys.com/TodoMore</string>
+    <string name="accountType">todomore.android.todomore</string>
+    <string name="action_test">Test</string>
+    <string name="add_button">Add</string>
+    <string name="add_item">New Todo Item Here</string>
+    <string name="app_name">TodoList</string>
+    <string name="cancel">Cancel</string>
+    <string name="completedDate">Completed</string>
+    <string name="context">Context</string>
+    <string name="creationDate">Creation Date</string>
+    <string name="datasync_provider_authority">todomore.android.datasync.provider</string>
+    <string name="default_host_path" translatable="false">todorest/todo</string>
+    <string name="delete">Delete</string>
+    <string name="description">Description</string>
+    <string name="done">Done</string>
+    <string name="dueDate">Due Date</string>
+    <string name="error_field_required">Field required</string>
+    <string name="error_incorrect_password">Password rejected</string>
+    <string name="error_invalid_email">Not a valid username?</string>
+    <string name="error_invalid_password">Password too short</string>
+    <string name="error_invalid_user">Username must be alphabetic</string>
+    <string name="helpText">Help not available yet. See http://darwinsys.com/TodoMore</string>
+    <string name="key_enable_synch" translatable="false">KEY_ENABLE_SYNCH</string>
+    <string name="key_host_https" translatable="false">KEY_HOST_HTTPS</string>
+    <string name="key_hostname" translatable="false">KEY_HOSTNAME</string>
+    <string name="key_hostpath" translatable="false">KEY_HOSTPATH</string>
+    <string name="key_hostport" translatable="false">KEY_HOSTPORT</string>
+    <string name="key_password" translatable="false">KEY_PASSWORD</string>
+    <string name="key_show_completed" translatable="false">KEY_SHOW_COMPLETED</string>
+    <string name="key_sync_interval" translatable="false">KEY_SYNC_INTERVAL</string>
+    <string name="key_username" translatable="false">KEY_USERNAME</string>
+    <string name="markAsDone">Mark Done</string>
+    <string name="modified">Modified</string>
+    <string name="priority">Priority</string>
+    <string name="project">Project</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_username">Account</string>
+    <string name="save">Save</string>
+    <string name="search_hint">Search…</string>
+    <string name="status">Status</string>
+    <string name="summary">Summary</string>
+    <string name="testNetwork">Test Network</string>
+    <string name="toggleEditable">Edit</string>
+    <style name="AppTheme" parent="android:Theme.Material">
+    
+  </style>
+</resources>

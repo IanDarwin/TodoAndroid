@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".MainActivity" >
+
+	<view class="org.metawidget.android.widget.AndroidMetawidget" 
+	    android:id="@+id/metawidget"		
+		config="@raw/metawidget"
+		readOnly="true"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:paddingTop="5dp">
+
+	</view>
+	
+	<LinearLayout
+	    android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+    	android:gravity="center"
+    	android:orientation="horizontal"
+    	>
+	    
+	<Button
+	    android:id="@+id/cancelDetailsButton"
+	    style="?android:attr/buttonBarButtonStyle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/cancel"
+		/>
+	
+	<Button
+	    android:id="@+id/markAsDoneButton"
+	    style="?android:attr/buttonBarButtonStyle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/markAsDone"
+		/>
+	
+	<Button
+	    android:id="@+id/enableEditButton"
+	    style="?android:attr/buttonBarButtonStyle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/toggleEditable"
+		/>
+
+	<Button
+	    android:visibility="gone"
+	    android:id="@+id/saveButton"
+	    style="?android:attr/buttonBarButtonStyle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/save"
+		/>
+
+	<Button
+	    android:id="@+id/deleteButton"
+	    style="?android:attr/buttonBarButtonStyle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/delete"
+		/>
+
+	</LinearLayout>
+	        
+</LinearLayout>
