@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    
-	<item android:id="@+id/settings_menuitem"  android:title="Settings" android:showAsAction="always"/>
-	
-	<item android:id="@+id/help_menuitem"  android:title="Help" android:showAsAction="ifRoom"/>
-	
-	<item android:id="@+id/about_menuitem"  android:title="About" android:showAsAction="never"/>
-</menu>
