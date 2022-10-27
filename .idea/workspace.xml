@@ -5,21 +5,30 @@
       <config />
     </shared>
   </component>
+  <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="062c9fc2-babc-4d52-89de-0ee1588770c0" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/libs/darwinsys-api-1.7.7-SNAPSHOT.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/j" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/todomore/android/DaoTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/todomore/android/DaoTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/todomore/android/DateConverterTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/todomore/android/DateConverterTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/todomore/android/GruntWorkTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/todomore/android/GruntWorkTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/todomore/android/MockTaskDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/todomore/android/MockTaskDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/todomore/android/PreferencesHelpersTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/todomore/android/PreferencesHelpersTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/todomore/android/SynchAdapterLogicTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/todomore/android/SynchAdapterLogicTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/todomore/android/GruntWork.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/GruntWork.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/todomore/android/TaskDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/TaskDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/DateConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/DateConverter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/PriorityConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/PriorityConverter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/StatusConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/StatusConverter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/TodoMoreAndroidWidgetBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/metawidget/TodoMoreAndroidWidgetBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/todomore/android/sync/TodoSyncAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/todomore/android/sync/TodoSyncAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/raw/metawidget.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/raw/metawidget.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/raw/metawidget_metadata.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/raw/metawidget_metadata.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,7 +38,7 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[25041JEGR19415]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[C:\Users\ian\.android\avd\Pixel_5_API_28.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -54,6 +63,14 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
   </component>
   <component name="GradleLocalSettings">
     <option name="externalProjectsViewState">
@@ -134,7 +151,7 @@
     <property name="project.structure.last.edited" value="Dependencies" />
     <property name="project.structure.proportion" value="0.17" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
+    <property name="settings.editor.selected.configurable" value="preferences.externalResources" />
     <property name="show.migrate.to.gradle.popup" value="false" />
   </component>
   <component name="PsdUISettings">
@@ -304,5 +321,16 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="java-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/todomore/android/GruntWork.java</url>
+          <line>82</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

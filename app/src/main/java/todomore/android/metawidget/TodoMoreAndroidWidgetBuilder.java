@@ -5,7 +5,7 @@ import java.util.Map;
 import org.metawidget.android.widget.AndroidMetawidget;
 import org.metawidget.widgetbuilder.iface.WidgetBuilder;
 
-import com.darwinsys.todo.model.Date;
+import java.time.LocalDate;
 
 import android.content.Context;
 import android.util.Log;
@@ -31,7 +31,7 @@ public class TodoMoreAndroidWidgetBuilder implements WidgetBuilder<View, Android
 		String type = attributes.get("type");
 		String readOnlyStr = attributes.get("read-only");
 		boolean readOnly = Boolean.parseBoolean(readOnlyStr);
-		if (type.equals(Date.class.getName())) {
+		if (type.equals(LocalDate.class.getName())) {
 			return readOnly ? new TextView(context) : new EditText(context);
 		}
 		return null;

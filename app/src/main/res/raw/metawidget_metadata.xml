@@ -4,8 +4,8 @@
     xsi:schemaLocation="http://metawidget.org/inspection-result http://metawidget.org/xsd/inspection-result-1.0.xsd" version="1.0">                     
                             
     <entity type="com.darwinsys.todo.model.Task">
-        <property name="creationDate" label="creationDate" type="com.darwinsys.todo.model.Date"/>
-        <property name="dueDate" label="dueDate" type="com.darwinsys.todo.model.Date"/>
-        <property name="completedDate" label="completedDate" type="com.darwinsys.todo.model.Date"/>
+        <property name="creationDate" label="creationDate" type="java.time.LocalDate"/>
+        <property name="dueDate" label="dueDate" type="java.time.LocalDate"/>
+        <property name="completedDate" label="completedDate" type="java.time.LocalDate"/>
     </entity>
 </inspection-result>

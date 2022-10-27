@@ -5,14 +5,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.time.*;
+import java.time.chrono.ChronoLocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.client.ClientProtocolException;
-
-import com.darwinsys.todo.model.Date;
 import com.darwinsys.todo.model.Task;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -48,7 +47,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	private final static String TAG = TodoSyncAdapter.class.getSimpleName();
 
 	private final static String LAST_SYNC_TSTAMP = "last sync";
-	private long lastSynchTime = 0;
+	private LocalDateTime lastSynchTime = LocalDateTime.MIN;
 
 	private SharedPreferences mPrefs;
 	private TaskDao mDao;
@@ -83,12 +82,12 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		Log.d(TAG, "TodoSyncAdapter.synchIsEnabled()");
 		if (!mPrefs.getBoolean(MainActivity.KEY_ENABLE_SYNCH, false)) {
 			System.out.println("TodoSyncAdapter.isSynchEnabled(): FAIL ON B " + MainActivity.KEY_ENABLE_SYNCH);
-			// return false;
+			return false;
 		}
 		for (String k : keys) {
 			if (mPrefs.getString(k, null) == null) {
 				System.out.println("TodoSyncAdapter.isSynchEnabled(): FAIL ON S " + k);
-				// return false;
+				return false;
 			};
 		}
 		return true;
@@ -129,7 +128,8 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			return;
 		}
 
-		lastSynchTime = mPrefs.getLong(LAST_SYNC_TSTAMP, 0L);
+		if (mPrefs.getString(LAST_SYNC_TSTAMP, null) != null)
+			lastSynchTime = LocalDateTime.parse(mPrefs.getString(LAST_SYNC_TSTAMP, null));
 		ArrayList<Task> toSaveRemotely = new ArrayList<Task>();
 		ArrayList<Task> toSaveLocally = new ArrayList<Task>();
 
@@ -144,8 +144,6 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 		}
 
 		Log.d(TAG, "Starting TODO Sync for " + userName);
-		
-		
 
 		try {
 			// Zeroeth, delete any remote items we previously deleted locally;
@@ -185,19 +183,17 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	 * Isolated to just deal with Lists, to make testing easier(possible).
 	 * @param local The list of existing Tasks in the local database
 	 * @param remote The list of existing Tasks in the remote database
-	 * @param lastSyncTime  Completion time viewed locally when last synch operation finished.
+	 * @param lastSynchDate  Completion time viewed locally when last synch operation finished.
 	 * @param toSaveLocally  The list of Tasks to be saved (added OR updated) locally
 	 * @param toSaveRemotely The list of Tasks to be saved (added OR updated) remotely
-	 * @param toDeleteRemotely The list of Tasks to be deleted locally.
+	 * NOTparam toDeleteRemotely The list of Tasks to be deleted locally.
 	 */
 	public static void algorithm(List<Task> local, List<Task> remote, 
-			long lastSynchTime, 
+			LocalDateTime lastSynchDate,
 			List<Task> toSaveLocally, List<Task> toSaveRemotely) {
 
 		List<Task> toDeleteLocally = new ArrayList<>();
 
-		Date lastSynchDate = Date.forTimestamp(lastSynchTime);
-		
 		// First, if local is empty and remote is not, assume we just installed
 		// on a new device, install everything locally.
 		if (local.isEmpty() && !remote.isEmpty()) {
@@ -214,7 +210,7 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			if (t.getServerId() != 0) {
 				localsWithServerId.add(t.getServerId());
 			}
-			if (t.getServerId() == 0 || (t.getModified() > lastSynchTime)) {
+			if (t.getServerId() == 0 || (t.getModified().isAfter(ChronoLocalDate.from(lastSynchDate)))) {
 				toSaveRemotely.add(t);
 				continue;
 			}
@@ -227,14 +223,14 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			if (!localsWithServerId.contains(serverId)) { // Not in our local DB
 				// If remote object created before lastSync and not in local DB,
 				// then we know it got deleted on the server (by web site or user's other mobile)
-				 if (t.getCreationDate().isBefore(lastSynchDate)) {
+				 if (t.getCreationDate().isBefore(ChronoLocalDate.from(lastSynchDate))) {
 				 	toDeleteLocally.add(t);
 					continue;
 				 }
 				toSaveLocally.add(t);	// it's newly created remotely
 				continue;
 			}
-			if (t.getModified() > lastSynchTime) {
+			if (t.getModified().isAfter(ChronoLocalDate.from(lastSynchDate))) {
 				toSaveLocally.add(t);	// remote version was modified after last synch
 				continue;
 			}
@@ -290,7 +286,6 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 	 * @throws JsonProcessingException On error
 	 * @throws UnsupportedEncodingException On error
 	 * @throws IOException On error
-	 * @throws ClientProtocolException On error
 	 * @throws URISyntaxException  On error
 	 */
 	private void synchSaveOrUpdateRemoteTasks(final List<Task> toSend)

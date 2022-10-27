@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <metawidget xmlns="http://metawidget.org"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://metawidget.org http://metawidget.org/xsd/metawidget-1.0.xsd" version="1.0">
+	xsi:schemaLocation="http://metawidget.org http://metawidget.org/xsd/metawidget-1.0.xsd"
+	version="1.0">
 
 	<androidMetawidget xmlns="java:org.metawidget.android.widget">
 		<bundle>
@@ -13,9 +14,6 @@
 					<array>
 						<propertyTypeInspector xmlns="java:org.metawidget.inspector.propertytype"/>
 						<metawidgetAnnotationInspector xmlns="java:org.metawidget.inspector.annotation"/>
-						<!-- See pom.xml
-						<jpaInspector xmlns="java:org.metawidget.inspector.jpa"/>
-						-->
 						<xmlInspector xmlns="java:org.metawidget.inspector.xml" config="XmlInspectorConfig">
 							<inputStream>
 								<resource>@todomore.android:raw/metawidget_metadata</resource>
@@ -43,7 +41,7 @@
 		    <array>
 		        <simpleBindingProcessor xmlns="java:org.metawidget.android.widget.widgetprocessor.binding.simple" config="SimpleBindingProcessorConfig">
 		            <converter>
-		                <class>com.darwinsys.todo.model.Date</class>
+		                <class>com.darwinsys.todo.metawidget</class>
 		                <dateConverter xmlns="java:todomore.android.metawidget"/>
 		            </converter>
 		            <converter>

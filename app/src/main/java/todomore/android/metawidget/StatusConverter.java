@@ -1,6 +1,5 @@
 package todomore.android.metawidget;
 
-import com.darwinsys.todo.metawidget.EnumConverter;
 import com.darwinsys.todo.model.Status;
 
 /**

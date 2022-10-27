@@ -63,13 +63,13 @@ public class TaskDao {
 	
 	/** R: Find All */
 	public List<Task> findAll() {
-		Cursor c = db.query(TABLE_TODO, null, null, null, null, null, "priority asc, name asc");
+		Cursor c = db.query(TABLE_TODO, TASK_COLUMNS, null, null, null, null, "priority asc, name asc");
 		return GruntWork.cursorToTaskList(c);
 	}
 	
 	public List<Task> findUncompleted() {
 		String select = "status < " + Status.COMPLETE.ordinal();
-		Cursor c = db.query(TABLE_TODO, null, select, null, null, null, "priority asc, name asc");
+		Cursor c = db.query(TABLE_TODO, TASK_COLUMNS, select, null, null, null, "priority asc, name asc");
 		return GruntWork.cursorToTaskList(c);
 	}
 	
@@ -103,7 +103,7 @@ public class TaskDao {
 		return true;
 	}
 	
-	/** Used only the the SyncAdapter, to delete remote entries
+	/** Used only by the SyncAdapter, to delete remote entries
 	 * that got deleted here.
 	 * @return An array of the serverIds of tasks deleted locally
 	 */
@@ -126,6 +126,20 @@ public class TaskDao {
 		db.delete(TABLE_DELQ, "remoteId = ?", new String[]{Long.toString(id)});
 	}
 
+	/** THIS MUST BE KEPT IN SYNC WITH THE CREATE IN ONCREATE BELOW!! */
+	public static final String[] TASK_COLUMNS = {
+			"_id",				// 0 PKey in Android SQLite database
+			"server_id",		// 1 PKey in remote database
+			"name", 			// 2 Short description of task
+			"description",		// 3 Longer description
+			"priority",			// 4 prio 0 = top, 1, 2, 3 = lowest
+			"status",			// 5
+			"modified",			// 6 LocalDateTime when last modified
+			"creationdate",		// 7
+			"duedate",			// 8
+			"completeddate",	// 9
+	};
+
 	class DbHelper extends SQLiteOpenHelper {
 
 		public final static int VER_ZERO = 1,
@@ -137,6 +151,8 @@ public class TaskDao {
 		@Override
 		public void onCreate(SQLiteDatabase db) {
 			Log.d(TAG, "onCreate()");
+
+			// THIS MUST BE KEPT IN SYNC WITH TASK_COLUMNS ABOVE
 			db.execSQL("create table " + TABLE_TODO + "("
 					+ "_id integer primary key,"	// PKey in Android SQLite database
 					+ "server_id long,"		// PKey in remote database
@@ -144,7 +160,7 @@ public class TaskDao {
 					+ "description varchar,"		// Longer description
 					+ "priority integer,"			// 0 = top, 1, 2, 3 = lowest
 					+ "status integer,"
-					+ "modified date,"			// currentTimeMillis when last modified
+					+ "modified date,"				// datetime when last modified
 					+ "creationdate date,"
 					+ "duedate date,"
 					+ "completeddate date"

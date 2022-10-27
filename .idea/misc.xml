@@ -8,6 +8,9 @@
     </option>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="ProjectResources">
+    <resource url="http://metawidget.org/inspection-result" location="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.metawidget.modules/metawidget-core/4.2/fa08979ab6e63f9b28671c43ba60d1d0db202c90/metawidget-core-4.2.jar!/org/metawidget/inspector/inspection-result-1.0.xsd" />
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
   <component name="masterDetails">
     <states>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TodoList</string>
+    <string name="app_name">TodoMore</string>
     <string name="add_item">New Todo Item Here</string>
     <string name="add_button">Add</string>
     <string name="search_hint">Search&#8230;</string>

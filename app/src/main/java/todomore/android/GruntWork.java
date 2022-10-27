@@ -21,12 +21,12 @@ import java.util.List;
 /** 
  * This class encapsulates various make-work functions that 
  * WOULD NOT BE NEEDED IF ANDROID'S DB API WERE OBJECT ORIENTED!
+ * Should revamp this app to use Rooms. "Someday."
  * @author Ian Darwin
  */
 public class GruntWork {
 	
 	private final static String TAG = "GruntWork";
-	
 
 	public static ContentValues taskToContentValuesWithout_ID(Task t) {
 		return taskToContentValues(t, false);
@@ -37,7 +37,7 @@ public class GruntWork {
 	}
 	
 	private static ContentValues taskToContentValues(Task t, boolean include_ID) {
-		Log.d(TAG, "taskToConentValues(" + t + ")");
+		Log.d(TAG, "taskToContentValues(" + t + ")");
 		ContentValues cv = new ContentValues();
 		if (t.getDeviceId() != null)
 			cv.put("_id", t.getDeviceId());
@@ -54,43 +54,52 @@ public class GruntWork {
 		}
 		LocalDate creationDate = t.getCreationDate();
 		if (creationDate != null)
-		cv.put("creationDate", creationDate.toString());		// when you decided you had to do it
+			cv.put("creationDate", creationDate.toString());	// when you decided you had to do it
 		LocalDate dueDate = t.getDueDate();
 		if (dueDate != null)
 			cv.put("dueDate", dueDate.toString());				// when you hoped to do it by
 		LocalDate completedDate = t.getCompletedDate();
 		if (completedDate != null)
 			cv.put("completedDate", completedDate.toString());	// when you actually did it by
-		cv.put("modified", t.getModified().toString());
+		LocalDate modifiedDate = t.getModified();
+		if (modifiedDate != null)
+			cv.put("modified", t.getModified().toString());		// When you last worked on the entry
 		// XXX Project project;	// what this task is part of
 		// XXX Context context;	// where to do it
 		return cv;
 	}
 
-	@SuppressLint("Range") // Too many warnings that getColumnIndex can fail
+	/** Get the columns from the current row, make into a Task.
+	 * N.B. Column numbers are taken from TASK_COLUMNS
+	 * @param c
+	 * @return
+	 */
 	public static Task cursorToTask(Cursor c) {
+		Log.d(TAG, "cursortToTask");
 		if (c.isAfterLast()) {
 			Log.d(TAG, "Cursor has no more rows");
 			return null;
 		}
 		Task t = new Task();
-		// sdumpCursor(c);
-		t.setDeviceId((long)c.getInt(c.getColumnIndex("_id")));// our idea of pkey
-		t.setServerId(c.getInt(c.getColumnIndex("server_id")));	// remote's idea of pkey
-		t.setName(c.getString(c.getColumnIndex("name")));
-		t.setDescription(c.getString(c.getColumnIndex("description")));
-		t.setPriority(Priority.values()[c.getInt(c.getColumnIndex("priority"))]);
-		t.setStatus(Status.values()[c.getInt(c.getColumnIndex("status"))]);
-		String modDateString = c.getString(c.getColumnIndex("moddate"));
+		for (int i = 0; i < 7; i++) {
+			Log.d(TAG, "i + \", \" + c.getColumnName(i) = " + i + ", " + c.getColumnName(i));
+		}
+		t.setDeviceId(c.getLong(0));// our idea of pkey
+		t.setServerId(c.getInt(1));	// remote's idea of pkey
+		t.setName(c.getString(2));
+		t.setDescription(c.getString(3));
+		t.setPriority(Priority.values()[c.getInt(4)]);
+		t.setStatus(Status.values()[c.getInt(5)]);
+		String modDateString = c.getString(6);
 		if (modDateString != null)
 			t.setModified(LocalDate.parse(modDateString));
-		String creationDateString = c.getString(c.getColumnIndex("creationdate"));
+		String creationDateString = c.getString(7);
 		if (creationDateString != null)
 			t.setCreationDate(LocalDate.parse(creationDateString));
-		String dueDateString = c.getString(c.getColumnIndex("duedate"));
+		String dueDateString = c.getString(8);
 		if (dueDateString != null)
 			t.setDueDate(LocalDate.parse(dueDateString));
-		String completedDateString = c.getString(c.getColumnIndex("completeddate"));
+		String completedDateString = c.getString(9);
 		if (completedDateString != null)
 			t.setCompletedDate(LocalDate.parse(completedDateString));
 		// XXX Project project;	// what this task is part of
@@ -135,9 +144,9 @@ public class GruntWork {
 				String creationDateString = o.getString("creationDate");
 				if (creationDateString != null && !"null".equals(creationDateString))
 					t.setCreationDate(LocalDate.parse(creationDateString));
-				String modDateString = o.getString("modDate");
+				String modDateString = o.getString("modified");
 				if (modDateString != null && !"null".equals(modDateString))
-					t.setModified(LocalDate.parse(modDateString);
+					t.setModified(LocalDate.parse(modDateString));
 				String dueDateString = o.getString("dueDate");
 				if (dueDateString != null && !"null".equals(dueDateString))
 					t.setDueDate(LocalDate.parse(dueDateString));
