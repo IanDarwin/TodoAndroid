@@ -201,7 +201,11 @@ public class TodoSyncAdapter extends AbstractThreadedSyncAdapter {
 			return;
 		}
 		
-		// XXX Should we do the same if remote is empty and local is not?
+		// The same if remote is empty and local is not.
+		if (!local.isEmpty() && remote.isEmpty()) {
+			toSaveRemotely.addAll(local);
+			return;
+		}
 
 		// Compute the list of local tasks that must be sent to the server.
 		// In same pass, pre-compute list of entries in local DB that have remote ids.
